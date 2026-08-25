@@ -13,7 +13,6 @@ from fastapi import FastAPI
 from app.config import settings
 from app.core.file_utils import cleanup_paths
 
-
 _active_paths: set[Path] = set()
 _active_paths_lock = threading.RLock()
 
@@ -27,9 +26,12 @@ def mark_active_paths(paths: Iterable[Path]) -> None:
 def cleanup_now(paths: Iterable[Path]) -> None:
     """Immediately remove paths and release any active-job protection."""
     cleanup_targets = [Path(path) for path in paths]
+    controlled_targets = [
+        path for path in cleanup_targets if _is_controlled_cleanup_target(path)
+    ]
 
     try:
-        cleanup_paths(cleanup_targets)
+        cleanup_paths(controlled_targets)
     finally:
         _release_paths(cleanup_targets)
 
@@ -47,6 +49,9 @@ def cleanup_after_response(paths: Iterable[Path]) -> None:
     completion_time = time.time()
 
     for path in cleanup_targets:
+        if not _is_controlled_cleanup_target(path):
+            continue
+
         try:
             if path.is_symlink():
                 os.utime(
@@ -69,7 +74,7 @@ def sweep_stale_temp_files(*, now: float | None = None) -> int:
     cutoff = current_time - delay_seconds
     removed_count = 0
 
-    for root in (settings.upload_temp_dir, settings.output_temp_dir):
+    for root in _controlled_temp_roots():
         try:
             root.mkdir(parents=True, exist_ok=True)
             candidates = list(root.iterdir())
@@ -86,6 +91,9 @@ def sweep_stale_temp_files(*, now: float | None = None) -> int:
                 continue
 
             if modified_at > cutoff:
+                continue
+
+            if not _is_controlled_cleanup_target(candidate):
                 continue
 
             cleanup_paths([candidate])
@@ -138,3 +146,60 @@ def _is_active(path: Path) -> bool:
 
 def _path_key(path: Path) -> Path:
     return Path(path).resolve(strict=False)
+
+
+def _is_controlled_cleanup_target(path: Path) -> bool:
+    """Only allow deletion below one of PrivCon's configured temp roots."""
+    path = Path(path)
+
+    try:
+        roots = _controlled_temp_roots()
+
+        if path.is_symlink():
+            candidate = path.parent.resolve(strict=False) / path.name
+        else:
+            candidate = path.resolve(strict=False)
+
+        return any(candidate != root and root in candidate.parents for root in roots)
+    except OSError:
+        return False
+
+
+def _controlled_temp_roots() -> set[Path]:
+    """Resolve temp roots while refusing broad or symlinked locations."""
+    configured_roots = {
+        Path(settings.upload_temp_dir),
+        Path(settings.output_temp_dir),
+    }
+    resolved_roots: set[Path] = set()
+    protected_roots = {
+        Path.cwd().resolve(strict=False),
+        Path.home().resolve(strict=False),
+    }
+
+    for configured_root in configured_roots:
+        absolute_root = configured_root.absolute()
+        resolved_root = configured_root.resolve(strict=False)
+
+        if resolved_root.parent == resolved_root:
+            return set()
+
+        if resolved_root in protected_roots:
+            return set()
+
+        # A symlinked temp root could be swapped to expose unrelated data to
+        # the stale-file sweeper. Refuse it instead of following it.
+        if absolute_root != resolved_root:
+            return set()
+
+        resolved_roots.add(resolved_root)
+
+    if len(resolved_roots) != 2:
+        return set()
+
+    first, second = tuple(resolved_roots)
+
+    if first in second.parents or second in first.parents:
+        return set()
+
+    return resolved_roots

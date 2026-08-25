@@ -3,7 +3,6 @@
 import logging
 from typing import Literal
 
-
 JobStatus = Literal["started", "success", "failure"]
 
 
@@ -18,14 +17,11 @@ def configure_logging() -> None:
     privcon_logger.propagate = False
 
     if not any(
-        isinstance(handler, _PrivConLogHandler)
-        for handler in privcon_logger.handlers
+        isinstance(handler, _PrivConLogHandler) for handler in privcon_logger.handlers
     ):
         handler = _PrivConLogHandler()
         handler.setFormatter(
-            logging.Formatter(
-                "%(asctime)s %(levelname)s %(name)s %(message)s"
-            )
+            logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
         )
         privcon_logger.addHandler(handler)
 

@@ -8,11 +8,10 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError as PydanticValidationError
 
-from app.config import Settings
+from app.config import Settings, settings
 from app.core.exceptions import ValidationError
 from app.core.file_utils import save_upload_to_temp
 from app.core.validators import validate_office_structure
-
 
 OFFICE_PARTS = {
     "docx": (
@@ -36,6 +35,7 @@ def _office_bytes(
     overrides: dict[str, bytes] | None = None,
     extra_parts: dict[str, bytes] | None = None,
     omitted_parts: set[str] | None = None,
+    compression: int = zipfile.ZIP_STORED,
 ) -> bytes:
     internal_path, document_xml = OFFICE_PARTS[tool_key]
     parts = {
@@ -51,7 +51,7 @@ def _office_bytes(
 
     output = BytesIO()
 
-    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_STORED) as archive:
+    with zipfile.ZipFile(output, "w", compression=compression) as archive:
         for name, content in parts.items():
             archive.writestr(name, content)
 
@@ -150,6 +150,142 @@ def test_office_validation_rejects_damaged_required_part(tmp_path: Path) -> None
     assert exc_info.value.code == "corrupted_file"
 
 
+def test_office_validation_checks_crc_for_optional_members(tmp_path: Path) -> None:
+    path = tmp_path / "document.docx"
+    optional_content = b"unique-optional-payload"
+    damaged_archive = bytearray(
+        _office_bytes(
+            "docx",
+            extra_parts={"word/media/image.bin": optional_content},
+        )
+    )
+    content_offset = damaged_archive.find(optional_content)
+    assert content_offset >= 0
+    damaged_archive[content_offset] ^= 0x01
+    path.write_bytes(damaged_archive)
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_office_structure(path, "docx")
+
+    assert exc_info.value.code == "corrupted_file"
+
+
+def test_office_validation_rejects_high_compression_ratio(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path = tmp_path / "document.docx"
+    path.write_bytes(
+        _office_bytes(
+            "docx",
+            extra_parts={"word/media/repetitive.bin": b"A" * 100_000},
+            compression=zipfile.ZIP_DEFLATED,
+        )
+    )
+    monkeypatch.setattr(settings, "max_office_compression_ratio", 10)
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_office_structure(path, "docx")
+
+    assert exc_info.value.code == "oversized_file"
+
+
+def test_office_validation_rejects_too_many_archive_entries(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path = tmp_path / "document.docx"
+    path.write_bytes(
+        _office_bytes(
+            "docx",
+            extra_parts={"word/media/extra.bin": b"content"},
+        )
+    )
+    monkeypatch.setattr(settings, "max_office_archive_entries", 3)
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_office_structure(path, "docx")
+
+    assert exc_info.value.code == "oversized_file"
+
+
+def test_office_validation_rejects_external_resource_relationships(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "document.docx"
+    relationships = (
+        b'<Relationships xmlns="urn:test">'
+        b'<Relationship Id="rId1" '
+        b'Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        b'relationships/image" Target="https://example.invalid/private.png" '
+        b'TargetMode="External"/>'
+        b"</Relationships>"
+    )
+    path.write_bytes(
+        _office_bytes(
+            "docx",
+            extra_parts={"word/_rels/document.xml.rels": relationships},
+        )
+    )
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_office_structure(path, "docx")
+
+    assert exc_info.value.code == "unsafe_document_content"
+
+
+def test_office_validation_allows_static_external_hyperlinks(tmp_path: Path) -> None:
+    path = tmp_path / "document.docx"
+    relationships = (
+        b'<Relationships xmlns="urn:test">'
+        b'<Relationship Id="rId1" '
+        b'Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        b'relationships/hyperlink" Target="https://example.com" '
+        b'TargetMode="External"/>'
+        b"</Relationships>"
+    )
+    path.write_bytes(
+        _office_bytes(
+            "docx",
+            extra_parts={"word/_rels/document.xml.rels": relationships},
+        )
+    )
+
+    validate_office_structure(path, "docx")
+
+
+def test_office_validation_rejects_dtd_in_any_xml_member(tmp_path: Path) -> None:
+    path = tmp_path / "document.docx"
+    path.write_bytes(
+        _office_bytes(
+            "docx",
+            extra_parts={
+                "customXml/item1.xml": b'<!DOCTYPE x [<!ENTITY e "boom">]><x>&e;</x>'
+            },
+        )
+    )
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_office_structure(path, "docx")
+
+    assert exc_info.value.code == "unsafe_document_content"
+
+
+def test_office_validation_rejects_embedded_objects(tmp_path: Path) -> None:
+    path = tmp_path / "document.docx"
+    path.write_bytes(
+        _office_bytes(
+            "docx",
+            extra_parts={"word/embeddings/payload.bin": b"payload"},
+        )
+    )
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_office_structure(path, "docx")
+
+    assert exc_info.value.code == "unsafe_document_content"
+
+
 def test_streaming_upload_limit_removes_partial_file(tmp_path: Path) -> None:
     upload_dir = tmp_path / "uploads"
     upload_dir.mkdir()
@@ -189,6 +325,12 @@ def test_streaming_upload_accepts_exact_limit(tmp_path: Path) -> None:
         {"conversion_timeout_seconds": 0},
         {"cleanup_delay_minutes": 0},
         {"cleanup_mode": "unknown"},
+        {"max_total_upload_size_mb": 49},
+        {"max_request_size_mb": 199},
+        {"max_total_image_pixels": 39_999_999},
+        {"max_files_per_request": 101},
+        {"max_concurrent_jobs": 33},
+        {"cors_origin": "*"},
     ],
 )
 def test_settings_reject_invalid_safety_configuration(invalid_setting) -> None:

@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, File, Response, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
@@ -10,6 +11,7 @@ from app.config import settings
 from app.core.exceptions import ConversionError, PrivConError, ValidationError
 from app.core.file_utils import new_job_id, sanitize_filename, save_upload_to_temp
 from app.core.logging_config import log_job_event
+from app.core.security import LimitedUploadRoute
 from app.core.validators import validate_extension, validate_office_structure
 from app.models.schemas import ErrorResponse
 from app.services import libreoffice_service
@@ -19,8 +21,11 @@ from app.services.cleanup_service import (
     mark_active_paths,
 )
 
-
-router = APIRouter(prefix="/api/convert", tags=["convert"])
+router = APIRouter(
+    prefix="/api/convert",
+    tags=["convert"],
+    route_class=LimitedUploadRoute,
+)
 logger = logging.getLogger("privcon.jobs")
 
 
@@ -34,7 +39,7 @@ def _error_response(status_code: int, error: PrivConError) -> JSONResponse:
     )
 
 
-async def _handle_office_conversion(
+def _handle_office_conversion(
     tool_key: str,
     job_id: str,
     upload: UploadFile,
@@ -69,7 +74,7 @@ async def _handle_office_conversion(
             "conversion_timeout": 504,
         }.get(exc.code, 422)
         return _error_response(status_code, exc)
-    except Exception:
+    except Exception:  # noqa: BLE001 - cleanup at the API trust boundary.
         cleanup_now([input_path] if input_path is not None else [])
         log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
         return _error_response(
@@ -108,7 +113,7 @@ async def _handle_office_conversion(
     )
 
 
-async def _convert_endpoint(
+def _convert_endpoint(
     tool_key: str,
     files: list[UploadFile] | None,
     background_tasks: BackgroundTasks,
@@ -127,7 +132,7 @@ async def _convert_endpoint(
             ),
         )
 
-    return await _handle_office_conversion(
+    return _handle_office_conversion(
         tool_key,
         job_id,
         files[0],
@@ -136,24 +141,24 @@ async def _convert_endpoint(
 
 
 @router.post("/docx-to-pdf")
-async def docx_to_pdf(
+def docx_to_pdf(
     background_tasks: BackgroundTasks,
-    files: list[UploadFile] | None = File(default=None, alias="file"),
+    files: Annotated[list[UploadFile] | None, File(alias="file")] = None,
 ) -> Response:
-    return await _convert_endpoint("docx", files, background_tasks)
+    return _convert_endpoint("docx", files, background_tasks)
 
 
 @router.post("/pptx-to-pdf")
-async def pptx_to_pdf(
+def pptx_to_pdf(
     background_tasks: BackgroundTasks,
-    files: list[UploadFile] | None = File(default=None, alias="file"),
+    files: Annotated[list[UploadFile] | None, File(alias="file")] = None,
 ) -> Response:
-    return await _convert_endpoint("pptx", files, background_tasks)
+    return _convert_endpoint("pptx", files, background_tasks)
 
 
 @router.post("/xlsx-to-pdf")
-async def xlsx_to_pdf(
+def xlsx_to_pdf(
     background_tasks: BackgroundTasks,
-    files: list[UploadFile] | None = File(default=None, alias="file"),
+    files: Annotated[list[UploadFile] | None, File(alias="file")] = None,
 ) -> Response:
-    return await _convert_endpoint("xlsx", files, background_tasks)
+    return _convert_endpoint("xlsx", files, background_tasks)

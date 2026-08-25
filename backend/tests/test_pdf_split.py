@@ -114,10 +114,7 @@ def test_split_one_range_returns_pdf(split_client) -> None:
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/pdf"
-    assert (
-        'filename="source_pages_2-3.pdf"'
-        in response.headers["content-disposition"]
-    )
+    assert 'filename="source_pages_2-3.pdf"' in response.headers["content-disposition"]
     assert _page_widths(response.content) == [102.0, 103.0]
     _assert_temp_dirs_empty(upload_dir, output_dir)
 
@@ -191,9 +188,7 @@ def test_split_rejects_invalid_mode_before_saving(split_client) -> None:
     response = client.post(
         "/api/pdf/split",
         data={"mode": "selected_pages"},
-        files={
-            "file": ("source.pdf", _pdf_bytes(100), "application/pdf")
-        },
+        files={"file": ("source.pdf", _pdf_bytes(100), "application/pdf")},
     )
 
     assert response.status_code == 400

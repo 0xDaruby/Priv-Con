@@ -20,9 +20,14 @@ import tempfile
 from pathlib import Path
 
 from app.config import settings
-from app.core.exceptions import ConversionError
-from app.core.file_utils import output_dir_for_job
+from app.core.exceptions import ConversionError, ValidationError
+from app.core.file_utils import (
+    enforce_output_size,
+    ensure_private_directory,
+    output_dir_for_job,
+)
 from app.services.cleanup_service import cleanup_now, mark_active_paths
+
 
 def _resolve_libreoffice_executable() -> str:
     """Resolve LibreOffice from the configured path or system PATH."""
@@ -82,7 +87,7 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
         output_dir_for_job(settings.output_temp_dir, job_id)
     ).resolve()
 
-    job_output_dir.mkdir(parents=True, exist_ok=True)
+    ensure_private_directory(job_output_dir)
     mark_active_paths([job_output_dir])
 
     output_path = job_output_dir / f"{input_path.stem}.pdf"
@@ -91,10 +96,13 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
     if output_path.exists():
         output_path.unlink()
 
-    # tempfile.mkdtemp() creates a unique, writable profile for every job.
+    # Keep the profile directly below the output root. This stays within the
+    # orphan sweeper's allowlist without creating Windows paths long enough to
+    # crash LibreOffice when it builds its nested profile directories.
     profile_dir = Path(
-        tempfile.mkdtemp(prefix="privcon-lo-profile-")
+        tempfile.mkdtemp(prefix="pc-lo-", dir=settings.output_temp_dir)
     ).resolve()
+    mark_active_paths([profile_dir])
 
     # Path.as_uri() correctly produces:
     # Windows: file:///C:/Users/David/...
@@ -122,9 +130,7 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
     process_environment.pop("PYTHONPATH", None)
 
     # Prevent soffice.com from creating an extra console window on Windows.
-    creation_flags = (
-        subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
-    )
+    creation_flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 
     try:
         try:
@@ -179,9 +185,7 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
         # Confirm the generated file is actually a PDF.
         try:
             with output_path.open("rb") as generated_pdf:
-                has_pdf_signature = (
-                    generated_pdf.read(5) == b"%PDF-"
-                )
+                has_pdf_signature = generated_pdf.read(5) == b"%PDF-"
 
         except OSError as exc:
             _remove_failed_output(job_output_dir)
@@ -199,8 +203,23 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
                 message="The document could not be converted to PDF.",
             )
 
+        try:
+            output_path.chmod(0o600)
+        except OSError as exc:
+            _remove_failed_output(job_output_dir)
+            raise ConversionError(
+                code="conversion_failed",
+                message="The generated PDF could not be secured.",
+            ) from exc
+
+        try:
+            enforce_output_size(output_path)
+        except ValidationError as exc:
+            _remove_failed_output(job_output_dir)
+            raise ConversionError(code=exc.code, message=exc.message) from exc
+
         return output_path
 
     finally:
         # Always remove the temporary LibreOffice profile.
-        shutil.rmtree(profile_dir, ignore_errors=True)
+        cleanup_now([profile_dir])

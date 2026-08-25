@@ -8,10 +8,16 @@ from pathlib import Path
 from pypdf import PdfReader, PdfWriter
 
 from app.config import settings
-from app.core.exceptions import PrivConError
-from app.core.file_utils import new_job_id, output_dir_for_job, sanitize_filename
+from app.core.exceptions import PrivConError, ValidationError
+from app.core.file_utils import (
+    enforce_output_size,
+    ensure_private_directory,
+    new_job_id,
+    output_dir_for_job,
+    private_binary_writer,
+    sanitize_filename,
+)
 from app.services.cleanup_service import cleanup_now, mark_active_paths
-
 
 EVERY_PAGE_MODE = "every_page"
 RANGES_MODE = "ranges"
@@ -127,7 +133,7 @@ def split_pdf(
 
     job_id = new_job_id()
     output_dir = output_dir_for_job(settings.output_temp_dir, job_id)
-    output_dir.mkdir(parents=True, exist_ok=True)
+    ensure_private_directory(output_dir)
     mark_active_paths([output_dir])
     reader: PdfReader | None = None
 
@@ -146,6 +152,15 @@ def split_pdf(
             raise SplitError(
                 code="empty_pdf",
                 message="PDF files must contain at least one page.",
+            )
+
+        if page_count > settings.max_pdf_pages_per_job:
+            raise SplitError(
+                code="too_many_pages",
+                message=(
+                    "The PDF exceeds the safe page-count limit of "
+                    f"{settings.max_pdf_pages_per_job} pages."
+                ),
             )
 
         safe_stem = _sanitized_stem(original_filename)
@@ -170,6 +185,7 @@ def split_pdf(
 
         if mode == RANGES_MODE and len(generated_paths) == 1:
             result_path = generated_paths[0]
+            _enforce_output_limit(result_path)
             return SplitResult(
                 path=result_path,
                 media_type="application/pdf",
@@ -178,13 +194,18 @@ def split_pdf(
 
         zip_path = output_dir / f"{safe_stem}_split.zip"
 
-        with zipfile.ZipFile(
-            zip_path,
-            mode="w",
-            compression=zipfile.ZIP_DEFLATED,
-        ) as archive:
+        with (
+            private_binary_writer(zip_path) as zip_file,
+            zipfile.ZipFile(
+                zip_file,
+                mode="w",
+                compression=zipfile.ZIP_DEFLATED,
+            ) as archive,
+        ):
             for generated_path in generated_paths:
                 archive.write(generated_path, arcname=generated_path.name)
+
+        _enforce_output_limit(zip_path)
 
         for generated_path in generated_paths:
             generated_path.unlink(missing_ok=True)
@@ -223,6 +244,7 @@ def _write_every_page(
         output_path = output_dir / filename
         _write_range(reader, page_range, output_path)
         generated_paths.append(output_path)
+        _enforce_total_generated_size(generated_paths)
 
     return generated_paths
 
@@ -236,12 +258,11 @@ def _write_ranges(
     generated_paths: list[Path] = []
 
     for page_range in page_ranges:
-        filename = (
-            f"{safe_stem}_pages_{page_range.start}-{page_range.end}.pdf"
-        )
+        filename = f"{safe_stem}_pages_{page_range.start}-{page_range.end}.pdf"
         output_path = output_dir / filename
         _write_range(reader, page_range, output_path)
         generated_paths.append(output_path)
+        _enforce_total_generated_size(generated_paths)
 
     return generated_paths
 
@@ -257,7 +278,7 @@ def _write_range(
         for page_number in range(page_range.start, page_range.end + 1):
             writer.add_page(reader.pages[page_number - 1])
 
-        with output_path.open("wb") as output_file:
+        with private_binary_writer(output_path) as output_file:
             writer.write(output_file)
     finally:
         writer.close()
@@ -267,6 +288,34 @@ def _sanitized_stem(filename: str) -> str:
     stem = Path(filename or "document.pdf").stem
     safe_stem = sanitize_filename(stem).strip(".")
     return safe_stem or "document"
+
+
+def _enforce_total_generated_size(paths: list[Path]) -> None:
+    max_output_bytes = settings.max_output_size_mb * 1024 * 1024
+
+    try:
+        total_size = sum(path.stat().st_size for path in paths)
+    except OSError as exc:
+        raise SplitError(
+            code="split_failed",
+            message="The generated PDF output could not be inspected.",
+        ) from exc
+
+    if total_size > max_output_bytes:
+        raise SplitError(
+            code="output_too_large",
+            message=(
+                "The generated output exceeds the safe processing limit. "
+                "Use fewer pages or ranges."
+            ),
+        )
+
+
+def _enforce_output_limit(path: Path) -> None:
+    try:
+        enforce_output_size(path)
+    except ValidationError as exc:
+        raise SplitError(code=exc.code, message=exc.message) from exc
 
 
 def _cleanup_dir(path: Path) -> None:

@@ -2,14 +2,20 @@
 
 import logging
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, File, Response, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.config import settings
 from app.core.exceptions import PrivConError, ValidationError
-from app.core.file_utils import new_job_id, save_upload_to_temp
+from app.core.file_utils import (
+    enforce_total_upload_size,
+    new_job_id,
+    save_upload_to_temp,
+)
 from app.core.logging_config import log_job_event
+from app.core.security import LimitedUploadRoute
 from app.core.validators import validate_image_extension, validate_image_structure
 from app.models.schemas import ErrorResponse
 from app.services.cleanup_service import (
@@ -19,8 +25,11 @@ from app.services.cleanup_service import (
 )
 from app.services.image_service import ImageConversionError, images_to_pdf
 
-
-router = APIRouter(prefix="/api/images", tags=["images"])
+router = APIRouter(
+    prefix="/api/images",
+    tags=["images"],
+    route_class=LimitedUploadRoute,
+)
 logger = logging.getLogger("privcon.jobs")
 
 
@@ -35,9 +44,9 @@ def _error_response(status_code: int, error: PrivConError) -> JSONResponse:
 
 
 @router.post("/to-pdf")
-async def images_to_pdf_endpoint(
+def images_to_pdf_endpoint(
     background_tasks: BackgroundTasks,
-    files: list[UploadFile] | None = File(default=None),
+    files: Annotated[list[UploadFile] | None, File()] = None,
 ) -> Response:
     job_id = new_job_id()
     log_job_event(logger, tool="images-to-pdf", job_id=job_id, status="started")
@@ -59,6 +68,8 @@ async def images_to_pdf_endpoint(
 
     saved_paths: list[Path] = []
     output_path: Path | None = None
+    total_upload_bytes = 0
+    total_pixels = 0
 
     try:
         # Multipart order is the requested PDF page order.
@@ -75,7 +86,17 @@ async def images_to_pdf_endpoint(
             )
             saved_paths.append(path)
             mark_active_paths([path])
-            validate_image_structure(path, original_filename)
+            total_upload_bytes += path.stat().st_size
+            enforce_total_upload_size(total_upload_bytes)
+            total_pixels += validate_image_structure(path, original_filename)
+
+            if total_pixels > settings.max_total_image_pixels:
+                raise ValidationError(
+                    code="oversized_file",
+                    message=(
+                        "The combined image dimensions exceed safe processing limits."
+                    ),
+                )
 
         output_path = images_to_pdf(saved_paths)
     except ValidationError as exc:
@@ -96,7 +117,7 @@ async def images_to_pdf_endpoint(
             status="failure",
         )
         return _error_response(422, exc)
-    except Exception:
+    except Exception:  # noqa: BLE001 - cleanup at the API trust boundary.
         _cleanup_after_failure(saved_paths, output_path)
         log_job_event(
             logger,

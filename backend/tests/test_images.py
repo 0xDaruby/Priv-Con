@@ -223,9 +223,7 @@ def test_images_to_pdf_rejects_mismatched_content(image_client) -> None:
 
     response = client.post(
         "/api/images/to-pdf",
-        files=[
-            ("files", ("renamed.jpg", _image_bytes("PNG"), "image/jpeg"))
-        ],
+        files=[("files", ("renamed.jpg", _image_bytes("PNG"), "image/jpeg"))],
     )
 
     assert response.status_code == 400
@@ -258,4 +256,41 @@ def test_images_to_pdf_rejects_oversized_upload_while_streaming(
         "error": "oversized_file",
         "message": "Files larger than 1 MB are not accepted.",
     }
+    _assert_temp_dirs_empty(upload_dir, output_dir)
+
+
+def test_images_to_pdf_rejects_excessive_decoded_pixels(
+    image_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client, upload_dir, output_dir = image_client
+    monkeypatch.setattr(settings, "max_image_pixels", 100)
+
+    response = client.post(
+        "/api/images/to-pdf",
+        files=[("files", ("large.png", _image_bytes("PNG"), "image/png"))],
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "oversized_file"
+    _assert_temp_dirs_empty(upload_dir, output_dir)
+
+
+def test_images_to_pdf_rejects_excessive_combined_pixels(
+    image_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client, upload_dir, output_dir = image_client
+    monkeypatch.setattr(settings, "max_total_image_pixels", 700)
+
+    response = client.post(
+        "/api/images/to-pdf",
+        files=[
+            ("files", ("one.png", _image_bytes("PNG", (20, 20)), "image/png")),
+            ("files", ("two.png", _image_bytes("PNG", (20, 20)), "image/png")),
+        ],
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "oversized_file"
     _assert_temp_dirs_empty(upload_dir, output_dir)

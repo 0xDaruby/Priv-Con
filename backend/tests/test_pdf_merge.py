@@ -42,6 +42,21 @@ def _empty_pdf_bytes() -> bytes:
     return output.getvalue()
 
 
+def _active_pdf_bytes(*, attachment: bool = False) -> bytes:
+    output = BytesIO()
+    writer = PdfWriter()
+    writer.add_blank_page(width=100, height=100)
+
+    if attachment:
+        writer.add_attachment("payload.txt", b"private payload")
+    else:
+        writer.add_js("app.alert('unsafe')")
+
+    writer.write(output)
+    writer.close()
+    return output.getvalue()
+
+
 def _assert_temp_dirs_empty(*directories: Path) -> None:
     for directory in directories:
         assert list(directory.iterdir()) == []
@@ -178,6 +193,53 @@ def test_merge_rejects_empty_pdf(merge_client) -> None:
         "error": "empty_pdf",
         "message": "PDF files must contain at least one page.",
     }
+    _assert_temp_dirs_empty(upload_dir, output_dir)
+
+
+@pytest.mark.parametrize("attachment", [False, True])
+def test_merge_rejects_active_or_embedded_pdf_content(
+    merge_client,
+    attachment: bool,
+) -> None:
+    client, upload_dir, output_dir = merge_client
+
+    response = client.post(
+        "/api/pdf/merge",
+        files=[
+            ("files", ("valid.pdf", _pdf_bytes(100), "application/pdf")),
+            (
+                "files",
+                (
+                    "unsafe.pdf",
+                    _active_pdf_bytes(attachment=attachment),
+                    "application/pdf",
+                ),
+            ),
+        ],
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "unsafe_document_content"
+    _assert_temp_dirs_empty(upload_dir, output_dir)
+
+
+def test_merge_rejects_excessive_combined_page_count(
+    merge_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client, upload_dir, output_dir = merge_client
+    monkeypatch.setattr(settings, "max_pdf_pages_per_job", 2)
+
+    response = client.post(
+        "/api/pdf/merge",
+        files=[
+            ("files", ("first.pdf", _pdf_bytes(100, 101), "application/pdf")),
+            ("files", ("second.pdf", _pdf_bytes(200), "application/pdf")),
+        ],
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "too_many_pages"
     _assert_temp_dirs_empty(upload_dir, output_dir)
 
 

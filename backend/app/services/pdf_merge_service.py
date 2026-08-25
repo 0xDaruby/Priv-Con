@@ -1,15 +1,22 @@
 """PDF merge service backed by pypdf."""
 
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 from pypdf import PdfReader, PdfWriter
 from pypdf.errors import PdfReadError
 
 from app.config import settings
-from app.core.exceptions import PrivConError
-from app.core.file_utils import new_job_id, output_dir_for_job
+from app.core.exceptions import PrivConError, ValidationError
+from app.core.file_utils import (
+    enforce_output_size,
+    ensure_private_directory,
+    new_job_id,
+    output_dir_for_job,
+    private_binary_writer,
+)
 from app.services.cleanup_service import cleanup_now, mark_active_paths
+
 
 class MergeError(PrivConError):
     """Raised when validated PDF inputs cannot be merged."""
@@ -30,12 +37,13 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
 
     job_id = new_job_id()
     job_output_dir = output_dir_for_job(settings.output_temp_dir, job_id)
-    job_output_dir.mkdir(parents=True, exist_ok=True)
+    ensure_private_directory(job_output_dir)
     mark_active_paths([job_output_dir])
     output_path = job_output_dir / "merged.pdf"
 
     writer = PdfWriter()
     opened_readers: list[PdfReader] = []
+    total_pages = 0
 
     try:
         for path in input_paths:
@@ -61,6 +69,17 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
                         message="PDF files must contain at least one page.",
                     )
 
+                total_pages += len(reader.pages)
+
+                if total_pages > settings.max_pdf_pages_per_job:
+                    raise MergeError(
+                        code="too_many_pages",
+                        message=(
+                            "The combined PDFs exceed the safe page-count limit "
+                            f"of {settings.max_pdf_pages_per_job} pages."
+                        ),
+                    )
+
                 for page in reader.pages:
                     writer.add_page(page)
             except PdfReadError as exc:
@@ -71,8 +90,13 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
                     ),
                 ) from exc
 
-        with output_path.open("wb") as output_file:
+        with private_binary_writer(output_path) as output_file:
             writer.write(output_file)
+
+        try:
+            enforce_output_size(output_path)
+        except ValidationError as exc:
+            raise MergeError(code=exc.code, message=exc.message) from exc
 
         return output_path
     except MergeError:

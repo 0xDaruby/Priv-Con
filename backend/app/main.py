@@ -8,6 +8,12 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import settings
 from app.core.logging_config import configure_logging
+from app.core.security import (
+    ProcessingConcurrencyMiddleware,
+    RequestBodyLimitMiddleware,
+    SecurityHeadersMiddleware,
+    UploadOriginMiddleware,
+)
 from app.models.schemas import ErrorResponse
 from app.routers import convert, health, images, pdf
 from app.services.cleanup_service import cleanup_lifespan
@@ -74,12 +80,19 @@ async def unexpected_error_handler(_: Request, __: Exception) -> JSONResponse:
         ).model_dump(),
     )
 
+
+# Middleware is registered inside-out. SecurityHeaders is last so it also
+# covers CORS preflights and request-limit/origin rejection responses.
+app.add_middleware(RequestBodyLimitMiddleware)
+app.add_middleware(ProcessingConcurrencyMiddleware)
+app.add_middleware(UploadOriginMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.cors_origin],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SecurityHeadersMiddleware)
 
 app.include_router(health.router)
 app.include_router(convert.router)

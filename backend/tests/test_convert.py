@@ -76,8 +76,10 @@ def test_docx_endpoint_converts_valid_package_and_cleans_temp(convert_client) ->
             "file": (
                 "private report.docx",
                 _docx_bytes(),
-                "application/vnd.openxmlformats-officedocument."
-                "wordprocessingml.document",
+                (
+                    "application/vnd.openxmlformats-officedocument."
+                    "wordprocessingml.document"
+                ),
             )
         },
     )
