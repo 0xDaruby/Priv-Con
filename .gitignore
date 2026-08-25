@@ -31,3 +31,7 @@ node_modules/
 dist/
 build/
 .next/
+
+# Documents
+/setup.md
+/Privcon PRD
