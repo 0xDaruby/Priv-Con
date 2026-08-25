@@ -1,66 +1,111 @@
-import logging
+"""PDF utility endpoints."""
+
 from pathlib import Path
-from typing import List
+from typing import Sequence
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, BackgroundTasks, File, Response, UploadFile
+from fastapi.responses import FileResponse, JSONResponse
 
-from app.core.validators import validate_pdf_structure, ValidationError
-from app.core.file_utils import save_upload_to_temp, cleanup_paths
-from app.services.pdf_merge_service import merge_pdfs, MergeError
+from app.config import settings
+from app.core.exceptions import PrivConError, ValidationError
+from app.core.file_utils import cleanup_paths, new_job_id, save_upload_to_temp
+from app.core.validators import validate_pdf_extension, validate_pdf_structure
+from app.models.schemas import ErrorResponse
+from app.services.pdf_merge_service import MergeError, merge_pdfs
 
-logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/api/pdf", tags=["pdf"])
 
 
+def _error_response(status_code: int, error: PrivConError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status_code,
+        content=ErrorResponse(
+            error=error.code,
+            message=error.message,
+        ).model_dump(),
+    )
+
+
+def _cleanup_after_failure(
+    saved_paths: Sequence[Path],
+    output_path: Path | None,
+) -> None:
+    cleanup_targets = list(saved_paths)
+
+    if output_path is not None:
+        cleanup_targets.append(output_path.parent)
+
+    cleanup_paths(cleanup_targets)
+
+
 @router.post("/merge")
-async def merge_pdf_endpoint(files: List[UploadFile] = File(...)):
-    if len(files) < 2:
-        raise HTTPException(
-            status_code=400,
-            detail={"error": "invalid_input", "message": "Upload at least two PDF files to merge."}
+async def merge_pdf_endpoint(
+    background_tasks: BackgroundTasks,
+    files: list[UploadFile] | None = File(default=None),
+) -> Response:
+    if not files or len(files) < 2:
+        return _error_response(
+            400,
+            ValidationError(
+                code="invalid_input",
+                message="Upload at least two PDF files to merge.",
+            ),
         )
 
-    saved_paths: List[Path] = []
+    saved_paths: list[Path] = []
     output_path: Path | None = None
 
     try:
-        # Save in the order received — order = merge order, matches PRD 10.2.4
+        # Multipart order is the requested merge order.
         for upload in files:
-            path = save_upload_to_temp(upload)
-            saved_paths.append(path)
+            original_filename = upload.filename or "upload"
+            validate_pdf_extension(original_filename)
 
-            try:
-                validate_pdf_structure(path)
-            except ValidationError as e:
-                raise HTTPException(
-                    status_code=400,
-                    detail={"error": e.code, "message": e.message}
-                )
-
-        try:
-            output_path = merge_pdfs(saved_paths)
-        except MergeError as e:
-            raise HTTPException(
-                status_code=422,
-                detail={"error": e.code, "message": e.message}
+            path = save_upload_to_temp(
+                source=upload.file,
+                upload_dir=settings.upload_temp_dir,
+                job_id=new_job_id(),
+                original_filename=original_filename,
             )
+            saved_paths.append(path)
+            validate_pdf_structure(path)
 
-        return FileResponse(
-            path=output_path,
-            media_type="application/pdf",
-            filename="merged.pdf",
-            background=None,  # cleanup handled below via cleanup_paths after response scheduling — see note
+        output_path = merge_pdfs(saved_paths)
+    except ValidationError as exc:
+        _cleanup_after_failure(saved_paths, output_path)
+        return _error_response(400, exc)
+    except MergeError as exc:
+        _cleanup_after_failure(saved_paths, output_path)
+        return _error_response(422, exc)
+    except Exception:
+        _cleanup_after_failure(saved_paths, output_path)
+        return _error_response(
+            500,
+            MergeError(
+                code="file_processing_failed",
+                message="The uploaded files could not be processed.",
+            ),
         )
 
-    except FileNotFoundError:
-        # mirrors convert.py's backend_unavailable class for missing-binary style failures
-        raise HTTPException(
-            status_code=503,
-            detail={"error": "backend_unavailable", "message": "Backend processing service unavailable."}
+    if output_path is None:
+        _cleanup_after_failure(saved_paths, output_path)
+        return _error_response(
+            500,
+            MergeError(
+                code="conversion_failed",
+                message="Failed to merge PDF files.",
+            ),
         )
-    finally:
-        cleanup_paths(saved_paths)
-        # Note: output_path cleanup should follow whatever pattern you used in
-        # convert.py for post-response deletion (BackgroundTask / cleanup_service),
-        # since FileResponse streams after this function returns.
+
+    background_tasks.add_task(
+        cleanup_paths,
+        [*saved_paths, output_path.parent],
+    )
+
+    return FileResponse(
+        path=output_path,
+        media_type="application/pdf",
+        filename="merged.pdf",
+        background=background_tasks,
+    )

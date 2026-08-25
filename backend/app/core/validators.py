@@ -23,6 +23,9 @@ truncated-but-technically-valid zip.
 import zipfile
 from pathlib import Path
 
+from pypdf import PdfReader
+from pypdf.errors import PdfReadError
+
 from app.core.exceptions import ValidationError
 
 # tool key -> accepted file extension
@@ -86,3 +89,53 @@ def validate_office_file(file_path: Path, filename: str, tool_key: str) -> None:
     """Convenience wrapper: extension check, then structural check."""
     validate_extension(filename, tool_key)
     validate_office_structure(file_path, tool_key)
+
+
+def validate_pdf_extension(filename: str) -> None:
+    """Reject files that are not presented as PDFs before saving them."""
+    if not (filename or "").lower().endswith(".pdf"):
+        raise ValidationError(
+            code="unsupported_file_type",
+            message="Only .pdf files are accepted for this tool.",
+        )
+
+
+def validate_pdf_structure(file_path: Path) -> None:
+    """Confirm that an uploaded PDF is readable, unencrypted, and non-empty."""
+    try:
+        with file_path.open("rb") as uploaded_file:
+            if uploaded_file.read(5) != b"%PDF-":
+                raise ValidationError(
+                    code="corrupted_file",
+                    message="This file isn't a valid or readable PDF.",
+                )
+
+        reader = PdfReader(str(file_path), strict=True)
+
+        try:
+            if reader.is_encrypted:
+                raise ValidationError(
+                    code="password_protected",
+                    message="Password-protected PDFs cannot be merged.",
+                )
+
+            if len(reader.pages) == 0:
+                raise ValidationError(
+                    code="empty_pdf",
+                    message="PDF files must contain at least one page.",
+                )
+        finally:
+            reader.close()
+    except ValidationError:
+        raise
+    except (OSError, PdfReadError, EOFError, ValueError) as exc:
+        raise ValidationError(
+            code="corrupted_file",
+            message="This file isn't a valid or readable PDF.",
+        ) from exc
+
+
+def validate_pdf_file(file_path: Path, filename: str) -> None:
+    """Convenience wrapper: PDF extension check, then content validation."""
+    validate_pdf_extension(filename)
+    validate_pdf_structure(file_path)

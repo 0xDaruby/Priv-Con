@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import convert, health
+from app.routers import convert, health, pdf
 
 app = FastAPI(title="PrivCon API")
 
@@ -17,3 +17,4 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(convert.router)
+app.include_router(pdf.router)
