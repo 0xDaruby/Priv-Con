@@ -1,6 +1,5 @@
 """Ordered image-to-PDF conversion using Pillow."""
 
-import shutil
 from pathlib import Path
 from typing import Sequence
 
@@ -9,6 +8,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from app.config import settings
 from app.core.exceptions import PrivConError
 from app.core.file_utils import new_job_id, output_dir_for_job
+from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 
 class ImageConversionError(PrivConError):
@@ -26,6 +26,7 @@ def images_to_pdf(input_paths: Sequence[Path]) -> Path:
     job_id = new_job_id()
     output_dir = output_dir_for_job(settings.output_temp_dir, job_id)
     output_dir.mkdir(parents=True, exist_ok=True)
+    mark_active_paths([output_dir])
     output_path = output_dir / "images.pdf"
     prepared_images: list[Image.Image] = []
 
@@ -112,4 +113,4 @@ def load_image_for_pdf(input_path: Path) -> Image.Image:
 
 
 def _cleanup_dir(path: Path) -> None:
-    shutil.rmtree(path, ignore_errors=True)
+    cleanup_now([path])

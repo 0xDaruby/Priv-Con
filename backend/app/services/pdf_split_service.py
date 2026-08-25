@@ -1,7 +1,6 @@
 """PDF split service supporting per-page and page-range modes."""
 
 import re
-import shutil
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -11,6 +10,7 @@ from pypdf import PdfReader, PdfWriter
 from app.config import settings
 from app.core.exceptions import PrivConError
 from app.core.file_utils import new_job_id, output_dir_for_job, sanitize_filename
+from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 
 EVERY_PAGE_MODE = "every_page"
@@ -128,6 +128,7 @@ def split_pdf(
     job_id = new_job_id()
     output_dir = output_dir_for_job(settings.output_temp_dir, job_id)
     output_dir.mkdir(parents=True, exist_ok=True)
+    mark_active_paths([output_dir])
     reader: PdfReader | None = None
 
     try:
@@ -269,4 +270,4 @@ def _sanitized_stem(filename: str) -> str:
 
 
 def _cleanup_dir(path: Path) -> None:
-    shutil.rmtree(path, ignore_errors=True)
+    cleanup_now([path])

@@ -1,7 +1,5 @@
 """PDF merge service backed by pypdf."""
 
-import logging
-import shutil
 from pathlib import Path
 from typing import Sequence
 
@@ -11,10 +9,7 @@ from pypdf.errors import PdfReadError
 from app.config import settings
 from app.core.exceptions import PrivConError
 from app.core.file_utils import new_job_id, output_dir_for_job
-
-
-logger = logging.getLogger(__name__)
-
+from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 class MergeError(PrivConError):
     """Raised when validated PDF inputs cannot be merged."""
@@ -36,6 +31,7 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
     job_id = new_job_id()
     job_output_dir = output_dir_for_job(settings.output_temp_dir, job_id)
     job_output_dir.mkdir(parents=True, exist_ok=True)
+    mark_active_paths([job_output_dir])
     output_path = job_output_dir / "merged.pdf"
 
     writer = PdfWriter()
@@ -68,7 +64,6 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
                 for page in reader.pages:
                     writer.add_page(page)
             except PdfReadError as exc:
-                logger.warning("Unreadable PDF encountered for job %s", job_id)
                 raise MergeError(
                     code="conversion_failed",
                     message=(
@@ -79,13 +74,11 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
         with output_path.open("wb") as output_file:
             writer.write(output_file)
 
-        logger.info("Job %s merged %s PDF files", job_id, len(input_paths))
         return output_path
     except MergeError:
         _cleanup_dir(job_output_dir)
         raise
     except Exception as exc:
-        logger.exception("Unexpected PDF merge failure for job %s", job_id)
         _cleanup_dir(job_output_dir)
         raise MergeError(
             code="conversion_failed",
@@ -99,4 +92,4 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
 
 
 def _cleanup_dir(path: Path) -> None:
-    shutil.rmtree(path, ignore_errors=True)
+    cleanup_now([path])

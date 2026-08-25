@@ -1,49 +1,39 @@
-"""Structural validators for Office, PDF, and image uploads.
+"""Structural validators for Office, PDF, and image uploads."""
 
-All validators run before a file reaches its conversion service. Office
-validation remains intentionally minimal until Phase 1 step 9; PDF and image
-validation covers the structural checks required by their current endpoints.
-
-Why this exists (see libreoffice-service-notes.md): sandbox testing found
-that LibreOffice's headless converter will "successfully" render garbage
-input — a plain-text file or random binary renamed to .docx — as a PDF
-rather than reject it, returning exit code 0 both times. Exit code / "a PDF
-was produced" is therefore not sufficient proof the input was a valid
-Office file, so that check has to happen here, first.
-
-Scope (intentionally minimal — this is Phase 1 step 4; full hardening is
-step 9):
-  1. extension matches what the tool expects
-  2. file is a valid ZIP container
-  3. the ZIP contains the internal path expected for its claimed type
-
-Deliberately NOT in scope here (deferred to step 9): file size limits,
-deeper XML well-formedness checks, malware scanning, or detecting a
-truncated-but-technically-valid zip.
-"""
-
+import warnings
 import zipfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+from xml.etree import ElementTree
 
 from PIL import Image, UnidentifiedImageError
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
+from app.config import settings
 from app.core.exceptions import ValidationError
 
-# tool key -> accepted file extension
+
 EXPECTED_EXTENSION = {
     "docx": ".docx",
     "pptx": ".pptx",
     "xlsx": ".xlsx",
 }
 
-# tool key -> a path that must exist inside the zip container for a
-# genuine Office file of that type
 EXPECTED_INTERNAL_PATH = {
     "docx": "word/document.xml",
     "pptx": "ppt/presentation.xml",
     "xlsx": "xl/workbook.xml",
+}
+
+EXPECTED_ROOT_ELEMENT = {
+    "docx": "document",
+    "pptx": "presentation",
+    "xlsx": "workbook",
+}
+
+REQUIRED_PACKAGE_PATHS = {
+    "[Content_Types].xml": "Types",
+    "_rels/.rels": "Relationships",
 }
 
 IMAGE_EXTENSION_TO_FORMAT = {
@@ -56,6 +46,7 @@ IMAGE_EXTENSION_TO_FORMAT = {
 
 def validate_extension(filename: str, tool_key: str) -> None:
     expected = EXPECTED_EXTENSION[tool_key]
+
     if not (filename or "").lower().endswith(expected):
         raise ValidationError(
             code="unsupported_file_type",
@@ -64,39 +55,59 @@ def validate_extension(filename: str, tool_key: str) -> None:
 
 
 def validate_office_structure(file_path: Path, tool_key: str) -> None:
-    """Confirm the file is a real ZIP-based Office document of the claimed
-    type. Raises ValidationError with a clean, user-facing message on any
-    mismatch — this is the check that catches mislabeled/corrupt files
-    that LibreOffice itself would silently "succeed" on."""
+    """Confirm that an Office upload is a coherent ZIP/XML package."""
     if not zipfile.is_zipfile(file_path):
-        raise ValidationError(
-            code="corrupted_file",
-            message="This file isn't a valid Office document. It may be "
-            "renamed, corrupted, or truncated.",
-        )
+        _raise_invalid_office_document()
 
     expected_path = EXPECTED_INTERNAL_PATH[tool_key]
 
     try:
         with zipfile.ZipFile(file_path) as archive:
-            names = archive.namelist()
-    except zipfile.BadZipFile:
-        raise ValidationError(
-            code="corrupted_file",
-            message="This file isn't a valid Office document. It may be "
-            "renamed, corrupted, or truncated.",
-        )
+            entries = archive.infolist()
+            names = [entry.filename for entry in entries]
 
-    if expected_path not in names:
-        raise ValidationError(
-            code="corrupted_file",
-            message="This file doesn't match the expected document "
-            "structure for this tool. It may be mislabeled or corrupted.",
-        )
+            if len(names) != len(set(names)):
+                _raise_corrupted_office(
+                    "This Office document contains duplicate package entries."
+                )
+
+            for entry in entries:
+                if _is_unsafe_archive_path(entry.filename):
+                    _raise_corrupted_office(
+                        "This Office document contains an invalid package path."
+                    )
+
+                if entry.flag_bits & 0x1:
+                    _raise_corrupted_office(
+                        "Encrypted Office documents are not supported."
+                    )
+
+            required_parts = {
+                **REQUIRED_PACKAGE_PATHS,
+                expected_path: EXPECTED_ROOT_ELEMENT[tool_key],
+            }
+            missing_parts = set(required_parts).difference(names)
+
+            if missing_parts:
+                _raise_corrupted_office(
+                    "This file doesn't match the expected Office document structure."
+                )
+
+            for part_name, expected_root in required_parts.items():
+                root = _read_office_xml_part(archive, part_name)
+
+                if _local_xml_name(root.tag) != expected_root:
+                    _raise_corrupted_office(
+                        "This Office document contains an invalid XML structure."
+                    )
+    except ValidationError:
+        raise
+    except (zipfile.BadZipFile, OSError, RuntimeError, ValueError) as exc:
+        _raise_invalid_office_document(exc)
 
 
 def validate_office_file(file_path: Path, filename: str, tool_key: str) -> None:
-    """Convenience wrapper: extension check, then structural check."""
+    """Validate an Office upload's extension and package structure."""
     validate_extension(filename, tool_key)
     validate_office_structure(file_path, tool_key)
 
@@ -114,7 +125,7 @@ def validate_pdf_structure(file_path: Path) -> None:
     """Confirm that an uploaded PDF is readable, unencrypted, and non-empty."""
     try:
         with file_path.open("rb") as uploaded_file:
-            if uploaded_file.read(5) != b"%PDF-":
+            if b"%PDF-" not in uploaded_file.read(1024):
                 raise ValidationError(
                     code="corrupted_file",
                     message="This file isn't a valid or readable PDF.",
@@ -129,16 +140,29 @@ def validate_pdf_structure(file_path: Path) -> None:
                     message="Password-protected PDFs are not supported.",
                 )
 
-            if len(reader.pages) == 0:
+            page_count = len(reader.pages)
+
+            if page_count == 0:
                 raise ValidationError(
                     code="empty_pdf",
                     message="PDF files must contain at least one page.",
                 )
+
+            for page in reader.pages:
+                _ = page.mediabox.width
+                _ = page.mediabox.height
         finally:
             reader.close()
     except ValidationError:
         raise
-    except (OSError, PdfReadError, EOFError, ValueError) as exc:
+    except (
+        OSError,
+        PdfReadError,
+        EOFError,
+        KeyError,
+        TypeError,
+        ValueError,
+    ) as exc:
         raise ValidationError(
             code="corrupted_file",
             message="This file isn't a valid or readable PDF.",
@@ -146,7 +170,7 @@ def validate_pdf_structure(file_path: Path) -> None:
 
 
 def validate_pdf_file(file_path: Path, filename: str) -> None:
-    """Convenience wrapper: PDF extension check, then content validation."""
+    """Validate a PDF upload's extension and content structure."""
     validate_pdf_extension(filename)
     validate_pdf_structure(file_path)
 
@@ -170,9 +194,21 @@ def validate_image_structure(file_path: Path, filename: str) -> None:
     expected_format = IMAGE_EXTENSION_TO_FORMAT[extension]
 
     try:
-        with Image.open(file_path) as image:
-            actual_format = image.format
-            image.verify()
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", Image.DecompressionBombWarning)
+
+            with Image.open(file_path) as image:
+                actual_format = image.format
+                image.verify()
+
+            with Image.open(file_path) as image:
+                image.seek(0)
+                image.load()
+    except (Image.DecompressionBombError, Image.DecompressionBombWarning) as exc:
+        raise ValidationError(
+            code="oversized_file",
+            message="The image dimensions exceed safe processing limits.",
+        ) from exc
     except (UnidentifiedImageError, OSError, SyntaxError, ValueError) as exc:
         raise ValidationError(
             code="corrupted_file",
@@ -187,6 +223,57 @@ def validate_image_structure(file_path: Path, filename: str) -> None:
 
 
 def validate_image_file(file_path: Path, filename: str) -> None:
-    """Convenience wrapper for image extension and content validation."""
+    """Validate an image upload's extension and content structure."""
     validate_image_extension(filename)
     validate_image_structure(file_path, filename)
+
+
+def _read_office_xml_part(
+    archive: zipfile.ZipFile,
+    part_name: str,
+) -> ElementTree.Element:
+    entry = archive.getinfo(part_name)
+    max_uncompressed_size = settings.max_upload_size_mb * 1024 * 1024
+
+    if entry.file_size > max_uncompressed_size:
+        raise ValidationError(
+            code="oversized_file",
+            message="The Office document contains an oversized internal component.",
+        )
+
+    try:
+        content = archive.read(part_name)
+        return ElementTree.fromstring(content)
+    except (zipfile.BadZipFile, ElementTree.ParseError) as exc:
+        raise ValidationError(
+            code="corrupted_file",
+            message="The Office document contains damaged or malformed XML.",
+        ) from exc
+
+
+def _is_unsafe_archive_path(filename: str) -> bool:
+    path = PurePosixPath(filename.replace("\\", "/"))
+    return path.is_absolute() or ".." in path.parts
+
+
+def _local_xml_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def _raise_corrupted_office(message: str) -> None:
+    raise ValidationError(code="corrupted_file", message=message)
+
+
+def _raise_invalid_office_document(exc: Exception | None = None) -> None:
+    error = ValidationError(
+        code="corrupted_file",
+        message=(
+            "This file isn't a valid Office document. It may be renamed, "
+            "corrupted, or truncated."
+        ),
+    )
+
+    if exc is None:
+        raise error
+
+    raise error from exc

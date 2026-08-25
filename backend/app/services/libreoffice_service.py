@@ -13,7 +13,6 @@ This service assumes structural validation has already been performed by
 core/validators.py before convert_to_pdf() is called.
 """
 
-import logging
 import os
 import shutil
 import subprocess
@@ -23,10 +22,7 @@ from pathlib import Path
 from app.config import settings
 from app.core.exceptions import ConversionError
 from app.core.file_utils import output_dir_for_job
-
-
-logger = logging.getLogger(__name__)
-
+from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 def _resolve_libreoffice_executable() -> str:
     """Resolve LibreOffice from the configured path or system PATH."""
@@ -59,7 +55,7 @@ def _resolve_libreoffice_executable() -> str:
 
 def _remove_failed_output(output_dir: Path) -> None:
     """Remove all output artifacts belonging to a failed job."""
-    shutil.rmtree(output_dir, ignore_errors=True)
+    cleanup_now([output_dir])
 
 
 def convert_to_pdf(input_path: Path, job_id: str) -> Path:
@@ -87,6 +83,7 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
     ).resolve()
 
     job_output_dir.mkdir(parents=True, exist_ok=True)
+    mark_active_paths([job_output_dir])
 
     output_path = job_output_dir / f"{input_path.stem}.pdf"
 
@@ -164,13 +161,6 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
             ) from exc
 
         if result.returncode != 0:
-            logger.error(
-                "LibreOffice conversion failed for job %s "
-                "with return code %s",
-                job_id,
-                result.returncode,
-            )
-
             _remove_failed_output(job_output_dir)
 
             raise ConversionError(
@@ -179,12 +169,6 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
             )
 
         if not output_path.is_file():
-            logger.error(
-                "LibreOffice returned success for job %s "
-                "without producing a PDF",
-                job_id,
-            )
-
             _remove_failed_output(job_output_dir)
 
             raise ConversionError(
@@ -208,11 +192,6 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
             ) from exc
 
         if not has_pdf_signature:
-            logger.error(
-                "LibreOffice produced invalid PDF output for job %s",
-                job_id,
-            )
-
             _remove_failed_output(job_output_dir)
 
             raise ConversionError(

@@ -57,6 +57,7 @@ def split_client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
     monkeypatch.setattr(settings, "upload_temp_dir", upload_dir)
     monkeypatch.setattr(settings, "output_temp_dir", output_dir)
+    monkeypatch.setattr(settings, "cleanup_mode", "immediate")
 
     with TestClient(app) as client:
         yield client, upload_dir, output_dir

@@ -1,5 +1,6 @@
 """PDF utility endpoints."""
 
+import logging
 from pathlib import Path
 from typing import Sequence
 
@@ -8,7 +9,8 @@ from fastapi.responses import FileResponse, JSONResponse
 
 from app.config import settings
 from app.core.exceptions import PrivConError, ValidationError
-from app.core.file_utils import cleanup_paths, new_job_id, save_upload_to_temp
+from app.core.file_utils import new_job_id, save_upload_to_temp
+from app.core.logging_config import log_job_event
 from app.core.validators import validate_pdf_extension, validate_pdf_structure
 from app.models.schemas import ErrorResponse
 from app.services.pdf_merge_service import MergeError, merge_pdfs
@@ -17,9 +19,15 @@ from app.services.pdf_split_service import (
     split_pdf,
     validate_split_options,
 )
+from app.services.cleanup_service import (
+    cleanup_after_response,
+    cleanup_now,
+    mark_active_paths,
+)
 
 
 router = APIRouter(prefix="/api/pdf", tags=["pdf"])
+logger = logging.getLogger("privcon.jobs")
 
 
 def _error_response(status_code: int, error: PrivConError) -> JSONResponse:
@@ -41,7 +49,7 @@ def _cleanup_after_failure(
     if output_path is not None:
         cleanup_targets.append(output_path.parent)
 
-    cleanup_paths(cleanup_targets)
+    cleanup_now(cleanup_targets)
 
 
 @router.post("/merge")
@@ -49,7 +57,11 @@ async def merge_pdf_endpoint(
     background_tasks: BackgroundTasks,
     files: list[UploadFile] | None = File(default=None),
 ) -> Response:
+    job_id = new_job_id()
+    log_job_event(logger, tool="pdf-merge", job_id=job_id, status="started")
+
     if not files or len(files) < 2:
+        log_job_event(logger, tool="pdf-merge", job_id=job_id, status="failure")
         return _error_response(
             400,
             ValidationError(
@@ -72,19 +84,24 @@ async def merge_pdf_endpoint(
                 upload_dir=settings.upload_temp_dir,
                 job_id=new_job_id(),
                 original_filename=original_filename,
+                max_size_bytes=settings.max_upload_size_mb * 1024 * 1024,
             )
             saved_paths.append(path)
+            mark_active_paths([path])
             validate_pdf_structure(path)
 
         output_path = merge_pdfs(saved_paths)
     except ValidationError as exc:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(logger, tool="pdf-merge", job_id=job_id, status="failure")
         return _error_response(400, exc)
     except MergeError as exc:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(logger, tool="pdf-merge", job_id=job_id, status="failure")
         return _error_response(422, exc)
     except Exception:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(logger, tool="pdf-merge", job_id=job_id, status="failure")
         return _error_response(
             500,
             MergeError(
@@ -95,6 +112,7 @@ async def merge_pdf_endpoint(
 
     if output_path is None:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(logger, tool="pdf-merge", job_id=job_id, status="failure")
         return _error_response(
             500,
             MergeError(
@@ -104,9 +122,10 @@ async def merge_pdf_endpoint(
         )
 
     background_tasks.add_task(
-        cleanup_paths,
+        cleanup_after_response,
         [*saved_paths, output_path.parent],
     )
+    log_job_event(logger, tool="pdf-merge", job_id=job_id, status="success")
 
     return FileResponse(
         path=output_path,
@@ -123,7 +142,11 @@ async def split_pdf_endpoint(
     mode: str | None = Form(default=None),
     ranges: str | None = Form(default=None),
 ) -> Response:
+    job_id = new_job_id()
+    log_job_event(logger, tool="pdf-split", job_id=job_id, status="started")
+
     if not files or len(files) != 1:
+        log_job_event(logger, tool="pdf-split", job_id=job_id, status="failure")
         return _error_response(
             400,
             ValidationError(
@@ -147,7 +170,9 @@ async def split_pdf_endpoint(
             upload_dir=settings.upload_temp_dir,
             job_id=new_job_id(),
             original_filename=original_filename,
+            max_size_bytes=settings.max_upload_size_mb * 1024 * 1024,
         )
+        mark_active_paths([saved_path])
         validate_pdf_structure(saved_path)
 
         result = split_pdf(
@@ -162,12 +187,14 @@ async def split_pdf_endpoint(
             [saved_path] if saved_path is not None else [],
             output_path,
         )
+        log_job_event(logger, tool="pdf-split", job_id=job_id, status="failure")
         return _error_response(400, exc)
     except SplitError as exc:
         _cleanup_after_failure(
             [saved_path] if saved_path is not None else [],
             output_path,
         )
+        log_job_event(logger, tool="pdf-split", job_id=job_id, status="failure")
         status_code = 400 if exc.code.startswith("invalid_") else 422
         return _error_response(status_code, exc)
     except Exception:
@@ -175,6 +202,7 @@ async def split_pdf_endpoint(
             [saved_path] if saved_path is not None else [],
             output_path,
         )
+        log_job_event(logger, tool="pdf-split", job_id=job_id, status="failure")
         return _error_response(
             500,
             SplitError(
@@ -188,6 +216,7 @@ async def split_pdf_endpoint(
             [saved_path] if saved_path is not None else [],
             output_path,
         )
+        log_job_event(logger, tool="pdf-split", job_id=job_id, status="failure")
         return _error_response(
             500,
             SplitError(
@@ -197,9 +226,10 @@ async def split_pdf_endpoint(
         )
 
     background_tasks.add_task(
-        cleanup_paths,
+        cleanup_after_response,
         [saved_path, output_path.parent],
     )
+    log_job_event(logger, tool="pdf-split", job_id=job_id, status="success")
 
     return FileResponse(
         path=output_path,

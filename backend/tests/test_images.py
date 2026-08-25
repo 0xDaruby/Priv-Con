@@ -62,6 +62,7 @@ def image_client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
     monkeypatch.setattr(settings, "upload_temp_dir", upload_dir)
     monkeypatch.setattr(settings, "output_temp_dir", output_dir)
+    monkeypatch.setattr(settings, "cleanup_mode", "immediate")
 
     with TestClient(app) as client:
         yield client, upload_dir, output_dir
@@ -231,5 +232,30 @@ def test_images_to_pdf_rejects_mismatched_content(image_client) -> None:
     assert response.json() == {
         "error": "file_type_mismatch",
         "message": "The image content does not match its file extension.",
+    }
+    _assert_temp_dirs_empty(upload_dir, output_dir)
+
+
+def test_images_to_pdf_rejects_oversized_upload_while_streaming(
+    image_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client, upload_dir, output_dir = image_client
+    monkeypatch.setattr(settings, "max_upload_size_mb", 1)
+
+    response = client.post(
+        "/api/images/to-pdf",
+        files=[
+            (
+                "files",
+                ("large.png", b"x" * (1024 * 1024 + 1), "image/png"),
+            )
+        ],
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {
+        "error": "oversized_file",
+        "message": "Files larger than 1 MB are not accepted.",
     }
     _assert_temp_dirs_empty(upload_dir, output_dir)

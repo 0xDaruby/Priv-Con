@@ -1,78 +1,105 @@
-"""
-/api/convert/* endpoints: DOCX/PPTX/XLSX -> PDF.
+"""Office document-to-PDF endpoints."""
 
-Request flow (all three routes share _handle_office_conversion):
-  1. save the upload to a unique temp path
-  2. validate extension + ZIP structure (core/validators.py) BEFORE the file
-     ever reaches LibreOffice — this is the fix for the "LibreOffice accepts
-     garbage input" finding documented in libreoffice-service-notes.md
-  3. convert via libreoffice_service.convert_to_pdf()
-  4. stream the PDF back, then clean up input + output (CLEANUP_MODE=immediate)
-
-Note: size-limit enforcement (PRD 22.2) is deliberately not here yet — that
-lands in Phase 1 step 9 alongside the rest of full validation hardening.
-"""
-
-import shutil
+import logging
 from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, File, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Response, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.config import settings
-from app.core.exceptions import ConversionError, ValidationError
-from app.core.file_utils import new_job_id, upload_target_path
-from app.core.validators import validate_office_file
+from app.core.exceptions import ConversionError, PrivConError, ValidationError
+from app.core.file_utils import new_job_id, sanitize_filename, save_upload_to_temp
+from app.core.logging_config import log_job_event
+from app.core.validators import validate_extension, validate_office_structure
 from app.models.schemas import ErrorResponse
 from app.services import libreoffice_service
+from app.services.cleanup_service import (
+    cleanup_after_response,
+    cleanup_now,
+    mark_active_paths,
+)
+
 
 router = APIRouter(prefix="/api/convert", tags=["convert"])
+logger = logging.getLogger("privcon.jobs")
 
 
-def _cleanup(*paths: Path) -> None:
-    for path in paths:
-        if path is None:
-            continue
-        if path.is_dir():
-            shutil.rmtree(path, ignore_errors=True)
-        elif path.exists():
-            path.unlink(missing_ok=True)
+def _error_response(status_code: int, error: PrivConError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status_code,
+        content=ErrorResponse(
+            error=error.code,
+            message=error.message,
+        ).model_dump(),
+    )
 
 
 async def _handle_office_conversion(
-    tool_key: str, upload: UploadFile, background_tasks: BackgroundTasks
-):
-    job_id = new_job_id()
-    input_path = upload_target_path(settings.upload_temp_dir, job_id, upload.filename)
-
-    # Save to disk first — both validation and LibreOffice need a real path,
-    # not a stream.
-    with input_path.open("wb") as f:
-        shutil.copyfileobj(upload.file, f)
+    tool_key: str,
+    job_id: str,
+    upload: UploadFile,
+    background_tasks: BackgroundTasks,
+) -> Response:
+    tool_name = f"{tool_key}-to-pdf"
+    original_filename = upload.filename or "upload"
+    input_path: Path | None = None
+    output_path: Path | None = None
 
     try:
-        validate_office_file(input_path, upload.filename, tool_key)
-    except ValidationError as exc:
-        _cleanup(input_path)
-        return JSONResponse(
-            status_code=400,
-            content=ErrorResponse(error=exc.code, message=exc.message).model_dump(),
+        validate_extension(original_filename, tool_key)
+        input_path = save_upload_to_temp(
+            source=upload.file,
+            upload_dir=settings.upload_temp_dir,
+            job_id=job_id,
+            original_filename=original_filename,
+            max_size_bytes=settings.max_upload_size_mb * 1024 * 1024,
         )
-
-    try:
+        mark_active_paths([input_path])
+        validate_office_structure(input_path, tool_key)
         output_path = libreoffice_service.convert_to_pdf(input_path, job_id)
+    except ValidationError as exc:
+        cleanup_now([input_path] if input_path is not None else [])
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        return _error_response(400, exc)
     except ConversionError as exc:
-        _cleanup(input_path)
-        return JSONResponse(
-            status_code=500,
-            content=ErrorResponse(error=exc.code, message=exc.message).model_dump(),
+        cleanup_now([input_path] if input_path is not None else [])
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        status_code = {
+            "backend_unavailable": 503,
+            "conversion_timeout": 504,
+        }.get(exc.code, 422)
+        return _error_response(status_code, exc)
+    except Exception:
+        cleanup_now([input_path] if input_path is not None else [])
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        return _error_response(
+            500,
+            ConversionError(
+                code="file_processing_failed",
+                message="The uploaded document could not be processed.",
+            ),
         )
 
-    # Immediate cleanup mode (setup.md section 4 / PRD 21.2): delete temp
-    # files right after the response has been sent.
-    background_tasks.add_task(_cleanup, input_path, output_path.parent)
+    if input_path is None or output_path is None:
+        cleanup_now([input_path] if input_path is not None else [])
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        return _error_response(
+            500,
+            ConversionError(
+                code="conversion_failed",
+                message="The document could not be converted to PDF.",
+            ),
+        )
 
-    download_name = Path(upload.filename).stem + ".pdf"
+    background_tasks.add_task(
+        cleanup_after_response,
+        [input_path, output_path.parent],
+    )
+
+    safe_stem = sanitize_filename(Path(original_filename).stem).strip(".")
+    download_name = f"{safe_stem or 'document'}.pdf"
+    log_job_event(logger, tool=tool_name, job_id=job_id, status="success")
+
     return FileResponse(
         path=output_path,
         media_type="application/pdf",
@@ -81,16 +108,52 @@ async def _handle_office_conversion(
     )
 
 
+async def _convert_endpoint(
+    tool_key: str,
+    files: list[UploadFile] | None,
+    background_tasks: BackgroundTasks,
+) -> Response:
+    job_id = new_job_id()
+    tool_name = f"{tool_key}-to-pdf"
+    log_job_event(logger, tool=tool_name, job_id=job_id, status="started")
+
+    if not files or len(files) != 1:
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        return _error_response(
+            400,
+            ValidationError(
+                code="invalid_input",
+                message="Upload exactly one document to convert.",
+            ),
+        )
+
+    return await _handle_office_conversion(
+        tool_key,
+        job_id,
+        files[0],
+        background_tasks,
+    )
+
+
 @router.post("/docx-to-pdf")
-async def docx_to_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    return await _handle_office_conversion("docx", file, background_tasks)
+async def docx_to_pdf(
+    background_tasks: BackgroundTasks,
+    files: list[UploadFile] | None = File(default=None, alias="file"),
+) -> Response:
+    return await _convert_endpoint("docx", files, background_tasks)
 
 
 @router.post("/pptx-to-pdf")
-async def pptx_to_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    return await _handle_office_conversion("pptx", file, background_tasks)
+async def pptx_to_pdf(
+    background_tasks: BackgroundTasks,
+    files: list[UploadFile] | None = File(default=None, alias="file"),
+) -> Response:
+    return await _convert_endpoint("pptx", files, background_tasks)
 
 
 @router.post("/xlsx-to-pdf")
-async def xlsx_to_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    return await _handle_office_conversion("xlsx", file, background_tasks)
+async def xlsx_to_pdf(
+    background_tasks: BackgroundTasks,
+    files: list[UploadFile] | None = File(default=None, alias="file"),
+) -> Response:
+    return await _convert_endpoint("xlsx", files, background_tasks)

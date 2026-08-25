@@ -11,7 +11,10 @@ import uuid
 from pathlib import Path
 from typing import BinaryIO, Iterable
 
+from app.core.exceptions import ValidationError
+
 _UNSAFE_CHARS = re.compile(r"[^A-Za-z0-9._-]")
+_UPLOAD_CHUNK_SIZE = 1024 * 1024
 
 
 def new_job_id() -> str:
@@ -46,13 +49,30 @@ def save_upload_to_temp(
     upload_dir: Path,
     job_id: str,
     original_filename: str,
+    max_size_bytes: int,
 ) -> Path:
-    """Persist an upload stream under a generated, sanitized temp name."""
+    """Persist an upload stream while enforcing its configured size limit."""
+    if max_size_bytes <= 0:
+        raise ValueError("max_size_bytes must be greater than zero")
+
     target_path = upload_target_path(upload_dir, job_id, original_filename)
+    total_bytes = 0
 
     try:
         with target_path.open("wb") as target:
-            shutil.copyfileobj(source, target)
+            while chunk := source.read(_UPLOAD_CHUNK_SIZE):
+                total_bytes += len(chunk)
+
+                if total_bytes > max_size_bytes:
+                    limit_mb = max_size_bytes // (1024 * 1024)
+                    raise ValidationError(
+                        code="oversized_file",
+                        message=(
+                            f"Files larger than {limit_mb} MB are not accepted."
+                        ),
+                    )
+
+                target.write(chunk)
     except Exception:
         try:
             target_path.unlink(missing_ok=True)
@@ -69,7 +89,9 @@ def cleanup_paths(paths: Iterable[Path]) -> None:
         path = Path(path)
 
         try:
-            if path.is_dir():
+            if path.is_symlink():
+                path.unlink(missing_ok=True)
+            elif path.is_dir():
                 shutil.rmtree(path, ignore_errors=True)
             else:
                 path.unlink(missing_ok=True)

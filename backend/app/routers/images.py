@@ -1,5 +1,6 @@
 """Image utility endpoints."""
 
+import logging
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, File, Response, UploadFile
@@ -7,13 +8,20 @@ from fastapi.responses import FileResponse, JSONResponse
 
 from app.config import settings
 from app.core.exceptions import PrivConError, ValidationError
-from app.core.file_utils import cleanup_paths, new_job_id, save_upload_to_temp
+from app.core.file_utils import new_job_id, save_upload_to_temp
+from app.core.logging_config import log_job_event
 from app.core.validators import validate_image_extension, validate_image_structure
 from app.models.schemas import ErrorResponse
+from app.services.cleanup_service import (
+    cleanup_after_response,
+    cleanup_now,
+    mark_active_paths,
+)
 from app.services.image_service import ImageConversionError, images_to_pdf
 
 
 router = APIRouter(prefix="/api/images", tags=["images"])
+logger = logging.getLogger("privcon.jobs")
 
 
 def _error_response(status_code: int, error: PrivConError) -> JSONResponse:
@@ -31,7 +39,16 @@ async def images_to_pdf_endpoint(
     background_tasks: BackgroundTasks,
     files: list[UploadFile] | None = File(default=None),
 ) -> Response:
+    job_id = new_job_id()
+    log_job_event(logger, tool="images-to-pdf", job_id=job_id, status="started")
+
     if not files:
+        log_job_event(
+            logger,
+            tool="images-to-pdf",
+            job_id=job_id,
+            status="failure",
+        )
         return _error_response(
             400,
             ValidationError(
@@ -54,19 +71,39 @@ async def images_to_pdf_endpoint(
                 upload_dir=settings.upload_temp_dir,
                 job_id=new_job_id(),
                 original_filename=original_filename,
+                max_size_bytes=settings.max_upload_size_mb * 1024 * 1024,
             )
             saved_paths.append(path)
+            mark_active_paths([path])
             validate_image_structure(path, original_filename)
 
         output_path = images_to_pdf(saved_paths)
     except ValidationError as exc:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(
+            logger,
+            tool="images-to-pdf",
+            job_id=job_id,
+            status="failure",
+        )
         return _error_response(400, exc)
     except ImageConversionError as exc:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(
+            logger,
+            tool="images-to-pdf",
+            job_id=job_id,
+            status="failure",
+        )
         return _error_response(422, exc)
     except Exception:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(
+            logger,
+            tool="images-to-pdf",
+            job_id=job_id,
+            status="failure",
+        )
         return _error_response(
             500,
             ImageConversionError(
@@ -77,6 +114,12 @@ async def images_to_pdf_endpoint(
 
     if output_path is None:
         _cleanup_after_failure(saved_paths, output_path)
+        log_job_event(
+            logger,
+            tool="images-to-pdf",
+            job_id=job_id,
+            status="failure",
+        )
         return _error_response(
             500,
             ImageConversionError(
@@ -86,8 +129,14 @@ async def images_to_pdf_endpoint(
         )
 
     background_tasks.add_task(
-        cleanup_paths,
+        cleanup_after_response,
         [*saved_paths, output_path.parent],
+    )
+    log_job_event(
+        logger,
+        tool="images-to-pdf",
+        job_id=job_id,
+        status="success",
     )
 
     return FileResponse(
@@ -107,4 +156,4 @@ def _cleanup_after_failure(
     if output_path is not None:
         cleanup_targets.append(output_path.parent)
 
-    cleanup_paths(cleanup_targets)
+    cleanup_now(cleanup_targets)
