@@ -156,7 +156,7 @@ def test_merge_rejects_password_protected_pdf(merge_client) -> None:
     assert response.status_code == 400
     assert response.json() == {
         "error": "password_protected",
-        "message": "Password-protected PDFs cannot be merged.",
+        "message": "Password-protected PDFs are not supported.",
     }
     _assert_temp_dirs_empty(upload_dir, output_dir)
 

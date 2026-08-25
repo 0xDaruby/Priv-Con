@@ -1,6 +1,8 @@
-"""
-Minimal structural validation for Office documents, run BEFORE any file
-reaches libreoffice_service.convert_to_pdf().
+"""Structural validators for Office, PDF, and image uploads.
+
+All validators run before a file reaches its conversion service. Office
+validation remains intentionally minimal until Phase 1 step 9; PDF and image
+validation covers the structural checks required by their current endpoints.
 
 Why this exists (see libreoffice-service-notes.md): sandbox testing found
 that LibreOffice's headless converter will "successfully" render garbage
@@ -23,6 +25,7 @@ truncated-but-technically-valid zip.
 import zipfile
 from pathlib import Path
 
+from PIL import Image, UnidentifiedImageError
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
@@ -41,6 +44,13 @@ EXPECTED_INTERNAL_PATH = {
     "docx": "word/document.xml",
     "pptx": "ppt/presentation.xml",
     "xlsx": "xl/workbook.xml",
+}
+
+IMAGE_EXTENSION_TO_FORMAT = {
+    ".jpg": "JPEG",
+    ".jpeg": "JPEG",
+    ".png": "PNG",
+    ".webp": "WEBP",
 }
 
 
@@ -116,7 +126,7 @@ def validate_pdf_structure(file_path: Path) -> None:
             if reader.is_encrypted:
                 raise ValidationError(
                     code="password_protected",
-                    message="Password-protected PDFs cannot be merged.",
+                    message="Password-protected PDFs are not supported.",
                 )
 
             if len(reader.pages) == 0:
@@ -139,3 +149,44 @@ def validate_pdf_file(file_path: Path, filename: str) -> None:
     """Convenience wrapper: PDF extension check, then content validation."""
     validate_pdf_extension(filename)
     validate_pdf_structure(file_path)
+
+
+def validate_image_extension(filename: str) -> str:
+    """Validate an image filename and return its normalized extension."""
+    extension = Path(filename or "").suffix.lower()
+
+    if extension not in IMAGE_EXTENSION_TO_FORMAT:
+        raise ValidationError(
+            code="unsupported_file_type",
+            message="Only .jpg, .jpeg, .png, and .webp files are accepted.",
+        )
+
+    return extension
+
+
+def validate_image_structure(file_path: Path, filename: str) -> None:
+    """Verify that image content is readable and matches its extension."""
+    extension = validate_image_extension(filename)
+    expected_format = IMAGE_EXTENSION_TO_FORMAT[extension]
+
+    try:
+        with Image.open(file_path) as image:
+            actual_format = image.format
+            image.verify()
+    except (UnidentifiedImageError, OSError, SyntaxError, ValueError) as exc:
+        raise ValidationError(
+            code="corrupted_file",
+            message="This file isn't a valid or readable image.",
+        ) from exc
+
+    if actual_format != expected_format:
+        raise ValidationError(
+            code="file_type_mismatch",
+            message="The image content does not match its file extension.",
+        )
+
+
+def validate_image_file(file_path: Path, filename: str) -> None:
+    """Convenience wrapper for image extension and content validation."""
+    validate_image_extension(filename)
+    validate_image_structure(file_path, filename)

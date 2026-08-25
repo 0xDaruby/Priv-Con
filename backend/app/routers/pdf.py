@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Sequence
 
-from fastapi import APIRouter, BackgroundTasks, File, Response, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, Response, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.config import settings
@@ -12,6 +12,11 @@ from app.core.file_utils import cleanup_paths, new_job_id, save_upload_to_temp
 from app.core.validators import validate_pdf_extension, validate_pdf_structure
 from app.models.schemas import ErrorResponse
 from app.services.pdf_merge_service import MergeError, merge_pdfs
+from app.services.pdf_split_service import (
+    SplitError,
+    split_pdf,
+    validate_split_options,
+)
 
 
 router = APIRouter(prefix="/api/pdf", tags=["pdf"])
@@ -107,5 +112,98 @@ async def merge_pdf_endpoint(
         path=output_path,
         media_type="application/pdf",
         filename="merged.pdf",
+        background=background_tasks,
+    )
+
+
+@router.post("/split")
+async def split_pdf_endpoint(
+    background_tasks: BackgroundTasks,
+    files: list[UploadFile] | None = File(default=None, alias="file"),
+    mode: str | None = Form(default=None),
+    ranges: str | None = Form(default=None),
+) -> Response:
+    if not files or len(files) != 1:
+        return _error_response(
+            400,
+            ValidationError(
+                code="invalid_input",
+                message="Upload exactly one PDF file to split.",
+            ),
+        )
+
+    file = files[0]
+    saved_path: Path | None = None
+    output_path: Path | None = None
+
+    try:
+        selected_mode = (mode or "").strip()
+        validate_split_options(selected_mode, ranges)
+
+        original_filename = file.filename or "upload"
+        validate_pdf_extension(original_filename)
+        saved_path = save_upload_to_temp(
+            source=file.file,
+            upload_dir=settings.upload_temp_dir,
+            job_id=new_job_id(),
+            original_filename=original_filename,
+        )
+        validate_pdf_structure(saved_path)
+
+        result = split_pdf(
+            input_path=saved_path,
+            original_filename=original_filename,
+            mode=selected_mode,
+            ranges=ranges,
+        )
+        output_path = result.path
+    except ValidationError as exc:
+        _cleanup_after_failure(
+            [saved_path] if saved_path is not None else [],
+            output_path,
+        )
+        return _error_response(400, exc)
+    except SplitError as exc:
+        _cleanup_after_failure(
+            [saved_path] if saved_path is not None else [],
+            output_path,
+        )
+        status_code = 400 if exc.code.startswith("invalid_") else 422
+        return _error_response(status_code, exc)
+    except Exception:
+        _cleanup_after_failure(
+            [saved_path] if saved_path is not None else [],
+            output_path,
+        )
+        return _error_response(
+            500,
+            SplitError(
+                code="file_processing_failed",
+                message="The uploaded PDF could not be processed.",
+            ),
+        )
+
+    if saved_path is None or output_path is None:
+        _cleanup_after_failure(
+            [saved_path] if saved_path is not None else [],
+            output_path,
+        )
+        return _error_response(
+            500,
+            SplitError(
+                code="split_failed",
+                message="The PDF could not be split.",
+            ),
+        )
+
+    background_tasks.add_task(
+        cleanup_paths,
+        [saved_path, output_path.parent],
+    )
+
+    return FileResponse(
+        path=output_path,
+        media_type=result.media_type,
+        filename=result.download_name,
         background=background_tasks,
     )
