@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+:root {
+  /* Primitive palette */
+  --pc-black: #000000;
+  --pc-gray-950: #111111;
+  --pc-gray-800: #2d2d2d;
+  --pc-gray-650: #5f5f5f;
+  --pc-gray-500: #7a7a7a;
+  --pc-gray-400: #9a9a9a;
+  --pc-gray-300: #c8c9c8;
+  --pc-gray-200: #d8d9da;
+  --pc-gray-100: #ececed;
+  --pc-gray-050: #f7f7f7;
+  --pc-white: #ffffff;
+
+  /* Primitive spacing */
+  --pc-space-1: 4px;
+  --pc-space-2: 8px;
+  --pc-space-3: 12px;
+  --pc-space-4: 16px;
+  --pc-space-5: 20px;
+  --pc-space-6: 24px;
+  --pc-space-7: 28px;
+  --pc-space-8: 32px;
+  --pc-space-10: 40px;
+  --pc-space-12: 48px;
+  --pc-space-16: 64px;
+
+  /* Primitive shape and motion */
+  --pc-radius-sm: 4px;
+  --pc-radius-md: 8px;
+  --pc-radius-lg: 10px;
+  --pc-radius-full: 9999px;
+  --pc-duration-fast: 120ms;
+  --pc-duration-base: 180ms;
+  --pc-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Semantic surface and text */
+  --pc-bg-page: var(--pc-white);
+  --pc-bg-surface: var(--pc-white);
+  --pc-bg-subtle: var(--pc-gray-050);
+  --pc-bg-selected: var(--pc-gray-100);
+  --pc-fg-primary: var(--pc-black);
+  --pc-fg-secondary: var(--pc-gray-650);
+  --pc-fg-muted: var(--pc-gray-500);
+  --pc-fg-inverse: var(--pc-white);
+
+  /* Semantic borders and actions */
+  --pc-border-default: var(--pc-gray-200);
+  --pc-border-strong: var(--pc-gray-400);
+  --pc-focus: var(--pc-black);
+  --pc-action-primary: var(--pc-black);
+  --pc-action-primary-hover: var(--pc-gray-950);
+  --pc-action-primary-active: var(--pc-gray-800);
+  --pc-action-disabled: var(--pc-gray-200);
+
+  /* Component geometry */
+  --pc-header-height: 100px;
+  --pc-progress-height: 113px;
+  --pc-shell-radius: 9px;
+  --pc-sidebar-width: 384px;
+  --pc-tool-row-height: 82px;
+  --pc-tool-row-radius: 10px;
+  --pc-dropzone-radius: 9px;
+  --pc-dropzone-border: 1px dashed var(--pc-border-strong);
+  --pc-primary-height: 90px;
+  --pc-primary-radius: 10px;
+  --pc-primary-max-width: 478px;
+  --pc-focus-ring: 0 0 0 2px var(--pc-white), 0 0 0 5px var(--pc-focus);
+}
+
+@theme inline {
+  --color-background: var(--pc-bg-page);
+  --color-foreground: var(--pc-fg-primary);
+  --font-sans: var(--font-geist);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  color-scheme: light;
+  background: var(--pc-bg-page);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100dvh;
+  margin: 0;
+  color: var(--pc-fg-primary);
+  background: var(--pc-bg-page);
+  font-family: var(--font-geist), "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+::selection {
+  color: var(--pc-fg-inverse);
+  background: var(--pc-fg-primary);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
