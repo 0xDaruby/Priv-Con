@@ -2,7 +2,8 @@
 
 **Project phase:** Phase 2 — Frontend MVP  
 **Status:** Active  
-**Current milestone:** Phase 2.2 — Persistent shell, navigation, dashboard, and empty states  
+**Current milestone:** Phase 2.9 — Full verification and owner acceptance
+
 **Primary target:** All six PrivCon tools work end-to-end in a local browser with the approved visual design, accessible interactions, exact backend-contract handling, and no third-party file or asset traffic.
 
 ## 1. Authority and change control
@@ -45,14 +46,14 @@ Phase 2 is complete only when:
 |---|---|---|
 | Phase 2.0 | Contract and scaffold baseline | Complete |
 | Phase 2.1 | Frontend foundation and design tokens | Complete |
-| Phase 2.2 | Persistent shell, navigation, dashboard, and empty states | Next — brand asset gate open |
-| Phase 2.3 | Local file intake and client-side validation | Pending |
-| Phase 2.4 | API client, health monitoring, conversion state, and downloads | Pending |
-| Phase 2.5 | Word, PowerPoint, and Excel end-to-end workflows | Pending |
-| Phase 2.6 | Merge PDF and Images-to-PDF ordering workflows | Pending |
-| Phase 2.7 | Split PDF modes and range workflow | Pending |
-| Phase 2.8 | Complete states, accessibility, and responsive refinement | Pending |
-| Phase 2.9 | Full verification and owner acceptance | Pending |
+| Phase 2.2 | Persistent shell, navigation, dashboard, and empty states | Complete |
+| Phase 2.3 | Local file intake and client-side validation | Complete |
+| Phase 2.4 | API client, health monitoring, conversion state, and downloads | Complete |
+| Phase 2.5 | Word, PowerPoint, and Excel end-to-end workflows | Complete |
+| Phase 2.6 | Merge PDF and Images-to-PDF ordering workflows | Complete |
+| Phase 2.7 | Split PDF modes and range workflow | Complete |
+| Phase 2.8 | Complete states, accessibility, and responsive refinement | Complete |
+| Phase 2.9 | Full verification and owner acceptance | In progress |
 
 ## 4. Milestone details
 
@@ -131,6 +132,14 @@ Visual verification:
 
 **Exit criteria:** All routes share one stable shell, the approved empty state is visually faithful, and route changes do not alter shell geometry.
 
+Completion evidence (30 August 2026):
+
+- The production mark, wordmark, lockup, and favicon assets are present and referenced locally.
+- The shared header, semantic progress rail, sidebar, utility shell, dashboard, and six configured empty states are implemented.
+- Active navigation exposes `aria-current="page"`; all routes retain identical shell geometry.
+- A same-viewport visual comparison at `1487 × 1058` found no unexplained geometry drift from the approved prototype.
+- `npm run lint`, `npm run typecheck`, and `npm run build` passed.
+
 ### Phase 2.3 — Local file intake and client-side validation
 
 **Goal:** Let users select valid local files safely before any network request occurs.
@@ -153,6 +162,14 @@ Verification:
 - Run lint, typecheck, and build.
 
 **Exit criteria:** Every tool accepts the correct local file set, rejects obvious invalid input without a request, and remains fully usable by keyboard.
+
+Completion evidence (30 August 2026):
+
+- The shared dropzone opens the native picker by pointer or keyboard and advertises correct single/multiple selection.
+- Selected `File` objects remain in component memory; no browser storage or preview service is used.
+- Shared validation rejects unsupported extensions, per-file oversize, aggregate oversize, duplicate selection, and file-count overflow before conversion.
+- The selected-file surface exposes name, formatted size, position where relevant, and a minimum 44 px remove action.
+- Lint, typecheck, and production build passed; source inspection confirms selection itself makes no API request.
 
 ### Phase 2.4 — API client, health monitoring, conversion state, and downloads
 
@@ -181,6 +198,14 @@ Verification:
 
 **Exit criteria:** One shared API/state layer can represent every documented success and failure without leaking data or leaving the interface stuck.
 
+Completion evidence (30 August 2026):
+
+- One local-only API client builds exact multipart field names, parses the frozen JSON error shape, response blobs, content types, and safe download names.
+- The shared conversion hook owns processing, success, recoverable error, cancel, retry, reset, and object-URL cleanup behavior.
+- Health checks run on initial load and after failed conversion requests without polling; the live browser changed from `Not running` to `Running` when the real backend started.
+- Shared processing, success/download-again, and error/retry components are implemented with live-region announcements and no fake percentages.
+- Lint, typecheck, production build, and a clean browser-console check passed.
+
 ### Phase 2.5 — Word, PowerPoint, and Excel end-to-end workflows
 
 **Goal:** Complete the three structurally identical single-file Office conversion routes against the real backend.
@@ -203,6 +228,13 @@ Verification:
 - Confirm backend temp folders are empty after completed and failed requests.
 
 **Exit criteria:** All three Office workflows work end-to-end in the browser with shared code and exact error behavior.
+
+Completion evidence (30 August 2026):
+
+- The shared `ConversionTool` wires DOCX, PPTX, and XLSX routes to their exact endpoints and singular `file` field.
+- Real local DOCX, PPTX, and XLSX files converted through LibreOffice to valid one-page PDFs named `privcon-word.pdf`, `privcon-slides.pdf`, and `privcon-sheet.pdf`.
+- Wrong-extension and corrupt-package responses returned the frozen `unsupported_file_type` and `corrupted_file` codes and are mapped to approved UI copy.
+- Files remain selected after recoverable UI errors; success exposes automatic download, download again, and clean convert-another behavior.
 
 ### Phase 2.6 — Merge PDF and Images-to-PDF ordering workflows
 
@@ -228,6 +260,14 @@ Verification:
 
 **Exit criteria:** Both ordered tools are fully usable by mouse and keyboard, and the generated output order matches the visible list.
 
+Completion evidence (30 August 2026):
+
+- One reusable reorder list implements native pointer dragging and `Alt + Up/Down` keyboard movement with visible instructions, positions, handles, sizes, and remove actions.
+- Multipart requests append repeated `files` fields directly from visible state order.
+- A reversed two-PDF request produced page sizes in the requested `400 × 500`, then `200 × 300` order.
+- A WebP/transparent PNG/JPG request preserved that order; EXIF orientation was normalized to a `110 × 220` first page and the transparent PNG converted successfully.
+- Merge minimum, image minimum, 20-file limit, per-file size, and 200 MB aggregate pre-checks are represented client-side.
+
 ### Phase 2.7 — Split PDF modes and range workflow
 
 **Goal:** Complete the specialized split interface against the frozen range contract.
@@ -249,6 +289,14 @@ Verification:
 - Confirm generated ZIP entry names and order match the backend contract.
 
 **Exit criteria:** Both split modes work end-to-end, invalid syntax is blocked early, and PDF-versus-ZIP behavior is always clear.
+
+Completion evidence (30 August 2026):
+
+- The split form sends exact `file`, `mode`, and conditional `ranges` fields.
+- Client syntax validation rejects empty/malformed tokens, duplicate or overlapping pages, reversed ranges, zero, and negative pages before submission.
+- A real three-page PDF produced a three-entry ZIP in every-page mode, a two-page PDF for the single `2-3` range, and a ZIP preserving user-entered `3,1` range order.
+- The UI explains expected PDF-versus-ZIP output before conversion and renders the backend-returned filename afterward.
+- Password-protected, active-content, and invalid-range inputs returned and map through the exact frozen error codes.
 
 ### Phase 2.8 — Complete states, accessibility, and responsive refinement
 
@@ -273,6 +321,16 @@ Verification:
 - Repeat visual overlay QA for representative empty, selected, processing, success, and error states.
 
 **Exit criteria:** Every state has a clear next action, accessibility requirements pass, and responsive layouts preserve the product hierarchy.
+
+Completion evidence (30 August 2026):
+
+- Empty, selected, processing, success, recoverable error, and backend-unavailable states share one monochrome hierarchy and one dominant action.
+- Progress uses semantic ordered markup and `aria-current="step"`; route navigation uses exactly one `aria-current="page"`; live status changes are announced.
+- File pickers, remove actions, drag handles, split radios/input, retry, cancel, download, and reset paths are keyboard operable with visible focus treatment and 44 px minimum targets.
+- Reduced-motion rules suppress continuous progress animation and translation; status never depends on color alone.
+- Browser captures at `1487 × 1058`, `1280 × 900`, `1024 × 900`, `768 × 900`, and `390 × 844` preserve header, progress, tool navigation, task action, and privacy status without hidden persistent controls.
+- Long-label truncation, compact progress labels, horizontal narrow navigation, and lower-height shell compression were refined from responsive QA evidence.
+- Lint, sequential typecheck, and production build passed with no browser console errors.
 
 ### Phase 2.9 — Full verification and owner acceptance
 
@@ -315,16 +373,35 @@ Visual acceptance:
 
 **Exit criteria:** Every Phase 2 definition-of-done item is checked, the user accepts the browser experience, and no required work remains before Phase 3.
 
+Verification evidence to date (30 August 2026):
+
+- Frontend `npm run lint`, sequential `npm run typecheck`, and `npm run build` pass.
+- The complete backend regression suite passes: `91 passed in 28.64s`.
+- Real local DOCX, PPTX, XLSX, ordered merge, split every page, split one range, split multiple ranges, and ordered JPG/PNG/WebP requests all returned validated PDF/ZIP artifacts.
+- Representative unsupported, corrupt, oversized, password-protected, active-content, and invalid-range failures returned the frozen codes mapped by the UI.
+- Same-input visual QA passed at the approved `1487 × 1058` target; `design-qa.md` records the comparison and responsive iterations.
+- Source/privacy scans found only the guarded localhost API URL, no storage/analytics/telemetry paths, and no filename/content console logging.
+- Backend upload/output roots are empty and all 53.7 MB of disposable acceptance fixtures/results were removed after inspection.
+- The Edge real-file matrix now passes for Word, PowerPoint, Excel, ordered PDF merge, ordered WebP/transparent-PNG/JPG conversion, split every page, one range, and ordered multiple ranges.
+- Browser success states exposed the exact returned PDF/ZIP filenames and live in-memory `blob:` download-again links; convert-another, retry, remove, reset, and retained-file recovery paths passed.
+- Browser error acceptance passed for wrong type, per-file oversize, corrupt Office package, invalid/overlapping range, password protection, unsafe PDF content, the real two-job busy limit, backend unavailability, and the real 70-second client timeout (`70,190 ms`).
+- Live browser asset inspection found only same-origin application assets, local brand/font assets, and the Codex browser overlay; observed conversion and health traffic remained on `localhost:3000` and `localhost:8000`.
+- The real FastAPI backend was restored after unavailable/timeout tests. Its upload/output roots are empty, and the final 15 disposable browser fixtures (52,506,582 bytes) plus temporary timeout harness were removed.
+
+Remaining acceptance gate:
+
+- Technical verification is complete. The user must perform the final non-technical usability and visual acceptance pass before Phase 2.9 is marked complete.
+
 ## 5. Decision gates
 
 These decisions must be resolved before the named milestone. They are recorded here to prevent speculative implementation.
 
 | Decision | Needed before | Recommended default | Status |
 |---|---|---|---|
-| Clean standalone `privcon-mark.png` asset | Phase 2.2 | Extract exactly from approved brand art; do not redraw | Open |
-| Backend health behavior | Phase 2.4 | Check on initial load and after a failed request; avoid continuous polling | Open |
-| Frontend representation of backend limits | Phase 2.3 | Mirror frozen Phase 1 limits in typed constants; no new backend config endpoint in Phase 2 | Open |
-| Reorder implementation | Phase 2.6 | Native lightweight implementation with explicit keyboard controls; no dependency unless needed | Open |
+| Clean standalone `privcon-mark.png` asset | Phase 2.2 | Extract exactly from approved brand art; do not redraw | Resolved — approved local asset present |
+| Backend health behavior | Phase 2.4 | Check on initial load and after a failed request; avoid continuous polling | Resolved — approved default implemented |
+| Frontend representation of backend limits | Phase 2.3 | Mirror frozen Phase 1 limits in typed constants; no new backend config endpoint in Phase 2 | Resolved — frozen limits mirrored |
+| Reorder implementation | Phase 2.6 | Native lightweight implementation with explicit keyboard controls; no dependency unless needed | Resolved — native drag and keyboard controls implemented |
 | Automated frontend test stack | Phase 2.3 | Add only the smallest test setup that materially protects validation/state logic | Deferred — no dependency needed for the Phase 2.1 foundation |
 
 ## 6. Required checks after every milestone
@@ -353,4 +430,4 @@ These remain Phase 3 or post-MVP work unless the user explicitly changes scope.
 
 ## 8. Immediate next action
 
-Begin **Phase 2.2 — Persistent shell, navigation, dashboard, and empty states** after resolving the standalone `privcon-mark.png` asset gate. Phase 2.1 passed its local font, metadata, token, shared-type, tool-configuration, error-mapping, privacy-scan, lint, typecheck, and production-build checks.
+Inspect the verified local preview in Edge and provide explicit owner acceptance. After approval, mark Phase 2.9 and Phase 2 complete without adding Phase 3 scope.

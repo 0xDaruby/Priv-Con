@@ -105,3 +105,29 @@ export interface ConversionResult {
   readonly contentType: string;
   readonly outputType: ConversionOutputType;
 }
+
+export interface DownloadableConversionResult extends ConversionResult {
+  readonly url: string;
+}
+
+export interface ConversionFailure {
+  readonly code: string;
+  readonly message: string;
+}
+
+export type ConversionExtraFields = Readonly<Record<string, string>>;
+
+export interface SelectedFile {
+  readonly id: string;
+  readonly file: File;
+}
+
+export interface ClientValidationIssue {
+  readonly code: ApiErrorCode;
+  readonly message: string;
+}
+
+export interface FileSelectionResult {
+  readonly files: readonly SelectedFile[];
+  readonly issue?: ClientValidationIssue;
+}

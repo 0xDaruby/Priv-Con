@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   description:
     "Convert Office documents, PDFs, and images locally on your machine.",
   icons: {
-    icon: "/brand/privcon-lockup.png",
+    icon: "/brand/privcon-favicon.png",
+    apple: "/brand/privcon-favicon.png",
   },
 };
 
