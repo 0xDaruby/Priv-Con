@@ -140,7 +140,7 @@ class ProcessingConcurrencyMiddleware:
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         is_job = (
             scope["type"] == "http"
-            and scope["method"] in _UNSAFE_METHODS
+            and scope["method"] in _UNSAFE_METHODS - {"DELETE"}
             and scope.get("path", "").startswith("/api/")
         )
 

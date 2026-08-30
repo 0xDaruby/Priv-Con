@@ -39,6 +39,27 @@ export type ConversionPhase =
   | "success"
   | "error";
 
+export type JobStatus =
+  | "queued"
+  | "running"
+  | "succeeded"
+  | "failed"
+  | "cancelling"
+  | "cancelled";
+
+export type JobStage =
+  | "uploading"
+  | "queued"
+  | "validating"
+  | "converting"
+  | "finalizing"
+  | "ready"
+  | "cancelling"
+  | "cancelled"
+  | "failed";
+
+export type ProgressMode = "determinate" | "indeterminate";
+
 export type ProgressStep = 1 | 2 | 3;
 
 export type SplitMode = "every_page" | "ranges";
@@ -71,6 +92,9 @@ export type ApiErrorCode =
   | "file_processing_failed"
   | "not_found"
   | "method_not_allowed"
+  | "job_not_ready"
+  | "result_unavailable"
+  | "job_cancelled"
   | "internal_error";
 
 export interface ToolConfig {
@@ -81,6 +105,7 @@ export interface ToolConfig {
   readonly description: string;
   readonly icon: ToolIconName;
   readonly endpoint: string;
+  readonly jobEndpoint: string;
   readonly acceptedExtensions: readonly string[];
   readonly acceptedFormatLabel: string;
   readonly acceptAttribute: string;
@@ -97,6 +122,33 @@ export interface ToolConfig {
 export interface ApiErrorPayload {
   readonly error: string;
   readonly message: string;
+}
+
+export interface JobStatusPayload {
+  readonly job_id: string;
+  readonly tool: string;
+  readonly status: JobStatus;
+  readonly stage: Exclude<JobStage, "uploading">;
+  readonly message: string;
+  readonly progress_percent: number | null;
+  readonly completed_units: number | null;
+  readonly total_units: number | null;
+  readonly unit_label: string | null;
+  readonly result_available: boolean;
+  readonly result_filename: string | null;
+  readonly result_content_type: string | null;
+  readonly error: ApiErrorPayload | null;
+}
+
+export interface ConversionProgress {
+  readonly stage: JobStage;
+  readonly label: string;
+  readonly message: string;
+  readonly mode: ProgressMode;
+  readonly percent?: number;
+  readonly completedUnits?: number;
+  readonly totalUnits?: number;
+  readonly unitLabel?: string;
 }
 
 export interface ConversionResult {

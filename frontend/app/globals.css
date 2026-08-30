@@ -1020,6 +1020,10 @@ svg {
   text-align: center;
 }
 
+.processing-panel {
+  padding-block: 48px;
+}
+
 .state-heading {
   max-width: 620px;
 }
@@ -1046,6 +1050,7 @@ svg {
 
 .processing-details {
   width: min(620px, 100%);
+  flex: 0 0 auto;
   margin-top: 32px;
   padding: 20px 22px 22px;
   display: grid;
@@ -1120,6 +1125,13 @@ svg {
   line-height: 20px;
 }
 
+.conversion-progress-status {
+  margin: 0;
+  color: var(--pc-fg-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
 .conversion-progress-track {
   position: relative;
   height: 10px;
@@ -1133,11 +1145,20 @@ svg {
   position: absolute;
   inset-block: -1px;
   left: -1px;
-  width: 42%;
   height: 100%;
   display: block;
   border-radius: var(--pc-radius-full);
   background: var(--pc-action-primary);
+}
+
+.conversion-progress-indicator--determinate {
+  left: 0;
+  min-width: 0;
+  transition: width var(--pc-duration-base) var(--pc-ease-standard);
+}
+
+.conversion-progress-indicator--indeterminate {
+  width: 42%;
   animation: pc-indeterminate-progress 1.4s var(--pc-ease-standard) infinite alternate;
 }
 
@@ -1730,8 +1751,12 @@ svg {
     animation-iteration-count: 1 !important;
   }
 
-  .conversion-progress-indicator {
+  .conversion-progress-indicator--indeterminate {
     animation: none !important;
     transform: translateX(70%);
+  }
+
+  .conversion-progress-indicator--determinate {
+    transition: none;
   }
 }

@@ -15,6 +15,12 @@ from app.core.file_utils import (
     output_dir_for_job,
     private_binary_writer,
 )
+from app.core.progress import (
+    CancellationCheck,
+    JobCancelled,
+    ProgressCallback,
+    StageCallback,
+)
 from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 
@@ -22,7 +28,14 @@ class MergeError(PrivConError):
     """Raised when validated PDF inputs cannot be merged."""
 
 
-def merge_pdfs(input_paths: Sequence[Path]) -> Path:
+def merge_pdfs(
+    input_paths: Sequence[Path],
+    *,
+    expected_total_pages: int | None = None,
+    progress_callback: ProgressCallback | None = None,
+    finalizing_callback: StageCallback | None = None,
+    cancellation_check: CancellationCheck | None = None,
+) -> Path:
     """Merge PDFs in order and return a temporary output path.
 
     The caller owns cleanup of the returned output directory after the
@@ -44,9 +57,13 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
     writer = PdfWriter()
     opened_readers: list[PdfReader] = []
     total_pages = 0
+    completed_pages = 0
 
     try:
         for path in input_paths:
+            if cancellation_check is not None:
+                cancellation_check()
+
             if not path.is_file():
                 raise MergeError(
                     code="conversion_failed",
@@ -81,7 +98,17 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
                     )
 
                 for page in reader.pages:
+                    if cancellation_check is not None:
+                        cancellation_check()
+
                     writer.add_page(page)
+                    completed_pages += 1
+
+                    if (
+                        progress_callback is not None
+                        and expected_total_pages is not None
+                    ):
+                        progress_callback(completed_pages, expected_total_pages)
             except PdfReadError as exc:
                 raise MergeError(
                     code="conversion_failed",
@@ -90,8 +117,17 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
                     ),
                 ) from exc
 
+        if finalizing_callback is not None:
+            finalizing_callback()
+
+        if cancellation_check is not None:
+            cancellation_check()
+
         with private_binary_writer(output_path) as output_file:
             writer.write(output_file)
+
+        if cancellation_check is not None:
+            cancellation_check()
 
         try:
             enforce_output_size(output_path)
@@ -99,7 +135,7 @@ def merge_pdfs(input_paths: Sequence[Path]) -> Path:
             raise MergeError(code=exc.code, message=exc.message) from exc
 
         return output_path
-    except MergeError:
+    except (MergeError, JobCancelled):
         _cleanup_dir(job_output_dir)
         raise
     except Exception as exc:

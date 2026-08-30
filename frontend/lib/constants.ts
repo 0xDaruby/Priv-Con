@@ -27,6 +27,7 @@ export const TOOL_CONFIGS = {
     description: "Convert a Word document into a PDF.",
     icon: "word-file",
     endpoint: "/api/convert/docx-to-pdf",
+    jobEndpoint: "/api/jobs/docx-to-pdf",
     acceptedExtensions: [".docx"],
     acceptedFormatLabel: ".DOCX",
     acceptAttribute:
@@ -48,6 +49,7 @@ export const TOOL_CONFIGS = {
     description: "Convert a PowerPoint presentation into a PDF.",
     icon: "powerpoint-file",
     endpoint: "/api/convert/pptx-to-pdf",
+    jobEndpoint: "/api/jobs/pptx-to-pdf",
     acceptedExtensions: [".pptx"],
     acceptedFormatLabel: ".PPTX",
     acceptAttribute:
@@ -69,6 +71,7 @@ export const TOOL_CONFIGS = {
     description: "Convert an Excel workbook into a PDF.",
     icon: "spreadsheet-file",
     endpoint: "/api/convert/xlsx-to-pdf",
+    jobEndpoint: "/api/jobs/xlsx-to-pdf",
     acceptedExtensions: [".xlsx"],
     acceptedFormatLabel: ".XLSX",
     acceptAttribute:
@@ -90,6 +93,7 @@ export const TOOL_CONFIGS = {
     description: "Combine multiple PDFs in the order you choose.",
     icon: "merge-file",
     endpoint: "/api/pdf/merge",
+    jobEndpoint: "/api/jobs/pdf-merge",
     acceptedExtensions: [".pdf"],
     acceptedFormatLabel: ".PDF",
     acceptAttribute: ".pdf,application/pdf",
@@ -110,6 +114,7 @@ export const TOOL_CONFIGS = {
     description: "Separate a PDF into individual pages or page ranges.",
     icon: "split-file",
     endpoint: "/api/pdf/split",
+    jobEndpoint: "/api/jobs/pdf-split",
     acceptedExtensions: [".pdf"],
     acceptedFormatLabel: ".PDF",
     acceptAttribute: ".pdf,application/pdf",
@@ -130,6 +135,7 @@ export const TOOL_CONFIGS = {
     description: "Combine images into a PDF in the order you choose.",
     icon: "image-file",
     endpoint: "/api/images/to-pdf",
+    jobEndpoint: "/api/jobs/images-to-pdf",
     acceptedExtensions: [".jpg", ".jpeg", ".png", ".webp"],
     acceptedFormatLabel: ".JPG .JPEG .PNG .WEBP",
     acceptAttribute: ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp",

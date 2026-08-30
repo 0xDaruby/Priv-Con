@@ -17,6 +17,12 @@ from app.core.file_utils import (
     private_binary_writer,
     sanitize_filename,
 )
+from app.core.progress import (
+    CancellationCheck,
+    JobCancelled,
+    ProgressCallback,
+    StageCallback,
+)
 from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 EVERY_PAGE_MODE = "every_page"
@@ -127,6 +133,10 @@ def split_pdf(
     original_filename: str,
     mode: str,
     ranges: str | None,
+    *,
+    progress_callback: ProgressCallback | None = None,
+    finalizing_callback: StageCallback | None = None,
+    cancellation_check: CancellationCheck | None = None,
 ) -> SplitResult:
     """Split a validated PDF and return either a PDF or ZIP result."""
     validate_split_options(mode, ranges)
@@ -173,6 +183,8 @@ def split_pdf(
                 output_dir=output_dir,
                 safe_stem=safe_stem,
                 page_count=page_count,
+                progress_callback=progress_callback,
+                cancellation_check=cancellation_check,
             )
         else:
             page_ranges = parse_page_ranges(ranges or "", page_count)
@@ -181,7 +193,15 @@ def split_pdf(
                 page_ranges=page_ranges,
                 output_dir=output_dir,
                 safe_stem=safe_stem,
+                progress_callback=progress_callback,
+                cancellation_check=cancellation_check,
             )
+
+        if finalizing_callback is not None:
+            finalizing_callback()
+
+        if cancellation_check is not None:
+            cancellation_check()
 
         if mode == RANGES_MODE and len(generated_paths) == 1:
             result_path = generated_paths[0]
@@ -215,7 +235,7 @@ def split_pdf(
             media_type="application/zip",
             download_name=zip_path.name,
         )
-    except SplitError:
+    except (SplitError, JobCancelled):
         _cleanup_dir(output_dir)
         raise
     except Exception as exc:
@@ -235,16 +255,29 @@ def _write_every_page(
     output_dir: Path,
     safe_stem: str,
     page_count: int,
+    progress_callback: ProgressCallback | None = None,
+    cancellation_check: CancellationCheck | None = None,
 ) -> list[Path]:
     padding = max(3, len(str(page_count)))
     generated_paths: list[Path] = []
 
-    for page_range in page_ranges:
+    for index, page_range in enumerate(page_ranges, start=1):
+        if cancellation_check is not None:
+            cancellation_check()
+
         filename = f"{safe_stem}_page_{page_range.start:0{padding}d}.pdf"
         output_path = output_dir / filename
-        _write_range(reader, page_range, output_path)
+        _write_range(
+            reader,
+            page_range,
+            output_path,
+            cancellation_check=cancellation_check,
+        )
         generated_paths.append(output_path)
         _enforce_total_generated_size(generated_paths)
+
+        if progress_callback is not None:
+            progress_callback(index, len(page_ranges))
 
     return generated_paths
 
@@ -254,15 +287,28 @@ def _write_ranges(
     page_ranges: list[PageRange],
     output_dir: Path,
     safe_stem: str,
+    progress_callback: ProgressCallback | None = None,
+    cancellation_check: CancellationCheck | None = None,
 ) -> list[Path]:
     generated_paths: list[Path] = []
 
-    for page_range in page_ranges:
+    for index, page_range in enumerate(page_ranges, start=1):
+        if cancellation_check is not None:
+            cancellation_check()
+
         filename = f"{safe_stem}_pages_{page_range.start}-{page_range.end}.pdf"
         output_path = output_dir / filename
-        _write_range(reader, page_range, output_path)
+        _write_range(
+            reader,
+            page_range,
+            output_path,
+            cancellation_check=cancellation_check,
+        )
         generated_paths.append(output_path)
         _enforce_total_generated_size(generated_paths)
+
+        if progress_callback is not None:
+            progress_callback(index, len(page_ranges))
 
     return generated_paths
 
@@ -271,11 +317,16 @@ def _write_range(
     reader: PdfReader,
     page_range: PageRange,
     output_path: Path,
+    *,
+    cancellation_check: CancellationCheck | None = None,
 ) -> None:
     writer = PdfWriter()
 
     try:
         for page_number in range(page_range.start, page_range.end + 1):
+            if cancellation_check is not None:
+                cancellation_check()
+
             writer.add_page(reader.pages[page_number - 1])
 
         with private_binary_writer(output_path) as output_file:

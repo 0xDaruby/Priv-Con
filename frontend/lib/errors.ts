@@ -39,6 +39,10 @@ const ERROR_MESSAGES: Readonly<Partial<Record<ApiErrorCode, string>>> = {
     "Something went wrong while processing this file. Please try again.",
   not_found: GENERIC_ERROR_MESSAGE,
   method_not_allowed: GENERIC_ERROR_MESSAGE,
+  job_not_ready: "The conversion result isn't ready yet. Please try again.",
+  result_unavailable:
+    "This conversion result is no longer available. Please convert the file again.",
+  job_cancelled: "This conversion was cancelled.",
   internal_error: "An unexpected error occurred. Please try again.",
 };
 

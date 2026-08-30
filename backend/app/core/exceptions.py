@@ -22,3 +22,11 @@ class ValidationError(PrivConError):
 class ConversionError(PrivConError):
     """Raised when the LibreOffice conversion subprocess fails, times out,
     or the input file is missing."""
+
+
+class JobCapacityError(PrivConError):
+    """Raised when the local asynchronous job capacity is exhausted."""
+
+
+class JobLookupError(PrivConError):
+    """Raised when a job or its result cannot be retrieved."""

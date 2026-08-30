@@ -86,7 +86,9 @@ export function ConversionTool({ config }: ConversionToolProps) {
     return conversion.convert(files.map(({ file }) => file), extraFields);
   };
 
-  const currentStep = conversion.phase === "processing" ||
+  const isConverting = conversion.phase === "uploading" ||
+    conversion.phase === "processing";
+  const currentStep = isConverting ||
     conversion.phase === "success" ||
     conversion.phase === "error"
     ? 3
@@ -96,10 +98,11 @@ export function ConversionTool({ config }: ConversionToolProps) {
 
   return (
     <AppShell currentStep={currentStep}>
-      {conversion.phase === "processing" ? (
+      {isConverting && conversion.progress ? (
         <ProgressState
           files={files.map(({ file }) => file)}
           onCancel={conversion.cancel}
+          progress={conversion.progress}
         />
       ) : conversion.phase === "success" && conversion.result ? (
         <SuccessDownload

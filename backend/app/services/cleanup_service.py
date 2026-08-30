@@ -114,6 +114,13 @@ async def run_periodic_cleanup(stop_event: asyncio.Event) -> None:
     while not stop_event.is_set():
         sweep_stale_temp_files()
 
+        # Import lazily to avoid a module cycle: job_service relies on the
+        # cleanup primitives above, while the periodic sweep also expires
+        # completed in-memory job records and unclaimed result files.
+        from app.services.job_service import job_manager
+
+        job_manager.sweep_expired_jobs()
+
         try:
             await asyncio.wait_for(stop_event.wait(), timeout=interval_seconds)
         except TimeoutError:

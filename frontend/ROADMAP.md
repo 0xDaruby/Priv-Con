@@ -3,7 +3,7 @@
 **Project phase:** Phase 2 — Frontend MVP  
 **Status:** Complete
 
-**Current milestone:** Phase 2 complete — verified and owner accepted
+**Current milestone:** Phase 2 complete — truthful hybrid progress verified and owner accepted
 
 **Primary target:** All six PrivCon tools work end-to-end in a local browser with the approved visual design, accessible interactions, exact backend-contract handling, and no third-party file or asset traffic.
 
@@ -174,7 +174,7 @@ Completion evidence (30 August 2026):
 
 ### Phase 2.4 — API client, health monitoring, conversion state, and downloads
 
-**Goal:** Create one typed, privacy-safe integration layer for the frozen local API.
+**Goal:** Create one typed, privacy-safe integration layer for the local API, including truthful conversion progress.
 
 Deliverables:
 
@@ -185,9 +185,9 @@ Deliverables:
 5. Derive safe output names from `Content-Disposition`, with deterministic tool-specific fallbacks.
 6. Implement `useBackendHealth` for the quiet local-backend status.
 7. Implement `useConversion` as the shared idle/files-selected/ready/converting/success/error state machine.
-8. Build the shared indeterminate processing, success/download, and error/retry components.
+8. Build the shared hybrid progress, success/download, and error/retry components. Progress is determinate only when the browser or backend exposes measurable work; opaque work remains indeterminate.
 9. Use `URL.createObjectURL` only for local result download and revoke URLs on reset/unmount.
-10. Do not display fake conversion percentages when the backend provides no progress stream.
+10. Display percentages only for measurable upload bytes or backend work units. Use truthful stage labels without a percentage when the converter provides no measurable progress stream.
 
 Verification:
 
@@ -201,10 +201,10 @@ Verification:
 
 Completion evidence (30 August 2026):
 
-- One local-only API client builds exact multipart field names, parses the frozen JSON error shape, response blobs, content types, and safe download names.
-- The shared conversion hook owns processing, success, recoverable error, cancel, retry, reset, and object-URL cleanup behavior.
+- One local-only API client builds exact multipart field names, creates local conversion jobs, polls typed status snapshots, reconstructs response blobs, and applies safe download names.
+- The shared conversion hook owns uploading, processing, truthful progress, success, recoverable error, backend cancellation, retry, reset, and object-URL cleanup behavior.
 - Health checks run on initial load and after failed conversion requests without polling; the live browser changed from `Not running` to `Running` when the real backend started.
-- Shared processing, success/download-again, and error/retry components are implemented with live-region announcements and no fake percentages.
+- The preserved shared progress component supports real upload/file/page/range/image percentages and indeterminate LibreOffice/finalization stages, with live-region announcements and no fabricated values.
 - Lint, typecheck, production build, and a clean browser-console check passed.
 
 ### Phase 2.5 — Word, PowerPoint, and Excel end-to-end workflows
@@ -377,7 +377,7 @@ Visual acceptance:
 Verification evidence to date (30 August 2026):
 
 - Frontend `npm run lint`, sequential `npm run typecheck`, and `npm run build` pass.
-- The complete backend regression suite passes: `91 passed in 28.64s`.
+- The complete backend regression suite passes: `99 passed in 41.73s`.
 - Real local DOCX, PPTX, XLSX, ordered merge, split every page, split one range, split multiple ranges, and ordered JPG/PNG/WebP requests all returned validated PDF/ZIP artifacts.
 - Representative unsupported, corrupt, oversized, password-protected, active-content, and invalid-range failures returned the frozen codes mapped by the UI.
 - Same-input visual QA passed at the approved `1487 × 1058` target; `design-qa.md` records the comparison and responsive iterations.
@@ -388,8 +388,30 @@ Verification evidence to date (30 August 2026):
 - Browser error acceptance passed for wrong type, per-file oversize, corrupt Office package, invalid/overlapping range, password protection, unsafe PDF content, the real two-job busy limit, backend unavailability, and the real 70-second client timeout (`70,190 ms`).
 - Live browser asset inspection found only same-origin application assets, local brand/font assets, and the Codex browser overlay; observed conversion and health traffic remained on `localhost:3000` and `localhost:8000`.
 - The real FastAPI backend was restored after unavailable/timeout tests. Its upload/output roots are empty, and the final 15 disposable browser fixtures (52,506,582 bytes) plus temporary timeout harness were removed.
-- Owner acceptance was received. The requested final UX refinement adds a dependency-free, monochrome indeterminate progress component with a visible `Processing locally…` label and semantic `role="progressbar"` status.
-- The progress component is mounted only while the real conversion request is pending, exposes no invented percentage, becomes static under reduced-motion preferences, and disappears immediately on success/error/cancel. A real local DOCX conversion verified the complete processing-to-download transition.
+- Owner acceptance was received. The final UX refinement preserves the dependency-free monochrome progress component and extends it with determinate and indeterminate modes, percentage text, stage-specific labels, status detail, semantic `role="progressbar"` attributes, and reduced-motion behavior.
+- A real 1,400-page merge visibly advanced through validation and page conversion, including `50%` after one of two files and `95%` after 1,335 of 1,400 pages. A real DOCX conversion remained truthfully indeterminate during LibreOffice processing, then completed normally.
+- Real browser cancellation stopped an in-flight LibreOffice job, returned the UI to the selected-file state, left no `soffice` process, and left both backend temporary roots empty.
+- The result route uses an internal PrivCon transport MIME while the status snapshot carries the real filename and content type. The frontend reconstructs the correct PDF/ZIP blob, preventing IDM from intercepting the internal fetch without changing the downloaded artifact.
+
+### Phase 2 hybrid-progress closeout — approved contract addendum
+
+The owner explicitly approved a local asynchronous job API for truthful progress. The original direct conversion endpoints remain available for compatibility; the Phase 2 frontend uses the job routes below.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/jobs/{tool}` | Upload locally and start one bounded conversion job |
+| `GET` | `/api/jobs/{job_id}` | Read stage, status, measurable units, result metadata, or a controlled error |
+| `DELETE` | `/api/jobs/{job_id}` | Request cooperative cancellation and cleanup |
+| `GET` | `/api/jobs/{job_id}/result` | Stream the one-shot local result and clean it after delivery |
+
+Progress truth contract:
+
+- Browser upload percentages are based on transmitted multipart bytes when the browser reports a computable total.
+- Validation percentages count files or images actually validated.
+- PDF merge counts pages actually copied; PDF split counts pages or requested ranges actually generated; Images-to-PDF counts images actually prepared.
+- LibreOffice conversion and final packaging expose truthful named stages without a percentage because those tools provide no reliable native completion metric.
+- Ready state is `100%`; cancellation and failures never continue animating as if work were succeeding.
+- Job metadata is held in local process memory only, terminal records and unclaimed results expire, and input/output paths are cleaned after success, cancellation, failure, delivery, or expiry.
 
 Remaining acceptance gate:
 

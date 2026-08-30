@@ -15,7 +15,7 @@ from app.core.security import (
     UploadOriginMiddleware,
 )
 from app.models.schemas import ErrorResponse
-from app.routers import convert, health, images, pdf
+from app.routers import convert, health, images, jobs, pdf
 from app.services.cleanup_service import cleanup_lifespan
 
 configure_logging()
@@ -98,3 +98,4 @@ app.include_router(health.router)
 app.include_router(convert.router)
 app.include_router(pdf.router)
 app.include_router(images.router)
+app.include_router(jobs.router)

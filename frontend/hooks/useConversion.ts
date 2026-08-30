@@ -8,6 +8,7 @@ import type {
   ConversionExtraFields,
   ConversionFailure,
   ConversionPhase,
+  ConversionProgress,
   DownloadableConversionResult,
   ToolConfig,
 } from "@/lib/types";
@@ -18,6 +19,7 @@ export function useConversion(config: ToolConfig) {
   const [phase, setPhase] = useState<ConversionPhase>("idle");
   const [error, setError] = useState<ConversionFailure>();
   const [result, setResult] = useState<DownloadableConversionResult>();
+  const [progress, setProgress] = useState<ConversionProgress>();
   const abortControllerRef = useRef<AbortController | undefined>(undefined);
   const resultUrlRef = useRef<string | undefined>(undefined);
 
@@ -33,7 +35,14 @@ export function useConversion(config: ToolConfig) {
       revokeResultUrl();
       setResult(undefined);
       setError(undefined);
-      setPhase("processing");
+      setProgress({
+        stage: "uploading",
+        label: "Uploading files",
+        message: "Preparing a local upload.",
+        mode: "determinate",
+        percent: 0,
+      });
+      setPhase("uploading");
 
       const controller = new AbortController();
       abortControllerRef.current = controller;
@@ -49,10 +58,17 @@ export function useConversion(config: ToolConfig) {
           files,
           extraFields,
           controller.signal,
+          (nextProgress) => {
+            setProgress(nextProgress);
+            setPhase(
+              nextProgress.stage === "uploading" ? "uploading" : "processing",
+            );
+          },
         );
         const url = URL.createObjectURL(conversion.blob);
         resultUrlRef.current = url;
         setResult({ ...conversion, url });
+        setProgress(undefined);
         setPhase("success");
       } catch (caught) {
         if (caught instanceof DOMException && caught.name === "AbortError") {
@@ -62,9 +78,11 @@ export function useConversion(config: ToolConfig) {
               message:
                 "This conversion took too long and was stopped. Try a smaller or simpler file.",
             });
+            setProgress(undefined);
             setPhase("error");
             requestBackendHealthCheck();
           } else {
+            setProgress(undefined);
             setPhase("ready");
           }
           return;
@@ -75,8 +93,9 @@ export function useConversion(config: ToolConfig) {
           : {
               code: "internal_error",
               message: "An unexpected error occurred. Please try again.",
-            };
+        };
         setError(failure);
+        setProgress(undefined);
         setPhase("error");
         requestBackendHealthCheck();
       } finally {
@@ -88,11 +107,18 @@ export function useConversion(config: ToolConfig) {
   );
 
   const cancel = useCallback(() => {
+    setProgress({
+      stage: "cancelling",
+      label: "Cancelling conversion",
+      message: "Stopping the local job and cleaning temporary files.",
+      mode: "indeterminate",
+    });
     abortControllerRef.current?.abort();
   }, []);
 
   const retry = useCallback(() => {
     setError(undefined);
+    setProgress(undefined);
     setPhase("ready");
   }, []);
 
@@ -101,6 +127,7 @@ export function useConversion(config: ToolConfig) {
     revokeResultUrl();
     setResult(undefined);
     setError(undefined);
+    setProgress(undefined);
     setPhase("idle");
   }, [revokeResultUrl]);
 
@@ -109,5 +136,5 @@ export function useConversion(config: ToolConfig) {
     revokeResultUrl();
   }, [revokeResultUrl]);
 
-  return { cancel, convert, error, phase, reset, result, retry } as const;
+  return { cancel, convert, error, phase, progress, reset, result, retry } as const;
 }

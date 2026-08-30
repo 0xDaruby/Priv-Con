@@ -15,6 +15,12 @@ from app.core.file_utils import (
     output_dir_for_job,
     private_binary_writer,
 )
+from app.core.progress import (
+    CancellationCheck,
+    JobCancelled,
+    ProgressCallback,
+    StageCallback,
+)
 from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 
@@ -22,7 +28,13 @@ class ImageConversionError(PrivConError):
     """Raised when validated images cannot be converted into a PDF."""
 
 
-def images_to_pdf(input_paths: Sequence[Path]) -> Path:
+def images_to_pdf(
+    input_paths: Sequence[Path],
+    *,
+    progress_callback: ProgressCallback | None = None,
+    finalizing_callback: StageCallback | None = None,
+    cancellation_check: CancellationCheck | None = None,
+) -> Path:
     """Convert images to one PDF, preserving upload order and dimensions."""
     if not input_paths:
         raise ImageConversionError(
@@ -38,7 +50,10 @@ def images_to_pdf(input_paths: Sequence[Path]) -> Path:
     prepared_images: list[Image.Image] = []
 
     try:
-        for input_path in input_paths:
+        for index, input_path in enumerate(input_paths, start=1):
+            if cancellation_check is not None:
+                cancellation_check()
+
             if not input_path.is_file():
                 raise ImageConversionError(
                     code="conversion_failed",
@@ -47,7 +62,17 @@ def images_to_pdf(input_paths: Sequence[Path]) -> Path:
 
             prepared_images.append(load_image_for_pdf(input_path))
 
+            if progress_callback is not None:
+                progress_callback(index, len(input_paths))
+
         first_image, *remaining_images = prepared_images
+
+        if finalizing_callback is not None:
+            finalizing_callback()
+
+        if cancellation_check is not None:
+            cancellation_check()
+
         with private_binary_writer(output_path) as output_file:
             first_image.save(
                 output_file,
@@ -56,6 +81,9 @@ def images_to_pdf(input_paths: Sequence[Path]) -> Path:
                 append_images=remaining_images,
                 resolution=72.0,
             )
+
+        if cancellation_check is not None:
+            cancellation_check()
 
         try:
             enforce_output_size(output_path)
@@ -70,7 +98,7 @@ def images_to_pdf(input_paths: Sequence[Path]) -> Path:
                 )
 
         return output_path
-    except ImageConversionError:
+    except (ImageConversionError, JobCancelled):
         _cleanup_dir(output_dir)
         raise
     except (UnidentifiedImageError, OSError, SyntaxError, ValueError) as exc:

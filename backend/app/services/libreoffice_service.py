@@ -17,6 +17,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
 from app.config import settings
@@ -26,6 +27,7 @@ from app.core.file_utils import (
     ensure_private_directory,
     output_dir_for_job,
 )
+from app.core.progress import CancellationCheck, JobCancelled
 from app.services.cleanup_service import cleanup_now, mark_active_paths
 
 
@@ -63,7 +65,79 @@ def _remove_failed_output(output_dir: Path) -> None:
     cleanup_now([output_dir])
 
 
-def convert_to_pdf(input_path: Path, job_id: str) -> Path:
+def _stop_process(process: subprocess.Popen[str]) -> None:
+    """Stop a cancellable LibreOffice child without leaving it running."""
+    if process.poll() is not None:
+        return
+
+    process.terminate()
+
+    try:
+        process.wait(timeout=2)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=2)
+
+
+def _run_cancellable(
+    command: list[str],
+    *,
+    cwd: str,
+    environment: dict[str, str],
+    creation_flags: int,
+    cancellation_check: CancellationCheck,
+) -> subprocess.CompletedProcess[str]:
+    """Run LibreOffice while periodically observing a cancellation event."""
+    process = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        errors="replace",
+        shell=False,
+        cwd=cwd,
+        env=environment,
+        creationflags=creation_flags,
+    )
+    deadline = time.monotonic() + settings.conversion_timeout_seconds
+
+    try:
+        while True:
+            cancellation_check()
+            remaining_seconds = deadline - time.monotonic()
+
+            if remaining_seconds <= 0:
+                raise subprocess.TimeoutExpired(
+                    command,
+                    settings.conversion_timeout_seconds,
+                )
+
+            try:
+                stdout, stderr = process.communicate(
+                    timeout=min(0.2, remaining_seconds),
+                )
+                return subprocess.CompletedProcess(
+                    args=command,
+                    returncode=process.returncode,
+                    stdout=stdout,
+                    stderr=stderr,
+                )
+            except subprocess.TimeoutExpired:
+                continue
+    except (JobCancelled, subprocess.TimeoutExpired):
+        _stop_process(process)
+        raise
+    except Exception:
+        _stop_process(process)
+        raise
+
+
+def convert_to_pdf(
+    input_path: Path,
+    job_id: str,
+    *,
+    cancellation_check: CancellationCheck | None = None,
+) -> Path:
     """Convert a validated DOCX, PPTX, or XLSX file to PDF.
 
     Returns the path to the generated PDF.
@@ -134,18 +208,27 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
 
     try:
         try:
-            result = subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                errors="replace",
-                timeout=settings.conversion_timeout_seconds,
-                check=False,
-                shell=False,
-                cwd=str(Path(libreoffice_executable).parent),
-                env=process_environment,
-                creationflags=creation_flags,
-            )
+            if cancellation_check is None:
+                result = subprocess.run(
+                    command,
+                    capture_output=True,
+                    text=True,
+                    errors="replace",
+                    timeout=settings.conversion_timeout_seconds,
+                    check=False,
+                    shell=False,
+                    cwd=str(Path(libreoffice_executable).parent),
+                    env=process_environment,
+                    creationflags=creation_flags,
+                )
+            else:
+                result = _run_cancellable(
+                    command,
+                    cwd=str(Path(libreoffice_executable).parent),
+                    environment=process_environment,
+                    creation_flags=creation_flags,
+                    cancellation_check=cancellation_check,
+                )
 
         except subprocess.TimeoutExpired as exc:
             _remove_failed_output(job_output_dir)
@@ -165,6 +248,10 @@ def convert_to_pdf(input_path: Path, job_id: str) -> Path:
                     "Please check the server configuration."
                 ),
             ) from exc
+
+        except JobCancelled:
+            _remove_failed_output(job_output_dir)
+            raise
 
         if result.returncode != 0:
             _remove_failed_output(job_output_dir)
