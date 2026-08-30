@@ -99,6 +99,20 @@ body {
   font-synthesis: none;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
+  zoom: 0.8;
+}
+
+@supports not (zoom: 1) {
+  body {
+    overflow: hidden;
+  }
+
+  .app-frame {
+    width: 125%;
+    height: 125dvh;
+    transform: scale(0.8);
+    transform-origin: top left;
+  }
 }
 
 button,
