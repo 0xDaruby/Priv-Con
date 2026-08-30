@@ -1,8 +1,9 @@
 # PrivCon Phase 2 Frontend Roadmap
 
 **Project phase:** Phase 2 — Frontend MVP  
-**Status:** Active  
-**Current milestone:** Phase 2.9 — Full verification and owner acceptance
+**Status:** Complete
+
+**Current milestone:** Phase 2 complete — verified and owner accepted
 
 **Primary target:** All six PrivCon tools work end-to-end in a local browser with the approved visual design, accessible interactions, exact backend-contract handling, and no third-party file or asset traffic.
 
@@ -53,7 +54,7 @@ Phase 2 is complete only when:
 | Phase 2.6 | Merge PDF and Images-to-PDF ordering workflows | Complete |
 | Phase 2.7 | Split PDF modes and range workflow | Complete |
 | Phase 2.8 | Complete states, accessibility, and responsive refinement | Complete |
-| Phase 2.9 | Full verification and owner acceptance | In progress |
+| Phase 2.9 | Full verification and owner acceptance | Complete |
 
 ## 4. Milestone details
 
@@ -387,10 +388,12 @@ Verification evidence to date (30 August 2026):
 - Browser error acceptance passed for wrong type, per-file oversize, corrupt Office package, invalid/overlapping range, password protection, unsafe PDF content, the real two-job busy limit, backend unavailability, and the real 70-second client timeout (`70,190 ms`).
 - Live browser asset inspection found only same-origin application assets, local brand/font assets, and the Codex browser overlay; observed conversion and health traffic remained on `localhost:3000` and `localhost:8000`.
 - The real FastAPI backend was restored after unavailable/timeout tests. Its upload/output roots are empty, and the final 15 disposable browser fixtures (52,506,582 bytes) plus temporary timeout harness were removed.
+- Owner acceptance was received. The requested final UX refinement adds a dependency-free, monochrome indeterminate progress component with a visible `Processing locally…` label and semantic `role="progressbar"` status.
+- The progress component is mounted only while the real conversion request is pending, exposes no invented percentage, becomes static under reduced-motion preferences, and disappears immediately on success/error/cancel. A real local DOCX conversion verified the complete processing-to-download transition.
 
 Remaining acceptance gate:
 
-- Technical verification is complete. The user must perform the final non-technical usability and visual acceptance pass before Phase 2.9 is marked complete.
+- None. Technical verification, final UX refinement, and owner acceptance are complete.
 
 ## 5. Decision gates
 
@@ -430,4 +433,4 @@ These remain Phase 3 or post-MVP work unless the user explicitly changes scope.
 
 ## 8. Immediate next action
 
-Inspect the verified local preview in Edge and provide explicit owner acceptance. After approval, mark Phase 2.9 and Phase 2 complete without adding Phase 3 scope.
+Phase 2 is complete. Do not begin Phase 3 or add post-MVP scope without explicit user direction.

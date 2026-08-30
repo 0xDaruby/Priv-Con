@@ -1044,16 +1044,31 @@ svg {
   margin-bottom: 22px;
 }
 
-.processing-summary {
+.processing-details {
   width: min(620px, 100%);
-  margin-top: 36px;
-  padding: 18px 22px;
-  display: flex;
-  flex-direction: column;
+  margin-top: 32px;
+  padding: 20px 22px 22px;
+  display: grid;
   overflow: hidden;
-  border-top: 1px solid var(--pc-border-default);
-  border-bottom: 1px solid var(--pc-border-default);
+  border: 1px solid var(--pc-border-default);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-bg-surface);
   text-align: left;
+}
+
+.processing-summary {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.processing-summary-label {
+  color: var(--pc-fg-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .processing-summary strong {
@@ -1064,7 +1079,7 @@ svg {
   white-space: nowrap;
 }
 
-.processing-summary span,
+.processing-summary p,
 .retained-files {
   margin: 3px 0 0;
   color: var(--pc-fg-secondary);
@@ -1072,25 +1087,63 @@ svg {
   line-height: 22px;
 }
 
-.indeterminate-progress {
+.conversion-progress {
   width: min(620px, 100%);
-  height: 4px;
   margin-top: 32px;
-  overflow: hidden;
-  background: var(--pc-border-default);
+  display: grid;
+  gap: 10px;
+  text-align: left;
 }
 
-.indeterminate-progress span {
-  width: 34%;
+.processing-details .conversion-progress {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.conversion-progress-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.conversion-progress-caption strong {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.conversion-progress-caption span {
+  color: var(--pc-fg-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.conversion-progress-track {
+  position: relative;
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid var(--pc-border-default);
+  border-radius: var(--pc-radius-full);
+  background: var(--pc-bg-subtle);
+}
+
+.conversion-progress-indicator {
+  position: absolute;
+  inset-block: -1px;
+  left: -1px;
+  width: 42%;
   height: 100%;
   display: block;
-  background: var(--pc-fg-primary);
-  animation: pc-progress 1.2s var(--pc-ease-standard) infinite;
+  border-radius: var(--pc-radius-full);
+  background: var(--pc-action-primary);
+  animation: pc-indeterminate-progress 1.4s var(--pc-ease-standard) infinite alternate;
 }
 
-@keyframes pc-progress {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(300%); }
+@keyframes pc-indeterminate-progress {
+  from { transform: translateX(0); }
+  to { transform: translateX(138%); }
 }
 
 .secondary-action {
@@ -1675,5 +1728,10 @@ svg {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .conversion-progress-indicator {
+    animation: none !important;
+    transform: translateX(70%);
   }
 }
