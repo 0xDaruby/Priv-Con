@@ -104,6 +104,37 @@ def sweep_stale_temp_files(*, now: float | None = None) -> int:
     return removed_count
 
 
+def purge_orphaned_temp_files_on_startup() -> int:
+    """Remove artifacts that cannot belong to the new backend process.
+
+    Job state is intentionally process-local. After a restart there is no
+    surviving job record that can claim an upload, LibreOffice profile, or
+    result directory left by the previous process, regardless of file age.
+    """
+    removed_count = 0
+
+    for root in _controlled_temp_roots():
+        try:
+            root.mkdir(parents=True, exist_ok=True)
+            candidates = list(root.iterdir())
+        except OSError:
+            continue
+
+        for candidate in candidates:
+            if _is_active(candidate):
+                continue
+
+            if not _is_controlled_cleanup_target(candidate):
+                continue
+
+            cleanup_paths([candidate])
+
+            if not candidate.exists() and not candidate.is_symlink():
+                removed_count += 1
+
+    return removed_count
+
+
 async def run_periodic_cleanup(stop_event: asyncio.Event) -> None:
     """Sweep on startup and periodically until application shutdown."""
     interval_seconds = max(
@@ -130,6 +161,7 @@ async def run_periodic_cleanup(stop_event: asyncio.Event) -> None:
 @asynccontextmanager
 async def cleanup_lifespan(_: FastAPI) -> AsyncIterator[None]:
     """Run the orphan sweeper for the lifetime of the FastAPI application."""
+    purge_orphaned_temp_files_on_startup()
     stop_event = asyncio.Event()
     cleanup_task = asyncio.create_task(run_periodic_cleanup(stop_event))
 

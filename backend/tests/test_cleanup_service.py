@@ -9,6 +9,7 @@ from app.services.cleanup_service import (
     cleanup_after_response,
     cleanup_now,
     mark_active_paths,
+    purge_orphaned_temp_files_on_startup,
     sweep_stale_temp_files,
 )
 
@@ -88,3 +89,22 @@ def test_sweeper_preserves_active_jobs_and_removes_crash_orphans(
 
     cleanup_now([active_path])
     assert not active_path.exists()
+
+
+def test_startup_purge_removes_fresh_crash_orphans(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    upload_dir, output_dir = _configure_temp_roots(tmp_path, monkeypatch)
+    upload_path = upload_dir / "interrupted.docx"
+    output_job_dir = output_dir / "interrupted-job"
+    libreoffice_profile = output_dir / "pc-lo-interrupted"
+    upload_path.write_bytes(b"input")
+    output_job_dir.mkdir()
+    (output_job_dir / "partial.pdf").write_bytes(b"partial")
+    libreoffice_profile.mkdir()
+    (libreoffice_profile / "registrymodifications.xcu").write_bytes(b"profile")
+
+    assert purge_orphaned_temp_files_on_startup() == 3
+    assert list(upload_dir.iterdir()) == []
+    assert list(output_dir.iterdir()) == []
