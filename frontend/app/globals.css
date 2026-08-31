@@ -158,10 +158,40 @@ svg {
 }
 
 .app-frame {
+  position: relative;
   width: 100%;
   height: 100dvh;
   overflow: hidden;
   background: var(--pc-bg-page);
+}
+
+.creator-credit {
+  position: absolute;
+  right: 39px;
+  bottom: 9px;
+  color: var(--pc-fg-muted);
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition:
+    color var(--pc-duration-fast) var(--pc-ease-standard),
+    text-decoration-color var(--pc-duration-fast) var(--pc-ease-standard);
+}
+
+.creator-credit:hover {
+  color: var(--pc-fg-primary);
+  text-decoration-color: currentColor;
+}
+
+.creator-credit:focus-visible {
+  color: var(--pc-fg-primary);
+  border-radius: var(--pc-radius-sm);
+  outline: 2px solid var(--pc-focus);
+  outline-offset: 3px;
 }
 
 .global-header {
@@ -1364,6 +1394,10 @@ svg {
     margin-left: 28px;
   }
 
+  .creator-credit {
+    right: 28px;
+  }
+
   .tool-sidebar {
     padding-right: 16px;
     padding-left: 16px;
@@ -1462,6 +1496,10 @@ svg {
     margin-bottom: 16px;
   }
 
+  .creator-credit {
+    bottom: 0;
+  }
+
   .tool-sidebar {
     padding-top: clamp(14px, 2.8dvh, 24px);
     padding-bottom: clamp(14px, 2.8dvh, 24px);
@@ -1543,6 +1581,13 @@ svg {
 
   .app-frame {
     overflow: auto;
+  }
+
+  .creator-credit {
+    position: static;
+    display: block;
+    width: max-content;
+    margin: 0 20px 12px auto;
   }
 
   .global-header {

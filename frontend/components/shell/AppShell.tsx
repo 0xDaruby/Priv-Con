@@ -19,6 +19,16 @@ export function AppShell({ children, currentStep = 1 }: AppShellProps) {
         <ToolSidebar />
         <section className="task-canvas">{children}</section>
       </main>
+      <a
+        aria-label="Built by 0xdaruby — opens portfolio in a new tab"
+        className="creator-credit"
+        href="https://oxdaruby.tech"
+        referrerPolicy="no-referrer"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Built by 0xdaruby
+      </a>
     </div>
   );
 }
