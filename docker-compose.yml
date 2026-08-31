@@ -1,0 +1,71 @@
+name: privcon
+
+services:
+  backend:
+    build:
+      context: ./backend
+    image: privcon-backend:local
+    init: true
+    environment:
+      UPLOAD_TEMP_DIR: /app/temp/uploads
+      OUTPUT_TEMP_DIR: /app/temp/outputs
+      LIBREOFFICE_PATH: libreoffice
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import json, urllib.request;
+          response = urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2);
+          payload = json.load(response);
+          raise SystemExit(0 if response.status == 200 and payload.get('status') == 'ok' else 1)
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - privcon-local
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    image: privcon-frontend:local
+    init: true
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000')
+            .then((response) => process.exit(response.ok ? 0 : 1))
+            .catch(() => process.exit(1))
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - privcon-local
+
+networks:
+  privcon-local:
+    driver: bridge
