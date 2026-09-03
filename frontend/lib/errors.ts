@@ -21,6 +21,8 @@ const ERROR_MESSAGES: Readonly<Partial<Record<ApiErrorCode, string>>> = {
   unsafe_document_content:
     "This PDF contains content PrivCon doesn't allow (such as embedded scripts or files) and can't be processed.",
   invalid_split_mode: "Please choose a valid split option.",
+  invalid_conversion_mode:
+    "Choose Editable Word or Preserve Appearance and try again.",
   invalid_page_ranges:
     "That page range isn't valid. Use a format like 1-3,5,8-10.",
   origin_not_allowed:
@@ -33,6 +35,8 @@ const ERROR_MESSAGES: Readonly<Partial<Record<ApiErrorCode, string>>> = {
     "This conversion took too long and was stopped. Try a smaller or simpler file.",
   conversion_failed:
     "Something went wrong while processing this file. Please try again.",
+  layout_conversion_failed:
+    "Editable layout conversion couldn't safely complete this PDF. Choose Preserve Appearance and try again.",
   split_failed:
     "Something went wrong while processing this file. Please try again.",
   file_processing_failed:

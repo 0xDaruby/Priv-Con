@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { FileListPreview } from "@/components/conversion/FileListPreview";
 import { ErrorMessage } from "@/components/conversion/ErrorMessage";
+import { PdfToWordOptions } from "@/components/conversion/PdfToWordOptions";
 import { ProgressState } from "@/components/conversion/ProgressState";
 import { ReorderList } from "@/components/conversion/ReorderList";
 import { SplitOptions } from "@/components/conversion/SplitOptions";
@@ -20,6 +21,8 @@ import {
 import { formatFileCount } from "@/lib/format";
 import type {
   ClientValidationIssue,
+  ConversionExtraFields,
+  PdfToWordMode,
   SelectedFile,
   SplitMode,
   ToolConfig,
@@ -34,6 +37,7 @@ export function ConversionTool({ config }: ConversionToolProps) {
   const [validationIssue, setValidationIssue] = useState<ClientValidationIssue>();
   const [splitMode, setSplitMode] = useState<SplitMode | "">("");
   const [splitRanges, setSplitRanges] = useState("");
+  const [pdfToWordMode, setPdfToWordMode] = useState<PdfToWordMode>("editable");
   const conversion = useConversion(config);
 
   const handleFilesSelected = (incomingFiles: readonly File[]) => {
@@ -63,6 +67,10 @@ export function ConversionTool({ config }: ConversionToolProps) {
       ? canConvert
         ? "Split options are ready to process locally."
         : "Choose how to split this PDF to continue."
+      : config.id === "pdfToWord"
+        ? pdfToWordMode === "editable"
+          ? "Editable layout reconstruction is ready to run locally."
+          : "Appearance-preserving conversion is ready to run locally."
       : `${formatFileCount(files.length)} ready to process locally.`
     : config.minFiles > 1
       ? `Choose at least ${config.minFiles} files to continue.`
@@ -74,15 +82,18 @@ export function ConversionTool({ config }: ConversionToolProps) {
     setValidationIssue(undefined);
     setSplitMode("");
     setSplitRanges("");
+    setPdfToWordMode("editable");
   };
 
   const startConversion = () => {
-    const extraFields = config.id === "split" && splitMode
+    const extraFields: ConversionExtraFields = config.id === "split" && splitMode
       ? {
           mode: splitMode,
           ...(splitMode === "ranges" ? { ranges: splitRanges.trim() } : {}),
         }
-      : {};
+      : config.id === "pdfToWord"
+        ? { mode: pdfToWordMode }
+        : {};
     return conversion.convert(files.map(({ file }) => file), extraFields);
   };
 
@@ -124,7 +135,11 @@ export function ConversionTool({ config }: ConversionToolProps) {
           onFilesSelected={handleFilesSelected}
         />
       ) : (
-        <section className="configuration-surface" aria-labelledby="configuration-title">
+        <section
+          aria-labelledby="configuration-title"
+          className="configuration-surface"
+          data-tool={config.id}
+        >
           <header className="configuration-header">
             <div>
               <p className="configuration-eyebrow">Add files</p>
@@ -165,6 +180,13 @@ export function ConversionTool({ config }: ConversionToolProps) {
               onRangesChange={setSplitRanges}
               rangeError={rangeError}
               ranges={splitRanges}
+            />
+          ) : null}
+
+          {config.id === "pdfToWord" ? (
+            <PdfToWordOptions
+              mode={pdfToWordMode}
+              onModeChange={setPdfToWordMode}
             />
           ) : null}
 

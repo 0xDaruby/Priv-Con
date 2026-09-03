@@ -10,6 +10,7 @@ export const BACKEND_LIMITS = {
 } as const;
 
 export const TOOL_ORDER = [
+  "pdfToWord",
   "word",
   "powerpoint",
   "excel",
@@ -19,6 +20,27 @@ export const TOOL_ORDER = [
 ] as const satisfies readonly ToolId[];
 
 export const TOOL_CONFIGS = {
+  pdfToWord: {
+    id: "pdfToWord",
+    slug: "pdf-to-word",
+    route: "/pdf-to-word",
+    title: "PDF to Word",
+    description: "Rebuild an editable Word file or preserve the exact page appearance.",
+    icon: "word-file",
+    endpoint: "/api/convert/pdf-to-docx",
+    jobEndpoint: "/api/jobs/pdf-to-docx",
+    acceptedExtensions: [".pdf"],
+    acceptedFormatLabel: ".PDF",
+    acceptAttribute: ".pdf,application/pdf",
+    multiple: false,
+    minFiles: 1,
+    maxFiles: 1,
+    fileFieldName: "file",
+    outputKind: "docx",
+    reorderable: false,
+    chooseLabel: "Choose a PDF file",
+    convertLabel: "Convert to Word",
+  },
   word: {
     id: "word",
     slug: "word-to-pdf",

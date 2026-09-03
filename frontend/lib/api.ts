@@ -65,16 +65,24 @@ function fallbackFilename(
   const sourceName = files[0]?.name || config.slug;
   const dotIndex = sourceName.lastIndexOf(".");
   const basename = dotIndex > 0 ? sourceName.slice(0, dotIndex) : sourceName;
-  return `${basename || config.slug}.pdf`;
+  const extension = outputType === "docx" ? "docx" : "pdf";
+  return `${basename || config.slug}.${extension}`;
 }
 
 function getOutputType(
   contentType: string,
   filename?: string,
 ): ConversionOutputType {
-  return contentType.includes("zip") || filename?.toLowerCase().endsWith(".zip")
-    ? "zip"
-    : "pdf";
+  if (contentType.includes("zip") || filename?.toLowerCase().endsWith(".zip")) {
+    return "zip";
+  }
+  if (
+    contentType.includes("wordprocessingml") ||
+    filename?.toLowerCase().endsWith(".docx")
+  ) {
+    return "docx";
+  }
+  return "pdf";
 }
 
 async function toApiError(

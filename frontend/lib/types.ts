@@ -1,4 +1,5 @@
 export type ToolId =
+  | "pdfToWord"
   | "word"
   | "powerpoint"
   | "excel"
@@ -7,6 +8,7 @@ export type ToolId =
   | "images";
 
 export type ToolSlug =
+  | "pdf-to-word"
   | "word-to-pdf"
   | "ppt-to-pdf"
   | "excel-to-pdf"
@@ -24,9 +26,9 @@ export type ToolIconName =
   | "split-file"
   | "image-file";
 
-export type ConversionOutputKind = "pdf" | "pdf-or-zip";
+export type ConversionOutputKind = "docx" | "pdf" | "pdf-or-zip";
 
-export type ConversionOutputType = "pdf" | "zip";
+export type ConversionOutputType = "docx" | "pdf" | "zip";
 
 export type FileFieldName = "file" | "files";
 
@@ -64,6 +66,8 @@ export type ProgressStep = 1 | 2 | 3;
 
 export type SplitMode = "every_page" | "ranges";
 
+export type PdfToWordMode = "editable" | "preserve_appearance";
+
 export type BackendHealthState =
   | "checking"
   | "running"
@@ -82,12 +86,14 @@ export type ApiErrorCode =
   | "too_many_pages"
   | "unsafe_document_content"
   | "invalid_split_mode"
+  | "invalid_conversion_mode"
   | "invalid_page_ranges"
   | "origin_not_allowed"
   | "server_busy"
   | "backend_unavailable"
   | "conversion_timeout"
   | "conversion_failed"
+  | "layout_conversion_failed"
   | "split_failed"
   | "file_processing_failed"
   | "not_found"

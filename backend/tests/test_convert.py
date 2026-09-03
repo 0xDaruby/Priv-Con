@@ -6,9 +6,11 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from pypdf import PdfWriter
 
 from app.config import settings
 from app.main import app
+from app.routers import convert as convert_router
 from app.services import libreoffice_service
 
 
@@ -30,6 +32,15 @@ def _docx_bytes(*, valid_document_xml: bool = True) -> bytes:
         )
         archive.writestr("word/document.xml", document_xml)
 
+    return output.getvalue()
+
+
+def _pdf_bytes() -> bytes:
+    output = BytesIO()
+    writer = PdfWriter()
+    writer.add_blank_page(width=100, height=100)
+    writer.write(output)
+    writer.close()
     return output.getvalue()
 
 
@@ -119,6 +130,56 @@ def test_docx_endpoint_rejects_malformed_xml_before_conversion(
     assert response.status_code == 400
     assert response.json()["error"] == "corrupted_file"
     assert conversion_called is False
+    _assert_temp_dirs_empty(upload_dir, output_dir)
+
+
+def test_pdf_to_word_endpoint_returns_docx_and_cleans_temp(
+    convert_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client, upload_dir, output_dir = convert_client
+
+    received_mode = ""
+
+    def fake_pdf_to_docx(input_path: Path, job_id: str, *, mode: str) -> Path:
+        nonlocal received_mode
+        received_mode = mode
+        job_output_dir = output_dir / job_id
+        job_output_dir.mkdir()
+        output_path = job_output_dir / f"{input_path.stem}.docx"
+        output_path.write_bytes(_docx_bytes())
+        return output_path
+
+    monkeypatch.setattr(convert_router, "pdf_to_docx", fake_pdf_to_docx)
+    response = client.post(
+        "/api/convert/pdf-to-docx",
+        files={"file": ("private report.pdf", _pdf_bytes(), "application/pdf")},
+        data={"mode": "preserve_appearance"},
+    )
+
+    assert response.status_code == 200
+    assert "wordprocessingml.document" in response.headers["content-type"]
+    assert "private_report.docx" in response.headers["content-disposition"]
+    assert received_mode == "preserve_appearance"
+
+    with zipfile.ZipFile(BytesIO(response.content)) as archive:
+        assert "word/document.xml" in archive.namelist()
+
+    _assert_temp_dirs_empty(upload_dir, output_dir)
+
+
+def test_pdf_to_word_endpoint_rejects_unknown_conversion_mode(
+    convert_client,
+) -> None:
+    client, upload_dir, output_dir = convert_client
+    response = client.post(
+        "/api/convert/pdf-to-docx",
+        files={"file": ("private.pdf", _pdf_bytes(), "application/pdf")},
+        data={"mode": "plain_text"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "invalid_conversion_mode"
     _assert_temp_dirs_empty(upload_dir, output_dir)
 
 

@@ -73,6 +73,37 @@ _DANGEROUS_PDF_ANNOTATIONS = {
     "/RichMedia",
     "/Screen",
 }
+_PDF_ACTION_CHILD_KEYS = {
+    # Generic action and form-field containers.
+    "/A",
+    "/AA",
+    "/Fields",
+    "/Kids",
+    "/Next",
+    "/OpenAction",
+    # Document-level additional actions.
+    "/WC",
+    "/WS",
+    "/DS",
+    "/WP",
+    "/DP",
+    # Page, annotation, and form-field additional actions.
+    "/O",
+    "/C",
+    "/E",
+    "/X",
+    "/D",
+    "/U",
+    "/Fo",
+    "/Bl",
+    "/PO",
+    "/PC",
+    "/PV",
+    "/PI",
+    "/K",
+    "/F",
+    "/V",
+}
 
 
 def validate_extension(filename: str, tool_key: str) -> None:
@@ -602,19 +633,27 @@ def _contains_dangerous_pdf_action(
         if len(visited) > max_nodes:
             return True
 
-        if hasattr(current, "items"):
-            items = list(current.items())
+        get_value = getattr(current, "get", None)
+        get_items = getattr(current, "items", None)
+
+        if callable(get_value) and callable(get_items):
+            try:
+                items = list(get_items())
+                action_type = str(get_value("/S", ""))
+            except (AttributeError, KeyError, TypeError, ValueError) as exc:
+                raise ValidationError(
+                    code="corrupted_file",
+                    message="This file isn't a valid or readable PDF.",
+                ) from exc
 
             if any(str(key) == "/JS" for key, _ in items):
                 return True
-
-            action_type = str(current.get("/S", ""))
 
             if action_type in _DANGEROUS_PDF_ACTIONS:
                 return True
 
             for key, child in items:
-                if str(key) in {"/A", "/AA", "/Fields", "/Kids", "/Next"}:
+                if str(key) in _PDF_ACTION_CHILD_KEYS:
                     pending.append(child)
         elif isinstance(current, (list, tuple)):
             pending.extend(current)
@@ -626,7 +665,7 @@ def _resolve_pdf_object(value: object) -> object:
     try:
         get_object = getattr(value, "get_object", None)
         return get_object() if callable(get_object) else value
-    except (KeyError, TypeError, ValueError) as exc:
+    except (AttributeError, KeyError, RecursionError, TypeError, ValueError) as exc:
         raise ValidationError(
             code="corrupted_file",
             message="This file isn't a valid or readable PDF.",

@@ -20,8 +20,7 @@ class ValidationError(PrivConError):
 
 
 class ConversionError(PrivConError):
-    """Raised when the LibreOffice conversion subprocess fails, times out,
-    or the input file is missing."""
+    """Raised when a local conversion engine cannot produce a valid output."""
 
 
 class JobCapacityError(PrivConError):

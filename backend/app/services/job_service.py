@@ -35,8 +35,11 @@ from app.services.pdf_split_service import (
     parse_page_ranges,
     split_pdf,
 )
+from app.services.pdf_to_word_engines import EDITABLE_MODE
+from app.services.pdf_to_word_service import pdf_to_docx
 
 JobTool = Literal[
+    "pdf-to-docx",
     "docx-to-pdf",
     "pptx-to-pdf",
     "xlsx-to-pdf",
@@ -333,7 +336,12 @@ class JobManager:
             )
             self._check_cancelled(job_id)
 
-            if spec.tool in OFFICE_TOOL_KEYS:
+            if spec.tool == "pdf-to-docx":
+                output_path, media_type, download_name = self._run_pdf_to_word(
+                    job_id,
+                    spec,
+                )
+            elif spec.tool in OFFICE_TOOL_KEYS:
                 output_path, media_type, download_name = self._run_office(
                     job_id,
                     spec,
@@ -444,6 +452,44 @@ class JobManager:
         self._set_finalizing(job_id, "Checking the generated PDF locally.")
         safe_stem = sanitize_filename(Path(spec.original_filenames[0]).stem).strip(".")
         return output_path, "application/pdf", f"{safe_stem or 'document'}.pdf"
+
+    def _run_pdf_to_word(
+        self,
+        job_id: str,
+        spec: JobSpec,
+    ) -> tuple[Path, str, str]:
+        input_path = spec.input_paths[0]
+        page_count = validate_pdf_structure(input_path)
+        self._set_progress(
+            job_id,
+            completed=1,
+            total=1,
+            unit_label="file",
+            message=f"Validated 1 PDF with {page_count} pages.",
+        )
+        self._check_cancelled(job_id)
+        self._set_stage(
+            job_id,
+            status="running",
+            stage="converting",
+            message=(
+                "Reconstructing editable layout in Word locally."
+                if spec.mode == EDITABLE_MODE
+                else "Rendering each page into Word locally."
+            ),
+        )
+        output_path = pdf_to_docx(
+            input_path,
+            job_id,
+            mode=spec.mode or EDITABLE_MODE,
+            cancellation_check=lambda: self._check_cancelled(job_id),
+        )
+        self._set_finalizing(job_id, "Checking the generated Word document locally.")
+        safe_stem = sanitize_filename(Path(spec.original_filenames[0]).stem).strip(".")
+        media_type = (
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        return output_path, media_type, f"{safe_stem or 'document'}.docx"
 
     def _run_merge(
         self,

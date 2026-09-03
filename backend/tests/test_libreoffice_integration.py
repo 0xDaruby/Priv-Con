@@ -15,6 +15,7 @@ from app.services.libreoffice_service import (
     _resolve_libreoffice_executable,
     convert_to_pdf,
 )
+from app.services.pdf_to_word_service import pdf_to_docx
 
 
 def test_installed_libreoffice_converts_a_real_docx(
@@ -39,6 +40,7 @@ def test_installed_libreoffice_converts_a_real_docx(
     document.add_paragraph("Local conversion security smoke test.")
     document.save(input_path)
     output_path: Path | None = None
+    word_output_path: Path | None = None
     process_diagnostics: list[tuple[int, str, str]] = []
     real_run = libreoffice_service.subprocess.run
 
@@ -62,11 +64,21 @@ def test_installed_libreoffice_converts_a_real_docx(
                 f"LibreOffice conversion failed: {process_diagnostics!r}"
             ) from exc
         assert validate_pdf_structure(output_path) == 1
+        word_output_path = pdf_to_docx(output_path, new_job_id())
+        validate_office_structure(word_output_path, "docx")
+        round_trip_text = "\n".join(
+            paragraph.text for paragraph in Document(word_output_path).paragraphs
+        )
+        assert "PrivCon" in round_trip_text
+        assert "Local conversion security smoke test." in round_trip_text
     finally:
         cleanup_targets = [input_path]
 
         if output_path is not None:
             cleanup_targets.append(output_path.parent)
+
+        if word_output_path is not None:
+            cleanup_targets.append(word_output_path.parent)
 
         cleanup_now(cleanup_targets)
 

@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, File, Response, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, Response, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.config import settings
@@ -12,7 +12,12 @@ from app.core.exceptions import ConversionError, PrivConError, ValidationError
 from app.core.file_utils import new_job_id, sanitize_filename, save_upload_to_temp
 from app.core.logging_config import log_job_event
 from app.core.security import LimitedUploadRoute
-from app.core.validators import validate_extension, validate_office_structure
+from app.core.validators import (
+    validate_extension,
+    validate_office_structure,
+    validate_pdf_extension,
+    validate_pdf_structure,
+)
 from app.models.schemas import ErrorResponse
 from app.services import libreoffice_service
 from app.services.cleanup_service import (
@@ -20,6 +25,7 @@ from app.services.cleanup_service import (
     cleanup_now,
     mark_active_paths,
 )
+from app.services.pdf_to_word_service import pdf_to_docx, validate_pdf_to_word_mode
 
 router = APIRouter(
     prefix="/api/convert",
@@ -140,12 +146,89 @@ def _convert_endpoint(
     )
 
 
+def _handle_pdf_to_word_conversion(
+    upload: UploadFile,
+    background_tasks: BackgroundTasks,
+    mode: str | None,
+) -> Response:
+    job_id = new_job_id()
+    tool_name = "pdf-to-docx"
+    original_filename = upload.filename or "upload"
+    input_path: Path | None = None
+    output_path: Path | None = None
+    log_job_event(logger, tool=tool_name, job_id=job_id, status="started")
+
+    try:
+        validate_pdf_extension(original_filename)
+        input_path = save_upload_to_temp(
+            source=upload.file,
+            upload_dir=settings.upload_temp_dir,
+            job_id=job_id,
+            original_filename=original_filename,
+            max_size_bytes=settings.max_upload_size_mb * 1024 * 1024,
+        )
+        mark_active_paths([input_path])
+        validate_pdf_structure(input_path)
+        selected_mode = validate_pdf_to_word_mode(mode)
+        output_path = pdf_to_docx(input_path, job_id, mode=selected_mode)
+    except ValidationError as exc:
+        cleanup_now([input_path] if input_path is not None else [])
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        return _error_response(400, exc)
+    except ConversionError as exc:
+        cleanup_now([input_path] if input_path is not None else [])
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        return _error_response(422, exc)
+    except Exception:  # noqa: BLE001 - cleanup at the API trust boundary.
+        cleanup_now([input_path] if input_path is not None else [])
+        log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")
+        return _error_response(
+            500,
+            ConversionError(
+                code="file_processing_failed",
+                message="The uploaded PDF could not be processed.",
+            ),
+        )
+
+    background_tasks.add_task(
+        cleanup_after_response,
+        [input_path, output_path.parent],
+    )
+    safe_stem = sanitize_filename(Path(original_filename).stem).strip(".")
+    log_job_event(logger, tool=tool_name, job_id=job_id, status="success")
+
+    return FileResponse(
+        path=output_path,
+        media_type=(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ),
+        filename=f"{safe_stem or 'document'}.docx",
+        background=background_tasks,
+    )
+
+
 @router.post("/docx-to-pdf")
 def docx_to_pdf(
     background_tasks: BackgroundTasks,
     files: Annotated[list[UploadFile] | None, File(alias="file")] = None,
 ) -> Response:
     return _convert_endpoint("docx", files, background_tasks)
+
+
+@router.post("/pdf-to-docx")
+def pdf_to_word(
+    background_tasks: BackgroundTasks,
+    files: Annotated[list[UploadFile] | None, File(alias="file")] = None,
+    mode: Annotated[str | None, Form()] = None,
+) -> Response:
+    if not files or len(files) != 1:
+        error = ValidationError(
+            code="invalid_input",
+            message="Upload exactly one PDF to convert.",
+        )
+        return _error_response(400, error)
+
+    return _handle_pdf_to_word_conversion(files[0], background_tasks, mode)
 
 
 @router.post("/pptx-to-pdf")

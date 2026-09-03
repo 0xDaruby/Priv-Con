@@ -7,11 +7,23 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError as PydanticValidationError
+from pypdf import PdfWriter
+from pypdf.generic import (
+    ArrayObject,
+    DictionaryObject,
+    NameObject,
+    RectangleObject,
+    TextStringObject,
+)
 
 from app.config import Settings, settings
 from app.core.exceptions import ValidationError
 from app.core.file_utils import save_upload_to_temp
-from app.core.validators import validate_office_structure
+from app.core.validators import (
+    _contains_dangerous_pdf_action,
+    validate_office_structure,
+    validate_pdf_structure,
+)
 
 OFFICE_PARTS = {
     "docx": (
@@ -67,6 +79,132 @@ def test_office_validation_accepts_well_formed_packages(
     path.write_bytes(_office_bytes(tool_key))
 
     validate_office_structure(path, tool_key)
+
+
+def test_pdf_validation_accepts_safe_open_destination_array(tmp_path: Path) -> None:
+    """A page destination array is navigation, not an executable PDF action."""
+    path = tmp_path / "safe-open-destination.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=100, height=100)
+    writer.root_object[NameObject("/OpenAction")] = ArrayObject(
+        [writer.pages[0].indirect_reference, NameObject("/Fit")]
+    )
+
+    with path.open("wb") as output:
+        writer.write(output)
+
+    writer.close()
+
+    assert validate_pdf_structure(path) == 1
+
+
+def test_pdf_validation_accepts_normal_uri_link(tmp_path: Path) -> None:
+    path = tmp_path / "safe-link.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=100, height=100)
+    writer.add_uri(
+        page_number=0,
+        uri="https://example.com/profile",
+        rect=RectangleObject((10, 10, 90, 30)),
+    )
+
+    with path.open("wb") as output:
+        writer.write(output)
+
+    writer.close()
+
+    assert validate_pdf_structure(path) == 1
+
+
+def test_pdf_action_scan_handles_cycles_without_hanging() -> None:
+    safe_action: dict[str, object] = {"/S": "/GoTo"}
+    safe_action["/Next"] = [safe_action]
+
+    assert _contains_dangerous_pdf_action(safe_action) is False
+
+    unsafe_action: dict[str, object] = {
+        "/S": "/JavaScript",
+        "/JS": "unsafe",
+    }
+    safe_action["/Next"] = [safe_action, unsafe_action]
+
+    assert _contains_dangerous_pdf_action(safe_action) is True
+
+
+def test_pdf_action_scan_normalizes_broken_references() -> None:
+    class BrokenReference:
+        def get_object(self):
+            raise AttributeError("broken reference")
+
+    with pytest.raises(ValidationError) as exc_info:
+        _contains_dangerous_pdf_action(BrokenReference())
+
+    assert exc_info.value.code == "corrupted_file"
+
+
+def test_pdf_validation_rejects_javascript_in_additional_action(
+    tmp_path: Path,
+) -> None:
+    """Document event dictionaries must not hide executable actions."""
+    path = tmp_path / "unsafe-additional-action.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=100, height=100)
+    writer.root_object[NameObject("/AA")] = DictionaryObject(
+        {
+            NameObject("/WC"): DictionaryObject(
+                {
+                    NameObject("/S"): NameObject("/JavaScript"),
+                    NameObject("/JS"): TextStringObject("app.alert('unsafe')"),
+                }
+            )
+        }
+    )
+
+    with path.open("wb") as output:
+        writer.write(output)
+
+    writer.close()
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_pdf_structure(path)
+
+    assert exc_info.value.code == "unsafe_document_content"
+
+
+def test_pdf_validation_rejects_javascript_in_chained_action(
+    tmp_path: Path,
+) -> None:
+    """Action arrays under /Next must be traversed without rejecting /GoTo."""
+    path = tmp_path / "unsafe-chained-action.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=100, height=100)
+    destination = ArrayObject([writer.pages[0].indirect_reference, NameObject("/Fit")])
+    writer.root_object[NameObject("/OpenAction")] = DictionaryObject(
+        {
+            NameObject("/S"): NameObject("/GoTo"),
+            NameObject("/D"): destination,
+            NameObject("/Next"): ArrayObject(
+                [
+                    DictionaryObject(
+                        {
+                            NameObject("/S"): NameObject("/JavaScript"),
+                            NameObject("/JS"): TextStringObject("unsafe"),
+                        }
+                    )
+                ]
+            ),
+        }
+    )
+
+    with path.open("wb") as output:
+        writer.write(output)
+
+    writer.close()
+
+    with pytest.raises(ValidationError) as exc_info:
+        validate_pdf_structure(path)
+
+    assert exc_info.value.code == "unsafe_document_content"
 
 
 def test_office_validation_rejects_missing_package_part(tmp_path: Path) -> None:

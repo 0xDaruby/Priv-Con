@@ -373,3 +373,61 @@ def test_split_and_images_job_routes_return_expected_results(job_client) -> None
     image_result = client.get(f"/api/jobs/{image_status['job_id']}/result")
     assert image_result.status_code == 200
     assert image_result.content.startswith(b"%PDF-")
+
+
+def test_pdf_to_word_job_returns_downloadable_docx(
+    job_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client, _, output_dir = job_client
+
+    received_mode = ""
+
+    def fake_pdf_to_docx(
+        input_path: Path,
+        job_id: str,
+        *,
+        mode: str,
+        cancellation_check=None,
+    ) -> Path:
+        nonlocal received_mode
+        received_mode = mode
+        if cancellation_check is not None:
+            cancellation_check()
+        output_directory = output_dir / job_id
+        output_directory.mkdir()
+        output_path = output_directory / f"{input_path.stem}.docx"
+        output_path.write_bytes(_office_bytes("docx"))
+        return output_path
+
+    monkeypatch.setattr(job_service, "pdf_to_docx", fake_pdf_to_docx)
+    response = client.post(
+        "/api/jobs/pdf-to-docx",
+        files={"file": ("editable report.pdf", _pdf_bytes(100))},
+        data={"mode": "preserve_appearance"},
+    )
+
+    assert response.status_code == 202
+    status = _wait_for_status(client, response.json()["job_id"], "succeeded")
+    assert status["result_filename"] == "editable_report.docx"
+    assert "wordprocessingml.document" in status["result_content_type"]
+    assert received_mode == "preserve_appearance"
+
+    result = client.get(f"/api/jobs/{status['job_id']}/result")
+    assert result.status_code == 200
+    with zipfile.ZipFile(BytesIO(result.content)) as archive:
+        assert "word/document.xml" in archive.namelist()
+
+
+def test_pdf_to_word_job_rejects_unknown_conversion_mode(job_client) -> None:
+    client, upload_dir, output_dir = job_client
+    response = client.post(
+        "/api/jobs/pdf-to-docx",
+        files={"file": ("editable report.pdf", _pdf_bytes(100))},
+        data={"mode": "plain_text"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "invalid_conversion_mode"
+    assert list(upload_dir.iterdir()) == []
+    assert list(output_dir.iterdir()) == []

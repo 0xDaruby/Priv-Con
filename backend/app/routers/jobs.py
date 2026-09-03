@@ -33,6 +33,7 @@ from app.services.job_service import (
     job_manager,
 )
 from app.services.pdf_split_service import SplitError, validate_split_options
+from app.services.pdf_to_word_service import validate_pdf_to_word_mode
 
 router = APIRouter(
     prefix="/api/jobs",
@@ -42,6 +43,7 @@ router = APIRouter(
 
 JOB_TOOLS: frozenset[str] = frozenset(
     {
+        "pdf-to-docx",
         "docx-to-pdf",
         "pptx-to-pdf",
         "xlsx-to-pdf",
@@ -90,7 +92,13 @@ def _select_uploads(
     single_files: list[UploadFile] | None,
     multiple_files: list[UploadFile] | None,
 ) -> list[UploadFile]:
-    if tool in {"docx-to-pdf", "pptx-to-pdf", "xlsx-to-pdf", "pdf-split"}:
+    if tool in {
+        "pdf-to-docx",
+        "docx-to-pdf",
+        "pptx-to-pdf",
+        "xlsx-to-pdf",
+        "pdf-split",
+    }:
         if multiple_files or not single_files or len(single_files) != 1:
             raise ValidationError(
                 code="invalid_input",
@@ -128,7 +136,7 @@ def _validate_filename(tool: JobTool, filename: str) -> None:
 
     if tool in office_tool_keys:
         validate_extension(filename, office_tool_keys[tool])
-    elif tool in {"pdf-merge", "pdf-split"}:
+    elif tool in {"pdf-to-docx", "pdf-merge", "pdf-split"}:
         validate_pdf_extension(filename)
     else:
         validate_image_extension(filename)
@@ -164,6 +172,8 @@ def create_job(
 
         if selected_tool == "pdf-split":
             validate_split_options((mode or "").strip(), ranges)
+        elif selected_tool == "pdf-to-docx":
+            mode = validate_pdf_to_word_mode(mode)
     except (ValidationError, SplitError) as exc:
         return _error_response(400, exc)
 
