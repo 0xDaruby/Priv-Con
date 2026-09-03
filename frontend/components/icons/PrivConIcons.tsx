@@ -32,6 +32,18 @@ export function BackendMonitorIcon(props: IconProps) {
   );
 }
 
+export function PdfFileIcon(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <rect height="34" rx="6" width="34" x="3" y="3" />
+      <path
+        d="M20.2 8.2c-2.2 0-2.1 4.6.2 9.5-2.2 5.4-5.1 10.3-7.8 13.1-2.6 2.7-5.7 1.8-4.9-.7.7-2.1 4.6-3.9 10.1-4.7 4.6-.6 9.8-.3 12.7 1.4 3.5 2 2.7 4.5.6 4.7-2.9.2-7.5-3.9-10.7-10.1 2.2-5.5 3.1-10.5-.2-10.5Z"
+        strokeWidth="1.8"
+      />
+    </IconBase>
+  );
+}
+
 export function WordFileIcon(props: IconProps) {
   return (
     <IconBase {...props}>
@@ -164,6 +176,8 @@ export function ToolFileIcon({
   ...props
 }: IconProps & { readonly name: ToolIconName }) {
   switch (name) {
+    case "pdf-file":
+      return <PdfFileIcon {...props} />;
     case "word-file":
       return <WordFileIcon {...props} />;
     case "powerpoint-file":

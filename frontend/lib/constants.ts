@@ -26,7 +26,7 @@ export const TOOL_CONFIGS = {
     route: "/pdf-to-word",
     title: "PDF to Word",
     description: "Rebuild an editable Word file or preserve the exact page appearance.",
-    icon: "word-file",
+    icon: "pdf-file",
     endpoint: "/api/convert/pdf-to-docx",
     jobEndpoint: "/api/jobs/pdf-to-docx",
     acceptedExtensions: [".pdf"],

@@ -19,6 +19,7 @@ export type ToolSlug =
 export type ToolRoute = `/${ToolSlug}`;
 
 export type ToolIconName =
+  | "pdf-file"
   | "word-file"
   | "powerpoint-file"
   | "spreadsheet-file"
