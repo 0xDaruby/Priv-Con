@@ -1,0 +1,4 @@
+# Upstream notice paths can contain names such as dist or build.
+# Preserve every collected notice in this dedicated documentation directory.
+!*/
+!*

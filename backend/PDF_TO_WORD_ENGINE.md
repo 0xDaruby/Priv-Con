@@ -20,19 +20,26 @@ and automatic cleanup.
 
 ## Distribution release gate
 
-Development evaluation is approved, but public distribution is blocked until
-the dependency licensing is reviewed and recorded:
+License selection was resolved on 2026-10-16 through the open-source route:
 
-1. PyMuPDF 1.26.7 is dual licensed under AGPL-3.0 or an Artifex commercial
-   license.
-2. The installed `pdf2docx` 0.5.8 wheel reports GPLv3 metadata, while the
-   upstream repository announced a later MIT relicense. The exact distributable
-   source and license text must be reconciled before release.
-3. PrivCon must either comply with all applicable open-source obligations or use
-   appropriate commercial licensing. This is a release decision, not a runtime
-   network dependency; conversion remains on the local machine.
+1. Use PyMuPDF 1.26.7 under its AGPLv3 option. Its installed COPYING declaration
+   is preserved, and the full AGPLv3 text is supplied at the repository root.
+2. Use the pinned `pdf2docx` 0.5.8 artifact under GPLv3. Both its installed full
+   LICENSE and version-specific PyPI metadata say GPLv3. The later upstream MIT
+   relicense is not applied to this artifact. No runtime dependency was changed.
+3. PrivCon's application as a whole follows the AGPLv3 distribution policy in
+   [LICENSING.md](../LICENSING.md). GPLv3/AGPLv3 section 13 permits this
+   combination while the pdf2docx portion retains GPLv3.
 
-Do not remove this gate merely because automated tests pass.
+Public binary distribution still requires assembling and publishing matching
+corresponding source, including the engines' incorporated native dependencies,
+and shipping applicable notices. Follow [SOURCE_CODE.md](../SOURCE_CODE.md) and
+the [release checklist](../docs/licensing/RELEASE-CHECKLIST.md). The local notice
+snapshot is not proof that an unbuilt installer satisfies these obligations.
+
+Do not remove this artifact/source gate merely because automated tests pass.
+Licensing compliance does not require sending user files to a third party;
+conversion remains on the local machine.
 
 ## Fidelity verification
 

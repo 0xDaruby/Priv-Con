@@ -1,0 +1,2348 @@
+{
+  "review_date": "2026-10-16",
+  "status": "development dependency notice snapshot; not a Windows installer bill of materials",
+  "python": [
+    {
+      "name": "annotated-doc",
+      "version": "0.0.5",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/annotated-doc/0.0.5/",
+      "notices": [
+        {
+          "path": "LICENSES/python/annotated-doc-0.0.5/annotated_doc-0.0.5.dist-info/licenses/LICENSE",
+          "sha256": "fff170779a6acbf65abdb405c087f1cee1786691e4a96a4034517e4a504a0cdf"
+        }
+      ]
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "declared_license": "MIT",
+      "license_classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "pypi_release": "https://pypi.org/project/annotated-types/0.8.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/annotated-types-0.8.0/annotated_types-0.8.0.dist-info/licenses/LICENSE",
+          "sha256": "fe1049884b1a0d9342901e88e07f32925d24b3121d9972b6a6805fb9824b095d"
+        }
+      ]
+    },
+    {
+      "name": "anyio",
+      "version": "4.14.2",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/anyio/4.14.2/",
+      "notices": [
+        {
+          "path": "LICENSES/python/anyio-4.14.2/anyio-4.14.2.dist-info/licenses/LICENSE",
+          "sha256": "5361ac9dc58f2ef5fd2e9b09c68297c17f04950909bbc8023bdb82eacf22c2b0"
+        }
+      ]
+    },
+    {
+      "name": "click",
+      "version": "8.4.2",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/click/8.4.2/",
+      "notices": [
+        {
+          "path": "LICENSES/python/click-8.4.2/click-8.4.2.dist-info/licenses/LICENSE.txt",
+          "sha256": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+        }
+      ]
+    },
+    {
+      "name": "colorama",
+      "version": "0.4.6",
+      "declared_license": null,
+      "license_classifiers": [
+        "License :: OSI Approved :: BSD License"
+      ],
+      "pypi_release": "https://pypi.org/project/colorama/0.4.6/",
+      "notices": [
+        {
+          "path": "LICENSES/python/colorama-0.4.6/colorama-0.4.6.dist-info/licenses/LICENSE.txt",
+          "sha256": "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318"
+        }
+      ]
+    },
+    {
+      "name": "fastapi",
+      "version": "0.141.1",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/fastapi/0.141.1/",
+      "notices": [
+        {
+          "path": "LICENSES/python/fastapi-0.141.1/fastapi-0.141.1.dist-info/licenses/LICENSE",
+          "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
+        }
+      ]
+    },
+    {
+      "name": "fire",
+      "version": "0.7.1",
+      "declared_license": "Apache-2.0",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/fire/0.7.1/",
+      "notices": [
+        {
+          "path": "LICENSES/python/fire-0.7.1/fire-0.7.1.dist-info/licenses/LICENSE",
+          "sha256": "a5de77b62266bca0bb97bf058992f0b0f308a83a8ca55ee10fbf6bd8ed8f7ed0"
+        }
+      ]
+    },
+    {
+      "name": "fonttools",
+      "version": "4.64.0",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/fonttools/4.64.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/fonttools-4.64.0/fonttools-4.64.0.dist-info/licenses/LICENSE",
+          "sha256": "22bef80697ecfaa17f97e62b9a26dfa12820be05583e8dd12ad169b241274c99"
+        },
+        {
+          "path": "LICENSES/python/fonttools-4.64.0/fonttools-4.64.0.dist-info/licenses/LICENSE.external",
+          "sha256": "b082a5f86775b2641f01bccb8b9c82908481de5f502bb254b1e13bfc2a9f303d"
+        }
+      ]
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "declared_license": "MIT",
+      "license_classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "pypi_release": "https://pypi.org/project/h11/0.16.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/h11-0.16.0/h11-0.16.0.dist-info/licenses/LICENSE.txt",
+          "sha256": "37db5bb85926db28a427a25867f10b1232003aea1be69ccb851138adb8e6f361"
+        }
+      ]
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [
+        "License :: OSI Approved :: BSD License"
+      ],
+      "pypi_release": "https://pypi.org/project/httpx/0.28.1/",
+      "notices": [
+        {
+          "path": "LICENSES/python/httpx-0.28.1/httpx-0.28.1.dist-info/licenses/LICENSE.md",
+          "sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d"
+        }
+      ]
+    },
+    {
+      "name": "httpx2",
+      "version": "2.12.0",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [
+        "License :: OSI Approved :: BSD License"
+      ],
+      "pypi_release": "https://pypi.org/project/httpx2/2.12.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/httpx2-2.12.0/httpx2-2.12.0.dist-info/licenses/LICENSE.md",
+          "sha256": "7e7d6dbaf7fe160d39fd6e84fd02c33cab96bcbea34d36998d545bceb4a19c30"
+        }
+      ]
+    },
+    {
+      "name": "idna",
+      "version": "3.19",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/idna/3.19/",
+      "notices": [
+        {
+          "path": "LICENSES/python/idna-3.19/idna-3.19.dist-info/licenses/LICENSE.md",
+          "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+        }
+      ]
+    },
+    {
+      "name": "lxml",
+      "version": "6.1.2",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/lxml/6.1.2/",
+      "notices": [
+        {
+          "path": "LICENSES/python/lxml-6.1.2/lxml-6.1.2.dist-info/licenses/LICENSE.txt",
+          "sha256": "e7c3ce8d76331b0101cc46790ab43958ea90a364bcf962ed8763d5a818340e69"
+        },
+        {
+          "path": "LICENSES/python/lxml-6.1.2/lxml-6.1.2.dist-info/licenses/LICENSES.txt",
+          "sha256": "df682c668de65321677b5e4861dca4128a8bad8067f230956e9da3f985b3d398"
+        }
+      ]
+    },
+    {
+      "name": "numpy",
+      "version": "2.5.2",
+      "declared_license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/numpy/2.5.2/",
+      "notices": [
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/LICENSE.txt",
+          "sha256": "a804dff0ead9fadc5293456410bcbfc32bf024be9c4513459663fb7b442d2341"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+          "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+          "sha256": "aea41976c720f91bd19725c16916a1ace40eb1ea42620d340e587a5de4bbcea0"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/_core/src/highway/LICENSE",
+          "sha256": "d208152e2777ffd0126eacc1bd21c0320d69e4e6b622d21a2a12a47e8ef73763"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+          "sha256": "b0fd592d4ead563148e3977e7b589169d46a5ef2ff133c755a81af880a3fc919"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+          "sha256": "a732977853530066790c42817087f4829b518dd98d340c916acbfd227e39d3cb"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE",
+          "sha256": "585483905b13d4b42f800c55ba99e89d6e2e33ccd5f503e201c07531d148ff41"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+          "sha256": "8db000e158c162e7249787852d8c69764706502ccee725c06641b31c1e95c8af"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+          "sha256": "19060ef465e1797d682ee0fc3081bd25ab1395e995e43d25c9d13c95d9a3cd6b"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/ma/LICENSE",
+          "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/random/LICENSE.md",
+          "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+          "sha256": "cf5619f25b112d5ce7c896efffc8e610bcb345dfadcc19f2c1460aa48fff2c9e"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+          "sha256": "92c10699884321f1c2947fe2a70ab23b0fbf1507f756d89dd08f38c61fc3d4fa"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+          "sha256": "41190663b77bee5302386495a07b7eabfbfa571aa0ae2f11da6764162062fc4f"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+          "sha256": "322ac46d870c8aeead6c53adcccc839296fb3c8e456eae155081297daf7f8013"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+          "sha256": "28cad82ce1379dc529df30da78ec012d7d0d1d576b03ddcb93388aee53659f59"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy-2.5.2.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+          "sha256": "454ec7350e478e037061850b67395753b425b1cb0a34bbc26290b020bf89d763"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy/_core/include/numpy/random/LICENSE.txt",
+          "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy/ma/LICENSE",
+          "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7"
+        },
+        {
+          "path": "LICENSES/python/numpy-2.5.2/numpy/random/LICENSE.md",
+          "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a"
+        }
+      ]
+    },
+    {
+      "name": "opencv-python-headless",
+      "version": "5.0.0.93",
+      "declared_license": "Apache 2.0",
+      "license_classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ],
+      "pypi_release": "https://pypi.org/project/opencv-python-headless/5.0.0.93/",
+      "notices": [
+        {
+          "path": "LICENSES/python/opencv-python-headless-5.0.0.93/cv2/LICENSE-3RD-PARTY.txt",
+          "sha256": "c1d60169b55cee56452b227c2fd2a7b9ddda3dd3741065f1c6201072be73fadb"
+        },
+        {
+          "path": "LICENSES/python/opencv-python-headless-5.0.0.93/cv2/LICENSE.txt",
+          "sha256": "edef0fac1eb08d29d34563f724742e078da2513e196133a12c6ad9ff01e26107"
+        },
+        {
+          "path": "LICENSES/python/opencv-python-headless-5.0.0.93/opencv_python_headless-5.0.0.93.dist-info/LICENSE-3RD-PARTY.txt",
+          "sha256": "c1d60169b55cee56452b227c2fd2a7b9ddda3dd3741065f1c6201072be73fadb"
+        },
+        {
+          "path": "LICENSES/python/opencv-python-headless-5.0.0.93/opencv_python_headless-5.0.0.93.dist-info/LICENSE.txt",
+          "sha256": "edef0fac1eb08d29d34563f724742e078da2513e196133a12c6ad9ff01e26107"
+        }
+      ]
+    },
+    {
+      "name": "pdf2docx",
+      "version": "0.5.8",
+      "declared_license": "GPL v3",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/pdf2docx/0.5.8/",
+      "notices": [
+        {
+          "path": "LICENSES/python/pdf2docx-0.5.8/pdf2docx-0.5.8.dist-info/LICENSE",
+          "sha256": "8b1ba204bb69a0ade2bfcf65ef294a920f6bb361b317dba43c7ef29d96332b9b"
+        }
+      ]
+    },
+    {
+      "name": "pillow",
+      "version": "12.3.0",
+      "declared_license": "MIT-CMU",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/pillow/12.3.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/pillow-12.3.0/pillow-12.3.0.dist-info/licenses/LICENSE",
+          "sha256": "4f7866a74802c6326f81faff59a56546b6aec2b10b91973e0e9308de95e79857"
+        }
+      ]
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.4",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/pydantic/2.13.4/",
+      "notices": [
+        {
+          "path": "LICENSES/python/pydantic-2.13.4/pydantic-2.13.4.dist-info/licenses/LICENSE",
+          "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
+        }
+      ]
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.15.0",
+      "declared_license": "MIT",
+      "license_classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "pypi_release": "https://pypi.org/project/pydantic-settings/2.15.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/pydantic-settings-2.15.0/pydantic_settings-2.15.0.dist-info/licenses/LICENSE",
+          "sha256": "eb355a753e020346d33d83bf9769135b89fc610568ac531a01c295bcee7fd998"
+        }
+      ]
+    },
+    {
+      "name": "pydantic_core",
+      "version": "2.46.4",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/pydantic_core/2.46.4/",
+      "notices": [
+        {
+          "path": "LICENSES/python/pydantic_core-2.46.4/pydantic_core-2.46.4.dist-info/licenses/LICENSE",
+          "sha256": "fbe7f615f18d135c07000e5a86325db27f42c7729699ef166ac1f7a3f4586bf4"
+        }
+      ]
+    },
+    {
+      "name": "pytest",
+      "version": "9.1.1",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/pytest/9.1.1/",
+      "notices": [
+        {
+          "path": "LICENSES/python/pytest-9.1.1/pytest-9.1.1.dist-info/licenses/LICENSE",
+          "sha256": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b"
+        }
+      ]
+    },
+    {
+      "name": "pypdf",
+      "version": "6.16.1",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/pypdf/6.16.1/",
+      "notices": [
+        {
+          "path": "LICENSES/python/pypdf-6.16.1/pypdf-6.16.1.dist-info/licenses/LICENSE",
+          "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
+        }
+      ]
+    },
+    {
+      "name": "PyMuPDF",
+      "version": "1.26.7",
+      "declared_license": "Dual Licensed - GNU AFFERO GPL 3.0 or Artifex Commercial License",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/PyMuPDF/1.26.7/",
+      "notices": [
+        {
+          "path": "LICENSES/python/PyMuPDF-1.26.7/pymupdf-1.26.7.dist-info/COPYING",
+          "sha256": "40e60697600535eabfb5ae05f72829d88cfe8d02dd4792f5a754f6f51dabe55b"
+        }
+      ]
+    },
+    {
+      "name": "python-docx",
+      "version": "1.2.0",
+      "declared_license": "MIT",
+      "license_classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "pypi_release": "https://pypi.org/project/python-docx/1.2.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/python-docx-1.2.0/python_docx-1.2.0.dist-info/licenses/LICENSE",
+          "sha256": "7652f271e46d0d533e9dc463f3b5fcbdcacf4d6a9c8d6b554d15efd0f37f6132"
+        }
+      ]
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.3",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/python-dotenv/1.2.3/",
+      "notices": [
+        {
+          "path": "LICENSES/python/python-dotenv-1.2.3/python_dotenv-1.2.3.dist-info/licenses/LICENSE",
+          "sha256": "80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9"
+        }
+      ]
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32",
+      "declared_license": "Apache-2.0",
+      "license_classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ],
+      "pypi_release": "https://pypi.org/project/python-multipart/0.0.32/",
+      "notices": [
+        {
+          "path": "LICENSES/python/python-multipart-0.0.32/python_multipart-0.0.32.dist-info/licenses/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    },
+    {
+      "name": "starlette",
+      "version": "1.6.0",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/starlette/1.6.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/starlette-1.6.0/starlette-1.6.0.dist-info/licenses/LICENSE.md",
+          "sha256": "dcb95677a02240243187e964f941847d19b17821cf99e5afae684fab328c19bf"
+        }
+      ]
+    },
+    {
+      "name": "termcolor",
+      "version": "3.3.0",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/termcolor/3.3.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/termcolor-3.3.0/termcolor-3.3.0.dist-info/licenses/COPYING.txt",
+          "sha256": "e79b6bd82962c1330caaa7c42278567b08667777673f8e2371a624d5715d4c0e"
+        }
+      ]
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "declared_license": "MIT",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/typing-inspection/0.4.4/",
+      "notices": [
+        {
+          "path": "LICENSES/python/typing-inspection-0.4.4/typing_inspection-0.4.4.dist-info/licenses/LICENSE",
+          "sha256": "804b59b25f2c31bd278f9202a19ae49a3945aa2664387e2d0a128c7cacc61ec3"
+        }
+      ]
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "declared_license": "PSF-2.0",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/typing_extensions/4.16.0/",
+      "notices": [
+        {
+          "path": "LICENSES/python/typing_extensions-4.16.0/typing_extensions-4.16.0.dist-info/licenses/LICENSE",
+          "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+        }
+      ]
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.52.4",
+      "declared_license": "BSD-3-Clause",
+      "license_classifiers": [],
+      "pypi_release": "https://pypi.org/project/uvicorn/0.52.4/",
+      "notices": [
+        {
+          "path": "LICENSES/python/uvicorn-0.52.4/uvicorn-0.52.4.dist-info/licenses/LICENSE.md",
+          "sha256": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371"
+        }
+      ]
+    }
+  ],
+  "frontend_production_lock_entries": [
+    {
+      "lock_path": "node_modules/@emnapi/runtime",
+      "version": "1.11.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/colour",
+      "version": "1.1.0",
+      "declared_license": "MIT",
+      "integrity": "sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/@img/colour/LICENSE.md",
+          "sha256": "e2eaa4603c14cb26f301e88648c12a853fa3f0f5da6d4b0972958c666e7f2ab8"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-darwin-arm64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-Uhfl4V4lhP2nbUVF9+hyH1+luj86f1gUFeo8ALYxFoULoU+G87D43BfeMP8XHsk9boxAnCY/bf2EHwhA7MuGsA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-darwin-x64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-hWniXY3bG5qKpkKrAwPe4y+VTPmf086YQAnkxWh7uA1YrlRouWGa0M0Mxj3ZjnXFkv7/TD1bTy9lGUK26vRvWw==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-freebsd-wasm32",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-lIsKw/BU+kjB4eZjxrYrZmwOJYi3Ajrv66iAlBmUPyKc3HpnloevB1g3wxGD9P/5BbQ1brBGl65VRRrCvQDEqA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-darwin-arm64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-suTBPTDGrI9WodccaDdwZItTSaBYASlBk1NSfElSHrUfzu3szG6lvIF58+WiFvnfzuK8ZBFS5zE00PxqxnRiPg==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-darwin-x64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-FVJZ5mITMobmXIz/hPDTw0EintTW5H3WfrxwLqEqjiIihlu+hVRyGrFQ60xl0Lxn7Bt3zdpevPaQi0HEzqz9fw==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linux-arm",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-3rbU4vqXXc3hY/OiXdl52xZvT0F1yEngWfvqudtPJg/KkyiaQw2DRsFrNzpmLvfavbwOq3qXn36GP8obHRULQA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linux-arm64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-0DaL0A6Xu6sQSQFwe4iVCrKWU2cCTItnRsYsCdxAMm9NF6twAA9BKnoqy4hqz4+azQ0JHuA26qiUKsf1XJ/v5A==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linux-ppc64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-cdn1OvUBwsXhbC0zSzJnNzf5MZ/mTrobawDvNXBTxe8VtqKAm0sRuEY2Evzovb/w9JMk4TvRxqt1mekSuJz64w==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linux-riscv64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-HjPVx7yKz+0lqdhDlTw1tt90wamBoxhiXpvl1XZpJLiHH4RCJ5yDTqH+VlYPv2fwFs89JFw4c1IexYOcQUi4IQ==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linux-s390x",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-neWLh+3yCNThxnfy3c4BbVBeGgt9aftno+XbT56iK28RgeDs3UOFWviLWlUu0bArYVYJaFDK+RRohbicUNCm8Q==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linux-x64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-4vKmvAst9nrowcqquKFAyZJUDolUaIp8uRiN0mWFguJ1IplC9/pitXtlnnlU4aa/eJw3J7i67V+pwUL+wZGdsA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linuxmusl-arm64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-Y9kQaLMuNoB0bPYOOdcZMaseNrFpPodIWWMrx+CZyydf2xn68j9WYc6sWWRrDwNkzCQjKYfc68L7jKjGlHMibw==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-libvips-linuxmusl-x64",
+      "version": "1.3.3",
+      "declared_license": "LGPL-3.0-or-later",
+      "integrity": "sha512-fj8Mv0HHfD1Rr+4I68+3agJynxDWtBFgicTbSOb9Bke6pIwzGcJ+RX/yHjmiEGFMCavY/dxvem7MyNaJF+wDiw==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linux-arm",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-7OAS8gI0EReKGVN2HssHlM6umJgxF5VI3xN0p9FA91p/YO+ou5hiNghLdZ5BEHztwaaK5+bLKRf8x/o2L2nk9A==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linux-arm64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-De4jpEnAU8Hd5oT0j1G3uL4ZvTuipVMn7YC6vPaJhy6/7EwEae0SVAoBrUMYQbkLGDm85taVWwuPc1a44LTzCQ==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linux-ppc64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-2oYZJeIl4kCcMGk4ouZVjnkCtFrpQFlNEtJ6GbxzhHQchwH0NH/qEb9ykmOl29dqwMq+JhFdZn+1ak2FKhI9fQ==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linux-riscv64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-cPbNChoRURAWdebDIHSenxRpgEdy7JkPydSnUxRm9VvKD7m0/xVaR/8Fzlu81pk5nHEvHH87UZUA7cTtwnbJSA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linux-s390x",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-RY0JFY8Fd6RonCBtHz+DvadaPkXDSI1AUn6yWL9TipqkZ1vY8w8evqdgyDFnkm4/K1ve1TvZiaePP5oSd4+WVQ==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linux-x64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-9qvvEAuk8k89TfWUoX2htWjbAMX8p+NxCppjpcg5k6xMsjhBQPTsoIh36h9Qde4WRuGpJeYnOjdosDn/cnv+OA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linuxmusl-arm64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-KB5jxpfWQTr0nc3xdHtWChdbifHrBGsd2SM62Eyxrl8afikm+f5qGBU75SJIZBT/S1MC8XyacdlXBMSWq6OURA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-linuxmusl-x64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-f+eZJZIQNEEd26RPSW+76chwOf1XtA2Y/O+5ocVyLliHkeih3e+jhLVBdNTd2rS3IbNXK8+ug93Vf5ZXtF5Lxg==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-wasm32",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
+      "integrity": "sha512-zQnl4Kwp7Q6NHsENtU2T/00Zi+w3AQNwz3+UaTyVBy2FpXrzXzGjndpK61onhZjRtRpQXxCTeqw19bVyXOh7jA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-webcontainers-wasm32",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-ESfNkywmCfPNyaZjxooddJQiQ+l/nTpGEOGthxiLnIHXC/CmcBixnfwUleX9mCz9ovrUUvKMap/pm8RYbzfwaA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-win32-arm64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0 AND LGPL-3.0-or-later",
+      "integrity": "sha512-iNdlBX9gLVvqe2I3uIJSIKTq6wckP/DYxZtcqxm09x5Gi24DnFBmPAWZmr60ZyYMG0xlzo6goG3670ar+RXvRw==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-win32-ia32",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0 AND LGPL-3.0-or-later",
+      "integrity": "sha512-kqRsbaa5CS6KHlpxnN7WhE6vAAugXyZButpRdvDWetlv6Qv4N9WTcrWzF7tXfB9T7MsoadqdI8hmwLq6UlLvtw==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@img/sharp-win32-x64",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0 AND LGPL-3.0-or-later",
+      "integrity": "sha512-XtmnYhBcrORsJ4XJngyzr/EWP0hRZLAZRFaApdKuviyqF78+ylxh2y06ZmtULAMOnObJ3ucpN0AcwSWnMowTRg==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/@img/sharp-win32-x64/LICENSE",
+          "sha256": "dc1f5d2d43c5531dfe0acaf4e950ea5dbe3e61e1850cf0e983bda7efc10d6693"
+        },
+        {
+          "path": "LICENSES/npm/@img/sharp-win32-x64/README.md",
+          "sha256": "280e7d164420cfc1a1b192a582bf53e3dba97b86a5c3575f878b674ad1d41e13"
+        },
+        {
+          "path": "LICENSES/npm/@img/sharp-win32-x64/versions.json",
+          "sha256": "d551c859958f06b8088957f679c29be1ff53760191f7401e8183460fc5f58cf4"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/@next/env",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-U2eYQRwXj+dsqxV79zFqExDdatnNY/ZWc2nsJU1p/OgT7fd3dXwlF6OjYaFQCfMoeTA19PWq+wVmYgimVA+V+g==",
+      "installed": true,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-darwin-arm64",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-8Hiv32QJPwdV6KYJ8meR9SBA061tQqnIKTJDocvOXlEQqib0xMFpzArosuffFUUc0sslbh7QQ8a3Yey1QV8EIw==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-darwin-x64",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-A1lgKgwVchRYmSe467zdwhxT9040dd8lH+o65sL5Jet8fjB4kegw/rDyPIpYVRb6jAqwXFOJpjIXJLxQKLiE3A==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-linux-arm64-gnu",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-bf0FIssMFueU2dm7vQEWWxk0c8UjKTdW0yzuh0sQsD8pf1+KCLDdaqhYZNMYGmXwEOiHAUzgBKudovIlcvvBjg==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-linux-arm64-musl",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-W7viwCk9JY/cAkdz/A273rd5bb3RgT/IHwR7Upv90tunjBWNtAAhGhoecHh+teRNRSinuAFmE+l7fwZ4YKkrXg==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-linux-x64-gnu",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-0W46zw1N3ODpI6n0GeivHvvob1pooozgZVqy65k0mh4/7vr+FbY9+WpHzNVXjHipJf/A3FDheBG19H1s5A25rA==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-linux-x64-musl",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-H4mBso8ZTMBPtdT0PN0pBx2ayTvQuTuvS6qT13d77yVFJXAPCxkyIhLTmdMaGTJs0krQYI/qpzdHijCeihXhbg==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-win32-arm64-msvc",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-cTMUJpcEGmeywofCUfhR+rSsoE33+rVPnPEYNTNdLNlsOeEg/vktOsKUSTb28vUGqD2jkm4Zaskcwn7OCI6FQg==",
+      "installed": false,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@next/swc-win32-x64-msvc",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-2VR4cTBzHXaBjnGsuH6GyJjENzQOmHeAh11uY1iUhjm3j5dEUrVJuUj+VL78jaGi/Dik8xS76zEj18BsFhlVZQ==",
+      "installed": true,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/@swc/helpers",
+      "version": "0.5.23",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/@swc/helpers/LICENSE",
+          "sha256": "d96eba1f1881334d50ffc144276dfa98e147a415e7c591ecdfcb81680361dc91"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/baseline-browser-mapping",
+      "version": "2.11.20",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-H0ulySigv6icDJ1F7SjtdCD6PrhTpdYCmP0CactWy1+ekh0AFd0o1Wn5T8b+hnTmdBx19u9yhL6wvCylXMY7zw==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/baseline-browser-mapping/LICENSE.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/caniuse-lite",
+      "version": "1.0.30001810",
+      "declared_license": "CC-BY-4.0",
+      "integrity": "sha512-TITQPUkaz+aVk5GL6NhOdwk1aEaNTSDPsGFWrTuhKGtjTF70jL/Oht2W4c6rXUe5fu7Ie19VIahAXHIIiWWNeg==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/caniuse-lite/LICENSE",
+          "sha256": "fd3a263fe19ed8faa9068b43abaebafc02c77897b0c6fc09abc04bb592e5f16e"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/client-only",
+      "version": "0.0.1",
+      "declared_license": "MIT",
+      "integrity": "sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==",
+      "installed": true,
+      "notices": []
+    },
+    {
+      "lock_path": "node_modules/detect-libc",
+      "version": "2.1.2",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/detect-libc/LICENSE",
+          "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/nanoid",
+      "version": "3.3.18",
+      "declared_license": "MIT",
+      "integrity": "sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/nanoid/LICENSE",
+          "sha256": "da4db1480d9beea3483a2eda5c53b22238d0827d57da162b48f122e04d2d9987"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/next",
+      "version": "16.3.3",
+      "declared_license": "MIT",
+      "integrity": "sha512-tuRTx1nQ/yVw83cwJBo9F+njGUgMn3UHQycreWHB8XsStvvAh1AthbI8/4IpKnFaF58F+iSiHejYOlMQ/eq83g==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@babel/runtime/LICENSE",
+          "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@hapi/accept/LICENSE",
+          "sha256": "ff96bbd6a7408c166f16dbed7f2c87a8061e5a21289ec8f2d3069f8d3b15fc0a"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@mswjs/interceptors/ClientRequest/LICENSE",
+          "sha256": "bb3a5cb8fb224f632970e31425348f556f7a83b165d5384ea5e142575f5c412e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@napi-rs/triples/LICENSE",
+          "sha256": "7b34e99bc43641767fded49f7f03563ffd50c689b1f3b0d50700b4727bc4ae24"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@opentelemetry/api/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@vercel/blob/LICENSE",
+          "sha256": "2b6fc3f4a995e6ad29f4e2ed8881a32979058b8d6557efaa6d86b7e985849f40"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@vercel/detect-agent/LICENSE",
+          "sha256": "b070d77bfb2c52a1dd6996de0ce5f64c49a0ca55c889b163a963ddf5cb001ee2"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@vercel/nft/LICENSE",
+          "sha256": "0b31f3a6ab66b272b7de451df39835f310a309a06b1a8aafb3a2fdab20adc166"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@vercel/og/LICENSE",
+          "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@vercel/og/satori/LICENSE",
+          "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/@vercel/routing-utils/LICENSE",
+          "sha256": "b070d77bfb2c52a1dd6996de0ce5f64c49a0ca55c889b163a963ddf5cb001ee2"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/acorn/LICENSE",
+          "sha256": "76a876cf886ff9be2a8b5e2e86514fed06223c8c9f0c1e9ee9606e93841e00b7"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/anser/LICENSE",
+          "sha256": "6d2abc90a426cf65bbf84f7cedf9487f7ff86a3daf0e130b335a45c112f040d0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/assert/LICENSE",
+          "sha256": "6239c6144c31e58cf925c34483606969c555574d64ffa96518ab5d7f45c75d43"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/async-retry/LICENSE",
+          "sha256": "8cec82f7beeab8459fa6165c973f5cd6f89aceea7a07de0aa8fc30a9dd339a05"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/async-sema/LICENSE",
+          "sha256": "291ff3e2bd22891edef553930da53ba64adf79d83f0bd1c5b7f6fe9727526b37"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/babel/LICENSE",
+          "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/browserify-zlib/LICENSE",
+          "sha256": "ddd770379e07bf0574dfaa4485be80a23b3248b36d09f33ec79276c09b829daf"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/browserslist/LICENSE",
+          "sha256": "f25bf9bf3ae8984bcd43bf7fb8f78e7eec8d577081fb8d0989cfa7c67ecebb8e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/buffer/LICENSE",
+          "sha256": "06bafa45fdad2579ba0e43b0c9b2c6290287c99c4203c300254a462b38a307f6"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/busboy/LICENSE",
+          "sha256": "d06b5d27bbbbe22c36b1fd88406b1208876e2d37d795f5b8eaed951a459a3111"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/bytes/LICENSE",
+          "sha256": "e3b44af066615de2ea48d18d852d0762f18c0b2efcea714fa48a6f729d405b85"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/ci-info/LICENSE",
+          "sha256": "25bd22427e27b0d3f1c3da2670bb44b622bcced22ebdf4777d5488ac129370a1"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/cli-select/LICENSE",
+          "sha256": "a8e260b5b60eb27746ff2c5967489e6878c5a6ba99400cbec84c89a9b49a46ca"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/commander/LICENSE",
+          "sha256": "04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/comment-json/LICENSE",
+          "sha256": "9dbd86998d3cdafc1d8c298aea636146568d05d429b81386e60cfce11e6cedb6"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/compression/LICENSE",
+          "sha256": "23d466b1b134b415b66fa50c6526b4cf3e7b9258554da88d3abb371721e7ce68"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/conf/LICENSE",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/content-disposition/LICENSE",
+          "sha256": "bd47ce7b88c7759630d1e2b9fcfa170a0f1fde522be09e13fb1581a79d090400"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/content-type/LICENSE",
+          "sha256": "257aed98914108e91a337912727b6a802eef218248507f74b76faffaff517a38"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/cookie/LICENSE",
+          "sha256": "c02110eedc16c7114f1a9bdc026c65626ce1d9c7e27fd51a8e0feee8a48a6858"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/cross-spawn/LICENSE",
+          "sha256": "aaa78451b6fecd1b9c4594c796c133c0e90cad100372ff8bc6de615e9ef9adf1"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/crypto-browserify/LICENSE",
+          "sha256": "6134c69bc22c8289252e70de3af20bd67071233459055be74d83acfcc4865e7e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/debug/LICENSE",
+          "sha256": "98c970de440dcfc77471610aec2377c9d9b0db2b3be6d1add524a586e1d7f422"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/devalue/LICENSE",
+          "sha256": "e399db7e952e45cae84f1b53d72ba8dbad2daaa7ab8cd1f0ab72fea5ab73b225"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/domain-browser/LICENSE",
+          "sha256": "fc06db8dd5e7840db84ab328d9f58bdb91a56fbbf045bb977c11fcd07e2d8e3e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/edge-runtime/LICENSE",
+          "sha256": "e4f76a7a19ef2989dd79339bd3abf8afcf1d6f065e5a10c76c19415ffd727eb3"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/events/LICENSE",
+          "sha256": "631987b7616a325a5b97566c232418481ddf7dbb5ecadefb991e791876cc2599"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/find-up/LICENSE",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/fresh/LICENSE",
+          "sha256": "a0ec0dab16b3666f24950f86d257930ac2ad475557b4bfe245620e0817d8a45d"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/glob/LICENSE",
+          "sha256": "6236fa0b88a4a0cce3dda0367979491b2052b3c8d6b1c10b3668de083e86a7f0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/gzip-size/LICENSE",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/https-browserify/LICENSE",
+          "sha256": "ff151c00207c908581639851dd8504ce4255be0650b2b236edec2aa90342b0cd"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/httpxy/LICENSE",
+          "sha256": "4249bd020d1b5c503d20a196c1b686b3bdebcd1c7ac06909c546d9624c64f79b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/icss-utils/LICENSE",
+          "sha256": "b2b54c738525e98cc42d4a1c239c9d8421507816acce98950e81d0943daae68e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/ignore-loader/LICENSE",
+          "sha256": "62ba766e9b50f9b175b0229f4ea03e93730c9180408acec50dd617e9ae1fa059"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/image-size/LICENSE",
+          "sha256": "3109783dad7527b490aabc49c3cb148573c19b41b843e70cf9388a93f3d7fccd"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/ipaddr.js/LICENSE",
+          "sha256": "62568a2d1337b77171ecca9db10579163446de1ba6151678e81f06cdc199971b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/is-animated/LICENSE",
+          "sha256": "e08c030e1274fadc495c71e0489612f0c74673b69ae8e41460526c233a94a728"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/is-docker/LICENSE",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/is-wsl/LICENSE",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/jest-worker/LICENSE",
+          "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/json5/LICENSE",
+          "sha256": "53e59feb13058722d977c699eb0407c7bce2f93c949b681bbd2ff31698535927"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/jsonwebtoken/LICENSE",
+          "sha256": "2144eb6894cb440fde6b2b3aaae3b617c8f1dc9bb19813079dcf62ec6c517042"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/loader-runner/LICENSE",
+          "sha256": "498d39c83164cf8de195090f5564fc0308ab271344ca2f95484a7f1020952d00"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/loader-utils2/LICENSE",
+          "sha256": "9068a8782d2fb4c6e432cfa25334efa56f722822180570802bf86e71b6003b1e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/loader-utils3/LICENSE",
+          "sha256": "9068a8782d2fb4c6e432cfa25334efa56f722822180570802bf86e71b6003b1e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/lodash.curry/LICENSE",
+          "sha256": "ffd8b33b354585f4ce119f19c53728281e48a97b074491eb6bf6d5c5ff305272"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/lru-cache/LICENSE",
+          "sha256": "451ec07eeb9c4e1b86de9abdaa426462a8be48f887ec7421cf0bbb9c769555ab"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/mini-css-extract-plugin/LICENSE",
+          "sha256": "9068a8782d2fb4c6e432cfa25334efa56f722822180570802bf86e71b6003b1e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/nanoid/LICENSE",
+          "sha256": "da4db1480d9beea3483a2eda5c53b22238d0827d57da162b48f122e04d2d9987"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/native-url/LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/neo-async/LICENSE",
+          "sha256": "811238ba7d85f6fe6b820703a32f92705bcf77bc352ddc3476783491c64a129a"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/node-html-parser/LICENSE",
+          "sha256": "ea75e9321945b7f0bc4644da1e404ad76ce55e9bc05cae3b2f5f2d973aede83b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/ora/LICENSE",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/os-browserify/LICENSE",
+          "sha256": "d25d1d6d28c35cb6f358e2833e405c4e53fec2fa24d156323ddea5cd438d3407"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/p-limit/LICENSE",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/p-queue/LICENSE",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/path-browserify/LICENSE",
+          "sha256": "a22b9d5763f574e5db347c30acc0b33eaf4846767c03d2e27d012e864e79a824"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/path-to-regexp/LICENSE",
+          "sha256": "4eeb3271453a891df609e5a9f4ee79a68307f730c13417a3bfeffa604ac8cf25"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/picomatch/LICENSE",
+          "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-flexbugs-fixes/LICENSE",
+          "sha256": "f26c92c1c16e78c6b1f7474792f7195b7abc851caccb4a73dcc5b3c31efc7321"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-modules-extract-imports/LICENSE",
+          "sha256": "9e534cfb7f7ae1300e16fe1ee7d203fdfe707dc932429c37246f747c3699ee14"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-modules-local-by-default/LICENSE",
+          "sha256": "dd40f37957ddcb6a6157f40b677d6f43697583f956144fbce25443e35630453e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-modules-scope/LICENSE",
+          "sha256": "7774c8c4a3f750b294b416818062201a404fc2d6c8756d8b89a1688e24b5d5a7"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-modules-values/LICENSE",
+          "sha256": "655287aefbf8e292057318c385d77767b1dd9819c87709fd26730b7090efe4d9"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-preset-env/LICENSE",
+          "sha256": "597756adcb51f243ef4fb386920377f61d012ace0904364e1a8ee9aaec6afc84"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-safe-parser/LICENSE",
+          "sha256": "c4630ac8b89cb317ac5bdd60ac5e4e185eab9bd5151a0c7b3afa41aa83d7ec9b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-scss/LICENSE",
+          "sha256": "c4630ac8b89cb317ac5bdd60ac5e4e185eab9bd5151a0c7b3afa41aa83d7ec9b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/postcss-value-parser/LICENSE",
+          "sha256": "3687447039151857a6ba378db062172c7f33d4aa70a615c87a43a9c50e990485"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/process/LICENSE",
+          "sha256": "59a400d04c5078579acc27ddd6452c1bdf763f9506e01364700935fbb1a7c91b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/querystring-es3/LICENSE",
+          "sha256": "cb72d9714ddc21e758d63f423be0caddf909d23ccbb10a2f5201a870818e4f57"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/raw-body/LICENSE",
+          "sha256": "c8e6bca7230689d536a3bd7158f66e9c4f89f95d0748743a0370ac229e9023ad"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-dom/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-dom-experimental/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-experimental/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-is/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-refresh/LICENSE",
+          "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-server-dom-turbopack/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-server-dom-turbopack-experimental/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-server-dom-webpack/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/react-server-dom-webpack-experimental/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/regenerator-runtime/LICENSE",
+          "sha256": "51887a3d47051ac2fce1210562e5b9fe0830a8a8fabeb272c2d586eeb18a05fd"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/safe-stable-stringify/LICENSE",
+          "sha256": "3a6d6de49d284a36c5d271ef0e62eca1838cc460dd7630e3f2c347c8f5b2232a"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/sass-loader/LICENSE",
+          "sha256": "2af12ca8b612a22e6659ae68e0e59ee7ac792718c45524a989b512c49c5f5879"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/scheduler/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/scheduler-experimental/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/schema-utils2/LICENSE",
+          "sha256": "9068a8782d2fb4c6e432cfa25334efa56f722822180570802bf86e71b6003b1e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/schema-utils3/LICENSE",
+          "sha256": "9068a8782d2fb4c6e432cfa25334efa56f722822180570802bf86e71b6003b1e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/semver/LICENSE",
+          "sha256": "4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/send/LICENSE",
+          "sha256": "25a328069fe771f8ed5b6f983ed4b0e6c84b3312ac0f69b28c3d52dc277962c9"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/serve-handler/LICENSE",
+          "sha256": "be8ba42db3b7c3dbb064bcdc1bbbb191c0a39c8851c2a53564e97c7eea301bca"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/shell-quote/LICENSE",
+          "sha256": "8bb16db1b047019e4395965f2cf3611b06c34bf86dc2d0210b3c3f91b53c21fe"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/source-map/LICENSE",
+          "sha256": "6cb0631f71c7749763fd3dd1d5bee52dd1070ec17f2edc1710079ad070bd2fbd"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/source-map08/LICENSE",
+          "sha256": "6cb0631f71c7749763fd3dd1d5bee52dd1070ec17f2edc1710079ad070bd2fbd"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/stacktrace-parser/LICENSE",
+          "sha256": "e1898814043cb5500483d9c8517edda824b352f696d35e5043fcfb537c221531"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/stream-browserify/LICENSE",
+          "sha256": "96e5193183476a03da6667d217ce14110191d26ee105338086e94339edf40d5a"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/stream-http/LICENSE",
+          "sha256": "a0e6357a5e8ea65827addeb383e0948a1874d2f46bc7feaf6349b7a376ed6e98"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/string_decoder/LICENSE",
+          "sha256": "11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/strip-ansi/LICENSE",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/superstruct/LICENSE",
+          "sha256": "0f644bc01d85e4b1958bdfe5a851704bd886404c78188d4d6fba43dc8293bc91"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/tar/LICENSE",
+          "sha256": "8a1af140fdfbf5afd3df27f7e662f989c5b963a300020dfafce42033cae9e004"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/terser/LICENSE",
+          "sha256": "901d0a7fcaccaae9917d165039c0473c354e5da2e0e94140dde67aad9ffb19da"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/text-table/LICENSE",
+          "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/timers-browserify/LICENSE",
+          "sha256": "d5f14c3258420dfe5a3b641a143d6e6dd90eabb5962244d937e25699c3a45ec9"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/tty-browserify/LICENSE",
+          "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/ua-parser-js/LICENSE",
+          "sha256": "fb9548e36708f09ae0cc1047ebd8153928bfe5bed67e4051f0ace552bdcbf0b3"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/util/LICENSE",
+          "sha256": "6239c6144c31e58cf925c34483606969c555574d64ffa96518ab5d7f45c75d43"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/vm-browserify/LICENSE",
+          "sha256": "3a62887f73cd035ac1068bc0127ce94291f7a03843391f56df3520e2ca2037f8"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/watchpack/LICENSE",
+          "sha256": "9068a8782d2fb4c6e432cfa25334efa56f722822180570802bf86e71b6003b1e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/web-vitals/LICENSE",
+          "sha256": "bfdeded4040e05da31ca9b6239dc83bd23fa26ac8db87342a7ca4363f68916ff"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/web-vitals-attribution/LICENSE",
+          "sha256": "bfdeded4040e05da31ca9b6239dc83bd23fa26ac8db87342a7ca4363f68916ff"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/webpack/LICENSE",
+          "sha256": "9068a8782d2fb4c6e432cfa25334efa56f722822180570802bf86e71b6003b1e"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/webpack-sources1/LICENSE",
+          "sha256": "214d0ac13edb475ec426df1979d96fd46b443debc466c0fb592e32152ae5a940"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/webpack-sources3/LICENSE",
+          "sha256": "214d0ac13edb475ec426df1979d96fd46b443debc466c0fb592e32152ae5a940"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/write-file-atomic/LICENSE",
+          "sha256": "ea7f376fe7a1fc28572b83ac8f806d92effb31852b9981bc9ba9d5266caa6b28"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/ws/LICENSE",
+          "sha256": "dcd0a622a3a2c94fe3aa6238b76363f87df442afe788cbad966afe943ed62281"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/zod/LICENSE",
+          "sha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8"
+        },
+        {
+          "path": "LICENSES/npm/next/dist/compiled/zod-validation-error/LICENSE",
+          "sha256": "03cc9a630489a2544b799548a0e8b134f382fe09fa06dc22b339091b28b8f4a8"
+        },
+        {
+          "path": "LICENSES/npm/next/license.md",
+          "sha256": "ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/next/node_modules/postcss",
+      "version": "8.5.23",
+      "declared_license": "MIT",
+      "integrity": "sha512-g50586zr4bZmwFiTlflMu8E0bDTb5I5gertgwAKmsdUlTQIhZtunzUlD1WSzwcVWPoAVpsrA6vlfCD7oXvRwgg==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/next/node_modules/postcss/LICENSE",
+          "sha256": "5be1f3465bba68a626777f984878814aaf35e7ef8e9fd314d469bcf887050fb8"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/picocolors",
+      "version": "1.1.1",
+      "declared_license": "ISC",
+      "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/picocolors/LICENSE",
+          "sha256": "6582629e2979466878f6014313dcc2f3756c9616148682227ce3063dde310750"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/react",
+      "version": "19.2.8",
+      "declared_license": "MIT",
+      "integrity": "sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/react/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/react-dom",
+      "version": "19.2.8",
+      "declared_license": "MIT",
+      "integrity": "sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/react-dom/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/scheduler",
+      "version": "0.27.0",
+      "declared_license": "MIT",
+      "integrity": "sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/scheduler/LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/sharp",
+      "version": "0.35.4",
+      "declared_license": "Apache-2.0",
+      "integrity": "sha512-n++8XWcj+jCOr2IOl7h8LbKnGBDY4aPbmprMONBNFdn0ImXqpGVv5zliDs0V9HbmbCQLpbuo2ej9rAoOQTvMDA==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/sharp/LICENSE",
+          "sha256": "73ba74dfaa520b49a401b5d21459a8523a146f3b7518a833eea5efa85130bf68"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/sharp/node_modules/semver",
+      "version": "7.8.5",
+      "declared_license": "ISC",
+      "integrity": "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/sharp/node_modules/semver/LICENSE",
+          "sha256": "4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/source-map-js",
+      "version": "1.2.1",
+      "declared_license": "BSD-3-Clause",
+      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/source-map-js/LICENSE",
+          "sha256": "6cb0631f71c7749763fd3dd1d5bee52dd1070ec17f2edc1710079ad070bd2fbd"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/styled-jsx",
+      "version": "5.1.6",
+      "declared_license": "MIT",
+      "integrity": "sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/styled-jsx/license.md",
+          "sha256": "24d4a4580df855c345705b3016404f0c9da7e7674dc3b21a3ce7d0e5d0c37e2d"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/tslib",
+      "version": "2.8.1",
+      "declared_license": "0BSD",
+      "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/tslib/CopyrightNotice.txt",
+          "sha256": "da16ddb65f8ca390998fb99223d0112498b56b45784d00afd77ff8ce1ac4de8b"
+        },
+        {
+          "path": "LICENSES/npm/tslib/LICENSE.txt",
+          "sha256": "210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751"
+        }
+      ]
+    }
+  ],
+  "libreoffice_local_reference": [
+    {
+      "path": "LICENSES/libreoffice-local-reference/license.txt",
+      "sha256": "4a4424cca75f2c723dfbc04c0394a70e97e37badce72700f3fb38701966ac344"
+    },
+    {
+      "path": "LICENSES/libreoffice-local-reference/NOTICE",
+      "sha256": "8d34210ebbfaee4ba258ef7b30c3044170f356ab82c8259c81b53860bcdeef7b"
+    },
+    {
+      "path": "LICENSES/libreoffice-local-reference/program/version.ini",
+      "sha256": "23ad6b8450db7429d9d4d1067f6d520ac5fdfded0f87b3d5c5d81e2772dd22d3"
+    }
+  ],
+  "python_runtime_local_reference": {
+    "version": "3.14.7",
+    "notices": [
+      {
+        "path": "LICENSES/python-runtime-local-reference/LICENSE.txt",
+        "sha256": "935cf13e19f8c31b497d20b05d73623431a226b230c3599bc30fa3348979bc68"
+      }
+    ]
+  },
+  "font": {
+    "path": "frontend/app/fonts/Geist-Variable.woff2",
+    "sha256": "2ffebe993e969069a9789d15164b7715d42491b5835516c5e3b935d5f81b05f1",
+    "upstream_license": "https://github.com/vercel/geist-font/blob/main/OFL.txt",
+    "notice": "LICENSES/Geist-OFL-1.1.txt",
+    "status": "verified from local font name table: Geist version 1.800, Copyright 2024 The Geist Project Authors, SIL OFL 1.1",
+    "name_table": {
+      "family": "Geist",
+      "version": "Version 1.800",
+      "copyright": "Copyright 2024 The Geist Project Authors (https://github.com/vercel/geist-font)",
+      "license": "SIL Open Font License, Version 1.1",
+      "license_url": "https://openfontlicense.org"
+    }
+  },
+  "pdf2docx_decision": {
+    "version": "0.5.8",
+    "distribution_license": "GPL-3.0",
+    "wheel_sha256_from_pypi": "8c5f439ba8147d59c20d33dadb275ff75a7f19b3b6179a9afda29ae2962514dc",
+    "sdist_sha256_from_pypi": "e723f639728193468602b69eade2fe62df5f5d339d2630228e325f4cc61c1918",
+    "evidence": "https://pypi.org/pypi/pdf2docx/0.5.8/json",
+    "verification": "PyPI metadata and installed full GPLv3 text inspected; upstream archives not downloaded or matched to installed files in this review",
+    "decision": "follow GPLv3 for pinned artifact, not later MIT relicense"
+  },
+  "python_environment_supplement": [
+    {
+      "name": "boolean.py",
+      "version": "5.0",
+      "declared_license": "BSD-2-Clause",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/boolean.py-5.0/boolean_py-5.0.dist-info/licenses/LICENSE.txt",
+          "sha256": "5ea0cdf8cfc824b446cccf597ff6518c3607a659e9804bc75f1261f9c6ac4ada"
+        }
+      ]
+    },
+    {
+      "name": "CacheControl",
+      "version": "0.14.4",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/CacheControl-0.14.4/cachecontrol-0.14.4.dist-info/licenses/LICENSE.txt",
+          "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+        }
+      ]
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "declared_license": "MPL-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/certifi-2026.7.22/certifi-2026.7.22.dist-info/licenses/LICENSE",
+          "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+        }
+      ]
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.1",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/charset-normalizer-3.5.1/charset_normalizer-3.5.1.dist-info/licenses/LICENSE",
+          "sha256": "18577485d3704f1a479ded8e573c0976cfed315fd2fd17983fa988da4c2f70d1"
+        }
+      ]
+    },
+    {
+      "name": "coverage",
+      "version": "7.15.4",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/coverage-7.15.4/coverage-7.15.4.dist-info/licenses/LICENSE.txt",
+          "sha256": "eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549"
+        },
+        {
+          "path": "LICENSES/python/coverage-7.15.4/coverage-7.15.4.dist-info/licenses/NOTICE.txt",
+          "sha256": "445e6e7876ff25ff16254af9ba7cb38939b108bad08034ab7742334473ad0e34"
+        }
+      ]
+    },
+    {
+      "name": "cyclonedx-python-lib",
+      "version": "11.12.0",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/cyclonedx-python-lib-11.12.0/cyclonedx_python_lib-11.12.0.dist-info/licenses/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "LICENSES/python/cyclonedx-python-lib-11.12.0/cyclonedx_python_lib-11.12.0.dist-info/licenses/NOTICE",
+          "sha256": "1c3bd67b96888a4ca25f3a94683d929b3f66d7e4cdfe6c04d24f16501a9375c3"
+        }
+      ]
+    },
+    {
+      "name": "defusedxml",
+      "version": "0.7.1",
+      "declared_license": "PSFL",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/defusedxml-0.7.1/defusedxml-0.7.1.dist-info/LICENSE",
+          "sha256": "b80ce9da8c42a1f91079627fbbe2bf27210ae108a0ffe5f077d5b08e076c24c8"
+        }
+      ]
+    },
+    {
+      "name": "et_xmlfile",
+      "version": "2.0.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": []
+    },
+    {
+      "name": "filelock",
+      "version": "3.32.4",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/filelock-3.32.4/filelock-3.32.4.dist-info/licenses/LICENSE",
+          "sha256": "608c89d5060ae9921adccf3236695bc654a9946e12323ef6c021dfa04e294d48"
+        }
+      ]
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "declared_license": "BSD-3-Clause",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/httpcore-1.0.9/httpcore-1.0.9.dist-info/licenses/LICENSE.md",
+          "sha256": "fdcb59154c74cbaba16a11242f7740bea9f23d6feb5547917d8c5f94a80392a5"
+        }
+      ]
+    },
+    {
+      "name": "httpcore2",
+      "version": "2.12.0",
+      "declared_license": "BSD-3-Clause",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/httpcore2-2.12.0/httpcore2-2.12.0.dist-info/licenses/LICENSE.md",
+          "sha256": "c4df125c807b0613501e943a5c92496dd11d2c16604ce396097a8dde396304d9"
+        }
+      ]
+    },
+    {
+      "name": "httptools",
+      "version": "0.8.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/httptools-0.8.0/httptools-0.8.0.dist-info/licenses/LICENSE",
+          "sha256": "1c028b059d7a58e14ccda38cabced698c591fe614ffbe4f721430446e86c8d69"
+        },
+        {
+          "path": "LICENSES/python/httptools-0.8.0/httptools-0.8.0.dist-info/licenses/vendor/http-parser/LICENSE-MIT",
+          "sha256": "5cd1b682c0ccbac0cb31b86a9a1104c3e2e7b1377a282b8169d2694b400db7c2"
+        },
+        {
+          "path": "LICENSES/python/httptools-0.8.0/httptools-0.8.0.dist-info/licenses/vendor/llhttp/LICENSE",
+          "sha256": "279012e02a10acfd59a3f2d8f13a497332535d871c2b27c89988985b06a3a438"
+        }
+      ]
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/iniconfig-2.3.0/iniconfig-2.3.0.dist-info/licenses/LICENSE",
+          "sha256": "3409fa91f7ace557894632676656e32264fe5ef7581535725dc9a23774551bd4"
+        }
+      ]
+    },
+    {
+      "name": "license-expression",
+      "version": "30.4.4",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/license-expression-30.4.4/license_expression-30.4.4.dist-info/licenses/NOTICE",
+          "sha256": "ef97db07e32f6e5d34363461acf5acc7d72db924533bce3d9f3b87046313363c"
+        },
+        {
+          "path": "LICENSES/python/license-expression-30.4.4/license_expression-30.4.4.dist-info/licenses/apache-2.0.LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "LICENSES/python/license-expression-30.4.4/license_expression/data/cc-by-4.0.LICENSE",
+          "sha256": "2a82ac9bbc3e3ee066908381e8d373896db5a6025d083fbd59692fe9ccfb9111"
+        },
+        {
+          "path": "LICENSES/python/license-expression-30.4.4/license_expression/data/license_key_index.json.ABOUT",
+          "sha256": "fb5ce1f2dbd2bedc01fad9507be71ca19ec37b4d6f8dfb9516fbfefee410d85d"
+        },
+        {
+          "path": "LICENSES/python/license-expression-30.4.4/license_expression/data/scancode-licensedb-index.json",
+          "sha256": "d7594273825a68b2d5676d76d336c560210072f07a77edb193ad608694067596"
+        }
+      ]
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0",
+      "declared_license": null,
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/markdown-it-py-4.2.0/markdown_it_py-4.2.0.dist-info/licenses/LICENSE",
+          "sha256": "4a2260d6e2cd0f5a151a1e86dbfe7d3ed552b1e2beabf9941c1ba5c49cbce484"
+        },
+        {
+          "path": "LICENSES/python/markdown-it-py-4.2.0/markdown_it_py-4.2.0.dist-info/licenses/LICENSE.markdown-it",
+          "sha256": "792c48c5a849a15fdf9e37e8bcf9e6d1dd13b32b46c642a748a0a46a9919d473"
+        }
+      ]
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2",
+      "declared_license": null,
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/mdurl-0.1.2/mdurl-0.1.2.dist-info/LICENSE",
+          "sha256": "7c605df6e28667a9603118e98274f64a49ce3eed0d26fccce9534a345e0ef955"
+        }
+      ]
+    },
+    {
+      "name": "msgpack",
+      "version": "1.2.1",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/msgpack-1.2.1/msgpack-1.2.1.dist-info/licenses/COPYING",
+          "sha256": "4fbdff42eba4593c16f7a7ea7078883b2b734870a1e2b636284ce2dce62bf4f7"
+        }
+      ]
+    },
+    {
+      "name": "openpyxl",
+      "version": "3.1.5",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": []
+    },
+    {
+      "name": "packageurl-python",
+      "version": "0.17.6",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": []
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "declared_license": "Apache-2.0 OR BSD-2-Clause",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/packaging-26.3/packaging-26.3.dist-info/licenses/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "LICENSES/python/packaging-26.3/packaging-26.3.dist-info/licenses/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "LICENSES/python/packaging-26.3/packaging-26.3.dist-info/licenses/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        }
+      ]
+    },
+    {
+      "name": "pip",
+      "version": "26.2.1",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/LICENSE.txt",
+          "sha256": "634300a669d49aeae65b12c6c48c924c51a4cdf3d1ff086dc3456dc8bcaa2104"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/cachecontrol/LICENSE.txt",
+          "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/certifi/LICENSE",
+          "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distlib/LICENSE.txt",
+          "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distro/LICENSE",
+          "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+          "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/msgpack/COPYING",
+          "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pkg_resources/LICENSE",
+          "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/platformdirs/LICENSE",
+          "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pygments/LICENSE",
+          "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pyproject_hooks/LICENSE",
+          "sha256": "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/requests/LICENSE",
+          "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/resolvelib/LICENSE",
+          "sha256": "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/rich/LICENSE",
+          "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli_w/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/truststore/LICENSE",
+          "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip-26.2.1.dist-info/licenses/src/pip/_vendor/urllib3/LICENSE.txt",
+          "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/cachecontrol/LICENSE.txt",
+          "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/certifi/LICENSE",
+          "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/distlib/LICENSE.txt",
+          "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/distro/LICENSE",
+          "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/idna/LICENSE.md",
+          "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/msgpack/COPYING",
+          "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/packaging/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/packaging/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/packaging/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/pkg_resources/LICENSE",
+          "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/platformdirs/LICENSE",
+          "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/pygments/LICENSE",
+          "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/pyproject_hooks/LICENSE",
+          "sha256": "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/requests/LICENSE",
+          "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/resolvelib/LICENSE",
+          "sha256": "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/rich/LICENSE",
+          "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/tomli/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/tomli_w/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/truststore/LICENSE",
+          "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+        },
+        {
+          "path": "LICENSES/python/pip-26.2.1/pip/_vendor/urllib3/LICENSE.txt",
+          "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+        }
+      ]
+    },
+    {
+      "name": "pip-api",
+      "version": "0.0.34",
+      "declared_license": null,
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pip-api-0.0.34/pip_api-0.0.34.dist-info/LICENSE",
+          "sha256": "14ed54990120efea26042269885df36e1b53db858bf04b40c8cfc8c5e12f6fb1"
+        }
+      ]
+    },
+    {
+      "name": "pip-requirements-parser",
+      "version": "32.0.1",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pip-requirements-parser-32.0.1/pip_requirements_parser-32.0.1.dist-info/mit.LICENSE",
+          "sha256": "18081c2c82771ca09d99d08cdac405924309e09fd19b16f1eea59cbc6ab809ed"
+        }
+      ]
+    },
+    {
+      "name": "pip_audit",
+      "version": "2.10.1",
+      "declared_license": null,
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pip_audit-2.10.1/pip_audit-2.10.1.dist-info/licenses/LICENSE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        }
+      ]
+    },
+    {
+      "name": "platformdirs",
+      "version": "4.11.4",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/platformdirs-4.11.4/platformdirs-4.11.4.dist-info/licenses/LICENSE",
+          "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+        }
+      ]
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pluggy-1.6.0/pluggy-1.6.0.dist-info/licenses/LICENSE",
+          "sha256": "d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606"
+        }
+      ]
+    },
+    {
+      "name": "py-serializable",
+      "version": "2.1.0",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/py-serializable-2.1.0/py_serializable-2.1.0.dist-info/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ]
+    },
+    {
+      "name": "Pygments",
+      "version": "2.21.0",
+      "declared_license": "BSD-2-Clause",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/Pygments-2.21.0/pygments-2.21.0.dist-info/licenses/LICENSE",
+          "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+        }
+      ]
+    },
+    {
+      "name": "pyparsing",
+      "version": "3.3.2",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pyparsing-3.3.2/pyparsing-3.3.2.dist-info/licenses/LICENSE",
+          "sha256": "a5425f9dc14ac74d4c5f0b679e941f2442e32cca7452a4418d5b1a49893ebe4e"
+        }
+      ]
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "1.4.0",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pytest-asyncio-1.4.0/pytest_asyncio-1.4.0.dist-info/licenses/LICENSE",
+          "sha256": "a8ad31b1c3f40dca5a84119351b8fa8ddc868edd77fad8a8ebf6d8f2d16fa4ae"
+        }
+      ]
+    },
+    {
+      "name": "pytest-cov",
+      "version": "7.1.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/pytest-cov-7.1.0/pytest_cov-7.1.0.dist-info/licenses/LICENSE",
+          "sha256": "835586ae156766a24e3c103fbc55d9af6b1a16df57ca932c97482a2737fd83d5"
+        }
+      ]
+    },
+    {
+      "name": "python-pptx",
+      "version": "1.0.2",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/python-pptx-1.0.2/python_pptx-1.0.2.dist-info/LICENSE",
+          "sha256": "7652f271e46d0d533e9dc463f3b5fcbdcacf4d6a9c8d6b554d15efd0f37f6132"
+        }
+      ]
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.3",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/PyYAML-6.0.3/pyyaml-6.0.3.dist-info/licenses/LICENSE",
+          "sha256": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4"
+        }
+      ]
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "declared_license": "Apache-2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/requests-2.34.2/requests-2.34.2.dist-info/licenses/LICENSE",
+          "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+        },
+        {
+          "path": "LICENSES/python/requests-2.34.2/requests-2.34.2.dist-info/licenses/NOTICE",
+          "sha256": "f5110972dedad2b4e9d314518daf3b7d72d6e02e499acd802181de6f74571dcc"
+        }
+      ]
+    },
+    {
+      "name": "rich",
+      "version": "15.0.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/rich-15.0.0/rich-15.0.0.dist-info/licenses/LICENSE",
+          "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+        }
+      ]
+    },
+    {
+      "name": "ruff",
+      "version": "0.16.4",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/ruff-0.16.4/ruff-0.16.4.dist-info/licenses/LICENSE",
+          "sha256": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
+        }
+      ]
+    },
+    {
+      "name": "sortedcontainers",
+      "version": "2.4.0",
+      "declared_license": "Apache 2.0",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/sortedcontainers-2.4.0/sortedcontainers-2.4.0.dist-info/LICENSE",
+          "sha256": "1db7cae7fce6452e2e608e401a0f953e0133e4c2d75db69fb8ae851d2086f5b6"
+        }
+      ]
+    },
+    {
+      "name": "tomli",
+      "version": "2.4.1",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/tomli-2.4.1/tomli-2.4.1.dist-info/licenses/LICENSE",
+          "sha256": "34b59b39e7ba577a1d86924218c71229b163d3bf3903aec784299f725c89d324"
+        }
+      ]
+    },
+    {
+      "name": "tomli_w",
+      "version": "1.2.0",
+      "declared_license": null,
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/tomli_w-1.2.0/tomli_w-1.2.0.dist-info/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        }
+      ]
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.4",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/truststore-0.10.4/truststore-0.10.4.dist-info/licenses/LICENSE",
+          "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+        }
+      ]
+    },
+    {
+      "name": "urllib3",
+      "version": "2.7.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/urllib3-2.7.0/urllib3-2.7.0.dist-info/licenses/LICENSE.txt",
+          "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+        }
+      ]
+    },
+    {
+      "name": "watchfiles",
+      "version": "1.2.0",
+      "declared_license": "MIT",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/watchfiles-1.2.0/watchfiles-1.2.0.dist-info/licenses/LICENSE",
+          "sha256": "2d40a03346bded8daa4bd22d23825a6f2568a0820fbef76ac05bae534421e189"
+        }
+      ]
+    },
+    {
+      "name": "websockets",
+      "version": "17.0.1",
+      "declared_license": "BSD-3-Clause",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/websockets-17.0.1/websockets-17.0.1.dist-info/licenses/LICENSE",
+          "sha256": "0f44514998aca209d3482d10204a8adf2aa4296ff157a36a5c0922f2280632d3"
+        }
+      ]
+    },
+    {
+      "name": "xlsxwriter",
+      "version": "3.2.9",
+      "declared_license": "BSD-2-Clause",
+      "scope": "installed environment supplement, not a pinned or shipped-product assertion",
+      "notices": [
+        {
+          "path": "LICENSES/python/xlsxwriter-3.2.9/xlsxwriter-3.2.9.dist-info/LICENSE.txt",
+          "sha256": "cf08b60a4ded986b58a617cb8304373bda5c4eff42fb4e30d7597b616e116e87"
+        }
+      ]
+    }
+  ]
+}
