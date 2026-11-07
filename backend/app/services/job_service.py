@@ -22,21 +22,26 @@ from app.core.logging_config import log_job_event
 from app.core.progress import JobCancelled
 from app.core.validators import (
     validate_image_structure,
-    validate_office_structure,
     validate_pdf_structure,
 )
 from app.services import libreoffice_service
 from app.services.cleanup_service import cleanup_now
 from app.services.image_service import images_to_pdf
 from app.services.pdf_merge_service import merge_pdfs
+from app.services.pdf_overlay_options import PageNumberOptions, WatermarkOptions
+from app.services.pdf_page_numbers_service import add_page_numbers
+from app.services.pdf_rotate_service import rotate_pdf
 from app.services.pdf_split_service import (
     EVERY_PAGE_MODE,
     SplitResult,
     parse_page_ranges,
     split_pdf,
 )
+from app.services.pdf_to_image_service import pdf_to_jpeg
 from app.services.pdf_to_word_engines import EDITABLE_MODE
 from app.services.pdf_to_word_service import pdf_to_docx
+from app.services.pdf_tool_options import JpegOptions, RotateOptions
+from app.services.pdf_watermark_service import watermark_pdf
 
 JobTool = Literal[
     "pdf-to-docx",
@@ -46,6 +51,10 @@ JobTool = Literal[
     "pdf-merge",
     "pdf-split",
     "images-to-pdf",
+    "pdf-rotate",
+    "pdf-to-jpg",
+    "pdf-watermark",
+    "pdf-page-numbers",
 ]
 JobStatus = Literal[
     "queued",
@@ -84,6 +93,9 @@ class JobSpec:
     original_filenames: tuple[str, ...]
     mode: str | None = None
     ranges: str | None = None
+    pdf_options: (
+        RotateOptions | JpegOptions | WatermarkOptions | PageNumberOptions | None
+    ) = None
 
 
 @dataclass(frozen=True)
@@ -356,10 +368,23 @@ class JobManager:
                 output_path = split_result.path
                 media_type = split_result.media_type
                 download_name = split_result.download_name
-            else:
+            elif spec.tool in {
+                "pdf-rotate",
+                "pdf-to-jpg",
+                "pdf-watermark",
+                "pdf-page-numbers",
+            }:
+                output_path, media_type, download_name = self._run_pdf_utility(
+                    job_id, spec
+                )
+            elif spec.tool == "images-to-pdf":
                 output_path, media_type, download_name = self._run_images(
                     job_id,
                     spec,
+                )
+            else:
+                raise ValidationError(
+                    "invalid_input", "The selected conversion tool is not supported."
                 )
 
             self._check_cancelled(job_id)
@@ -422,6 +447,69 @@ class JobManager:
                 "The selected files could not be processed.",
             )
 
+    def _run_pdf_utility(self, job_id: str, spec: JobSpec) -> tuple[Path, str, str]:
+        input_path = spec.input_paths[0]
+        if spec.tool not in {"pdf-watermark", "pdf-page-numbers"}:
+            validate_pdf_structure(input_path)
+        self._check_cancelled(job_id)
+        self._set_stage(
+            job_id,
+            status="running",
+            stage="converting",
+            message="Processing selected PDF pages locally.",
+        )
+        callbacks = {
+            "progress_callback": lambda completed, total: self._set_progress(
+                job_id,
+                completed=completed,
+                total=total,
+                unit_label="pages",
+                message=f"Processed {completed} of {total} selected pages.",
+            ),
+            "finalizing_callback": lambda: self._set_finalizing(
+                job_id, "Verifying the local PDF result."
+            ),
+            "cancellation_check": lambda: self._check_cancelled(job_id),
+        }
+        if spec.tool == "pdf-rotate" and isinstance(spec.pdf_options, RotateOptions):
+            path = rotate_pdf(input_path, spec.pdf_options, **callbacks)
+            stem = (
+                Path(sanitize_filename(spec.original_filenames[0])).stem.strip(".")[
+                    :100
+                ]
+                or "document"
+            )
+            return path, "application/pdf", f"{stem}_rotated.pdf"
+        if spec.tool == "pdf-to-jpg" and isinstance(spec.pdf_options, JpegOptions):
+            result = pdf_to_jpeg(
+                input_path, spec.original_filenames[0], spec.pdf_options, **callbacks
+            )
+            return result.path, result.media_type, result.download_name
+        if spec.tool == "pdf-watermark" and isinstance(
+            spec.pdf_options, WatermarkOptions
+        ):
+            path = watermark_pdf(
+                input_path,
+                spec.pdf_options,
+                spec.input_paths[1] if len(spec.input_paths) == 2 else None,
+                **callbacks,
+            )
+            suffix = "watermarked"
+        elif spec.tool == "pdf-page-numbers" and isinstance(
+            spec.pdf_options, PageNumberOptions
+        ):
+            path = add_page_numbers(input_path, spec.pdf_options, **callbacks)
+            suffix = "numbered"
+        else:
+            raise ValidationError(
+                "invalid_input", "The PDF tool options are missing or invalid."
+            )
+        stem = (
+            Path(sanitize_filename(spec.original_filenames[0])).stem.strip(".")[:100]
+            or "document"
+        )
+        return path, "application/pdf", f"{stem}_{suffix}.pdf"
+
     def _run_office(
         self,
         job_id: str,
@@ -429,26 +517,26 @@ class JobManager:
     ) -> tuple[Path, str, str]:
         tool_key = OFFICE_TOOL_KEYS[spec.tool]
         input_path = spec.input_paths[0]
-        validate_office_structure(input_path, tool_key)
-        self._set_progress(
-            job_id,
-            completed=1,
-            total=1,
-            unit_label="file",
-            message="Validated 1 of 1 file.",
-        )
-        self._check_cancelled(job_id)
-        self._set_stage(
-            job_id,
-            status="running",
-            stage="converting",
-            message="LibreOffice is converting the document locally.",
-        )
-        output_path = libreoffice_service.convert_to_pdf(
-            input_path,
-            job_id,
-            cancellation_check=lambda: self._check_cancelled(job_id),
-        )
+        with libreoffice_service.validated_office_input(input_path, tool_key) as prepared_path:
+            self._set_progress(
+                job_id,
+                completed=1,
+                total=1,
+                unit_label="file",
+                message="Validated 1 of 1 file.",
+            )
+            self._check_cancelled(job_id)
+            self._set_stage(
+                job_id,
+                status="running",
+                stage="converting",
+                message="LibreOffice is converting the document locally.",
+            )
+            output_path = libreoffice_service.convert_to_pdf(
+                prepared_path,
+                job_id,
+                cancellation_check=lambda: self._check_cancelled(job_id),
+            )
         self._set_finalizing(job_id, "Checking the generated PDF locally.")
         safe_stem = sanitize_filename(Path(spec.original_filenames[0]).stem).strip(".")
         return output_path, "application/pdf", f"{safe_stem or 'document'}.pdf"

@@ -19,12 +19,19 @@ const ERROR_MESSAGES: Readonly<Partial<Record<ApiErrorCode, string>>> = {
     "The result would be too large to generate. Try fewer or smaller files.",
   too_many_pages: "This PDF has more pages than PrivCon can process at once.",
   unsafe_document_content:
-    "This PDF contains content PrivCon doesn't allow (such as embedded scripts or files) and can't be processed.",
+    "This file contains content PrivCon can't safely process, such as scripts, linked resources, or embedded objects.",
   invalid_split_mode: "Please choose a valid split option.",
   invalid_conversion_mode:
     "Choose Editable Word or Preserve Appearance and try again.",
   invalid_page_ranges:
     "That page range isn't valid. Use a format like 1-3,5,8-10.",
+  invalid_rotation: "Choose a clockwise rotation of 90, 180, or 270 degrees.",
+  invalid_render_options: "Use a whole-number resolution of 72-300 DPI and JPG quality of 40-95.",
+  render_too_large: "These pages would require too much memory to render. Try fewer pages or a lower resolution.",
+  signed_pdf_not_supported: "This PDF is digitally signed. Changing it would invalidate its signature, so it wasn't changed.",
+  invalid_overlay_options: "Check the watermark or page-number options. The text or image must fit within the page margins.",
+  unsupported_pdf_geometry: "This PDF has page geometry that this tool cannot safely change.",
+  invalid_result: "PrivCon received an unexpected result format. Please try converting the file again.",
   origin_not_allowed:
     "PrivCon couldn't verify this request. Please reload the page and try again.",
   server_busy:
@@ -70,12 +77,16 @@ export function getErrorMessage(
     return `This file is larger than the ${limit} limit for a single file.`;
   }
 
+  const backendMessage = options.backendMessage?.trim();
+  if (errorCode === "unsafe_document_content" && backendMessage) {
+    return backendMessage;
+  }
+
   const knownMessage = ERROR_MESSAGES[errorCode as ApiErrorCode];
   if (knownMessage) {
     return knownMessage;
   }
 
-  const backendMessage = options.backendMessage?.trim();
   return backendMessage || GENERIC_ERROR_MESSAGE;
 }
 

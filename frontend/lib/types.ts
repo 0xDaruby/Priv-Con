@@ -5,7 +5,11 @@ export type ToolId =
   | "excel"
   | "merge"
   | "split"
-  | "images";
+  | "images"
+  | "rotate"
+  | "pdfToJpg"
+  | "watermark"
+  | "pageNumbers";
 
 export type ToolSlug =
   | "pdf-to-word"
@@ -14,7 +18,11 @@ export type ToolSlug =
   | "excel-to-pdf"
   | "merge-pdf"
   | "split-pdf"
-  | "images-to-pdf";
+  | "images-to-pdf"
+  | "rotate-pdf"
+  | "pdf-to-jpg"
+  | "watermark-pdf"
+  | "page-numbers";
 
 export type ToolRoute = `/${ToolSlug}`;
 
@@ -25,11 +33,14 @@ export type ToolIconName =
   | "spreadsheet-file"
   | "merge-file"
   | "split-file"
-  | "image-file";
+  | "image-file"
+  | "rotate-file"
+  | "watermark-file"
+  | "numbered-file";
 
-export type ConversionOutputKind = "docx" | "pdf" | "pdf-or-zip";
+export type ConversionOutputKind = "docx" | "pdf" | "pdf-or-zip" | "jpg-or-zip";
 
-export type ConversionOutputType = "docx" | "pdf" | "zip";
+export type ConversionOutputType = "docx" | "pdf" | "zip" | "jpg";
 
 export type FileFieldName = "file" | "files";
 
@@ -89,6 +100,13 @@ export type ApiErrorCode =
   | "invalid_split_mode"
   | "invalid_conversion_mode"
   | "invalid_page_ranges"
+  | "invalid_rotation"
+  | "invalid_render_options"
+  | "render_too_large"
+  | "invalid_overlay_options"
+  | "unsupported_pdf_geometry"
+  | "signed_pdf_not_supported"
+  | "invalid_result"
   | "origin_not_allowed"
   | "server_busy"
   | "backend_unavailable"
@@ -174,7 +192,7 @@ export interface ConversionFailure {
   readonly message: string;
 }
 
-export type ConversionExtraFields = Readonly<Record<string, string>>;
+export type ConversionExtraFields = Readonly<Record<string, string | File>>;
 
 export interface SelectedFile {
   readonly id: string;

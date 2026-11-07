@@ -105,6 +105,15 @@ export function ImageFileIcon(props: IconProps) {
   );
 }
 
+export function RotateFileIcon(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M31 13a14 14 0 1 0 3 15M31 4v10H21" />
+      <rect height="15" rx="1" width="11" x="14" y="14" />
+    </IconBase>
+  );
+}
+
 export function UploadTrayIcon(props: IconProps) {
   return (
     <IconBase {...props}>
@@ -171,6 +180,20 @@ export function ArchiveFileIcon(props: IconProps) {
   );
 }
 
+export function WatermarkFileIcon(props: IconProps) {
+  return <IconBase {...props}>
+    <path d="M3 1.5h23l10 10v27H3zM26 1.5v10h10" />
+    <path d="M12 29h16M15 25h10v4H15zM18 25v-6a3 3 0 0 1 6 0v6" />
+  </IconBase>;
+}
+
+export function NumberedFileIcon(props: IconProps) {
+  return <IconBase {...props}>
+    <path d="M3 1.5h23l10 10v27H3zM26 1.5v10h10" />
+    <path d="m11 19 3-2v10M11 27h6M22 18h7M22 23h7M11 33h18" />
+  </IconBase>;
+}
+
 export function ToolFileIcon({
   name,
   ...props
@@ -190,5 +213,11 @@ export function ToolFileIcon({
       return <SplitFileIcon {...props} />;
     case "image-file":
       return <ImageFileIcon {...props} />;
+    case "rotate-file":
+      return <RotateFileIcon {...props} />;
+    case "watermark-file":
+      return <WatermarkFileIcon {...props} />;
+    case "numbered-file":
+      return <NumberedFileIcon {...props} />;
   }
 }

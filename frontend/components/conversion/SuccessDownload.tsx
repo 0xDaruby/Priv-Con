@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 import {
   PrivacyShieldCheckIcon,
   SuccessCheckIcon,
@@ -21,12 +19,6 @@ export function SuccessDownload({
   outputType,
   onConvertAgain,
 }: SuccessDownloadProps) {
-  const downloadRef = useRef<HTMLAnchorElement>(null);
-
-  useEffect(() => {
-    downloadRef.current?.click();
-  }, [downloadUrl]);
-
   return (
     <section className="state-panel success-panel" aria-live="polite">
       <SuccessCheckIcon className="state-icon" />
@@ -41,7 +33,6 @@ export function SuccessDownload({
         className="primary-action state-primary"
         download={filename}
         href={downloadUrl}
-        ref={downloadRef}
       >
         Download again
       </a>

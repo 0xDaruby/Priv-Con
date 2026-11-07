@@ -12,6 +12,10 @@ from pypdf.errors import PdfReadError
 
 from app.config import settings
 from app.core.exceptions import ValidationError
+from app.core.pptx_chart_data import (
+    CHART_WORKBOOK_PATH,
+    write_pptx_without_chart_workbooks,
+)
 
 EXPECTED_EXTENSION = {
     "docx": ".docx",
@@ -116,8 +120,10 @@ def validate_extension(filename: str, tool_key: str) -> None:
         )
 
 
-def validate_office_structure(file_path: Path, tool_key: str) -> None:
-    """Confirm that an Office upload is a coherent ZIP/XML package."""
+def validate_office_structure(
+    file_path: Path, tool_key: str, *, chart_safe_copy: Path | None = None
+) -> Path | None:
+    """Validate an Office package, optionally writing a workbook-free PPTX copy."""
     if not zipfile.is_zipfile(file_path):
         _raise_invalid_office_document()
 
@@ -141,7 +147,14 @@ def validate_office_structure(file_path: Path, tool_key: str) -> None:
                     "This Office document contains duplicate package entries."
                 )
 
-            _validate_archive_metadata(entries)
+            workbooks = {
+                entry.filename
+                for entry in entries
+                if tool_key == "pptx"
+                and chart_safe_copy is not None
+                and CHART_WORKBOOK_PATH.fullmatch(entry.filename)
+            }
+            _validate_archive_metadata(entries, chart_workbooks=workbooks)
 
             required_parts = {
                 **REQUIRED_PACKAGE_PATHS,
@@ -170,6 +183,12 @@ def validate_office_structure(file_path: Path, tool_key: str) -> None:
 
             _validate_office_relationships(archive, entries)
             _validate_content_types(archive)
+
+            if workbooks and chart_safe_copy is not None:
+                write_pptx_without_chart_workbooks(
+                    archive, entries, workbooks, chart_safe_copy
+                )
+                return chart_safe_copy
     except ValidationError:
         raise
     except (
@@ -180,6 +199,8 @@ def validate_office_structure(file_path: Path, tool_key: str) -> None:
         ValueError,
     ) as exc:
         _raise_invalid_office_document(exc)
+
+    return None
 
 
 def validate_office_file(file_path: Path, filename: str, tool_key: str) -> None:
@@ -331,7 +352,9 @@ def validate_image_file(file_path: Path, filename: str) -> int:
     return validate_image_structure(file_path, filename)
 
 
-def _validate_archive_metadata(entries: list[zipfile.ZipInfo]) -> None:
+def _validate_archive_metadata(
+    entries: list[zipfile.ZipInfo], *, chart_workbooks: set[str]
+) -> None:
     max_uncompressed = settings.max_office_uncompressed_size_mb * 1024 * 1024
     total_uncompressed = 0
 
@@ -360,7 +383,9 @@ def _validate_archive_metadata(entries: list[zipfile.ZipInfo]) -> None:
 
         lower_name = f"/{normalized_name.casefold().strip('/')}"
 
-        if any(marker in lower_name for marker in _BLOCKED_OFFICE_PARTS):
+        if entry.filename not in chart_workbooks and any(
+            marker in lower_name for marker in _BLOCKED_OFFICE_PARTS
+        ):
             raise ValidationError(
                 code="unsafe_document_content",
                 message=(

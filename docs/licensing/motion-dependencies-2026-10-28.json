@@ -1,0 +1,58 @@
+{
+  "review_date": "2026-10-28",
+  "status": "Addendum to development dependency snapshot; not installer certification",
+  "npm": [
+    {
+      "lock_path": "node_modules/motion",
+      "version": "14.7.1",
+      "declared_license": "MIT",
+      "integrity": "sha512-o+q7MExUC0RuCUF62HxF9v+fNVX7pUMYZqlyigQJJFAgAsmnnSlAOYeG41hGYkamxFR0rdBA0KXpaBJ28/GGAw==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/motion/LICENSE.md",
+          "sha256": "1bf0dc3f7727723e5a032ed12164a47cf92c05204cb1a3485f123c24e2833ed1"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/framer-motion",
+      "version": "14.7.1",
+      "declared_license": "MIT",
+      "integrity": "sha512-mFDYZxyfeZnpvL/zEQEqLZNYVA/ya47c9TBfZb/PEoNBBVSVvCLkMrCv9U38cuw72W161XENZwZB0+4nIBLEJg==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/framer-motion/LICENSE.md",
+          "sha256": "5ff46083b88563822b0560dd6221ab89d2f74bc97a52d4c97a75020fd62c6f32"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/motion-dom",
+      "version": "14.7.1",
+      "declared_license": "MIT",
+      "integrity": "sha512-p9q9F7+HoijbQjUG/cSGNmWS2t1OaAKxkd2RG5gQJRoDwoTap/Khb7K1P5rLW90crnSmx0rcRXzh3Jd5UNrpEw==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/motion-dom/LICENSE.md",
+          "sha256": "1bf0dc3f7727723e5a032ed12164a47cf92c05204cb1a3485f123c24e2833ed1"
+        }
+      ]
+    },
+    {
+      "lock_path": "node_modules/motion-utils",
+      "version": "14.7.0",
+      "declared_license": "MIT",
+      "integrity": "sha512-woO0/Nb7ys75f94fjvQi/6leiHGvZUYkeHUPEZ3vxsV+9OpEVhkxp01x8MlRwX0zt31EqgXsKDAoBoJLC148Tw==",
+      "installed": true,
+      "notices": [
+        {
+          "path": "LICENSES/npm/motion-utils/LICENSE.md",
+          "sha256": "1bf0dc3f7727723e5a032ed12164a47cf92c05204cb1a3485f123c24e2833ed1"
+        }
+      ]
+    }
+  ]
+}

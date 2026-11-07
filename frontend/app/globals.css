@@ -67,7 +67,7 @@
   --pc-primary-height: 90px;
   --pc-primary-radius: 10px;
   --pc-primary-max-width: 478px;
-  --pc-focus-ring: 0 0 0 2px var(--pc-white), 0 0 0 5px var(--pc-focus);
+  --pc-focus-ring: 0 0 0 2px var(--pc-bg-surface), 0 0 0 5px var(--pc-focus);
 }
 
 @theme inline {
@@ -99,20 +99,6 @@ body {
   font-synthesis: none;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
-  zoom: 0.8;
-}
-
-@supports not (zoom: 1) {
-  body {
-    overflow: hidden;
-  }
-
-  .app-frame {
-    width: 125%;
-    height: 125dvh;
-    transform: scale(0.8);
-    transform-origin: top left;
-  }
 }
 
 button,
@@ -345,9 +331,9 @@ svg {
 
 .progress-stage[data-active] .step-number,
 .progress-stage[data-complete] .step-number {
-  border-color: var(--pc-black);
+  border-color: var(--pc-action-primary);
   color: var(--pc-fg-inverse);
-  background: var(--pc-black);
+  background: var(--pc-action-primary);
 }
 
 .progress-connector {
@@ -374,8 +360,10 @@ svg {
 
 .tool-sidebar {
   min-width: 0;
+  min-height: 0;
   padding: 48px 24px 40px 18px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   border-right: 1px solid var(--pc-border-default);
   background: var(--pc-bg-surface);
 }
@@ -626,10 +614,10 @@ svg {
 .interactive-dropzone:hover::before,
 .interactive-dropzone:focus-visible::before {
   background:
-    linear-gradient(var(--pc-black), var(--pc-black)) top left / 100% 1px no-repeat,
-    linear-gradient(var(--pc-black), var(--pc-black)) bottom left / 100% 1px no-repeat,
-    linear-gradient(var(--pc-black), var(--pc-black)) top left / 1px 100% no-repeat,
-    linear-gradient(var(--pc-black), var(--pc-black)) top right / 1px 100% no-repeat;
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) top left / 100% 1px no-repeat,
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) bottom left / 100% 1px no-repeat,
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) top left / 1px 100% no-repeat,
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) top right / 1px 100% no-repeat;
 }
 
 .interactive-dropzone:focus-visible {
@@ -643,10 +631,10 @@ svg {
 
 .interactive-dropzone[data-dragging]::before {
   background:
-    linear-gradient(var(--pc-black), var(--pc-black)) top left / 100% 1px no-repeat,
-    linear-gradient(var(--pc-black), var(--pc-black)) bottom left / 100% 1px no-repeat,
-    linear-gradient(var(--pc-black), var(--pc-black)) top left / 1px 100% no-repeat,
-    linear-gradient(var(--pc-black), var(--pc-black)) top right / 1px 100% no-repeat;
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) top left / 100% 1px no-repeat,
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) bottom left / 100% 1px no-repeat,
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) top left / 1px 100% no-repeat,
+    linear-gradient(var(--pc-fg-primary), var(--pc-fg-primary)) top right / 1px 100% no-repeat;
 }
 
 .configuration-surface {
@@ -875,7 +863,7 @@ svg {
   height: 20px;
   margin: 2px 0 0;
   flex: 0 0 auto;
-  accent-color: var(--pc-black);
+  accent-color: var(--pc-action-primary);
 }
 
 .conversion-mode-choice span {
@@ -938,7 +926,7 @@ svg {
   width: 20px;
   height: 20px;
   margin: 2px 0 0;
-  accent-color: var(--pc-black);
+  accent-color: var(--pc-action-primary);
 }
 
 .split-choice span {
@@ -970,7 +958,8 @@ svg {
   line-height: 22px;
 }
 
-.range-field input {
+.range-field input,
+.range-field select {
   width: 100%;
   min-height: 48px;
   padding: 10px 13px;
@@ -982,7 +971,8 @@ svg {
   line-height: 24px;
 }
 
-.range-field input:focus-visible {
+.range-field input:focus-visible,
+.range-field select:focus-visible {
   outline: none;
   box-shadow: var(--pc-focus-ring);
 }
@@ -999,6 +989,10 @@ svg {
   font-weight: 600;
 }
 
+.pdf-page-options .image-option-field {
+  grid-column: auto;
+}
+
 .expected-output {
   grid-column: 1 / -1;
   margin: 2px 0 0;
@@ -1010,6 +1004,28 @@ svg {
 .expected-output strong {
   color: var(--pc-fg-primary);
 }
+
+.pdf-overlay-options > * { min-width: 0; }
+.pdf-overlay-options .split-mode-options,
+.pdf-overlay-options .overlay-controls {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 16px;
+}
+.pdf-overlay-options .split-mode-options label {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.pdf-overlay-options .split-mode-options input { width: 20px; height: 20px; accent-color: var(--pc-action-primary); }
+.pdf-overlay-options .overlay-controls .range-field { min-width: 0; grid-column: auto; align-content: start; }
+.pdf-overlay-options > .range-error { grid-column: 1 / -1; margin: 0; font-weight: 600; }
+.watermark-selected-image { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.watermark-selected-image > span { min-width: 0; overflow-wrap: anywhere; }
+.watermark-image-field input[type="file"] { font-size: 14px; }
 
 .file-row {
   min-height: 88px;

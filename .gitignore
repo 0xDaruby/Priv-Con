@@ -13,6 +13,7 @@ __pycache__/
 
 # Temporary conversion files
 temp/
+/backend/tmp/
 uploads/
 outputs/
 *.tmp
@@ -31,6 +32,7 @@ node_modules/
 dist/
 build/
 .next/
+/frontend/public/pdfjs/
 
 # Documents
 /setup.md

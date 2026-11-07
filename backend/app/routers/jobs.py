@@ -32,8 +32,13 @@ from app.services.job_service import (
     JobTool,
     job_manager,
 )
+from app.services.pdf_overlay_options import (
+    overlay_options,
+    validate_overlay_image_choice,
+)
 from app.services.pdf_split_service import SplitError, validate_split_options
 from app.services.pdf_to_word_service import validate_pdf_to_word_mode
+from app.services.pdf_tool_options import jpeg_options, rotation_options
 
 router = APIRouter(
     prefix="/api/jobs",
@@ -50,6 +55,10 @@ JOB_TOOLS: frozenset[str] = frozenset(
         "pdf-merge",
         "pdf-split",
         "images-to-pdf",
+        "pdf-rotate",
+        "pdf-to-jpg",
+        "pdf-watermark",
+        "pdf-page-numbers",
     }
 )
 
@@ -98,6 +107,10 @@ def _select_uploads(
         "pptx-to-pdf",
         "xlsx-to-pdf",
         "pdf-split",
+        "pdf-rotate",
+        "pdf-to-jpg",
+        "pdf-watermark",
+        "pdf-page-numbers",
     }:
         if multiple_files or not single_files or len(single_files) != 1:
             raise ValidationError(
@@ -136,7 +149,15 @@ def _validate_filename(tool: JobTool, filename: str) -> None:
 
     if tool in office_tool_keys:
         validate_extension(filename, office_tool_keys[tool])
-    elif tool in {"pdf-to-docx", "pdf-merge", "pdf-split"}:
+    elif tool in {
+        "pdf-to-docx",
+        "pdf-merge",
+        "pdf-split",
+        "pdf-rotate",
+        "pdf-to-jpg",
+        "pdf-watermark",
+        "pdf-page-numbers",
+    }:
         validate_pdf_extension(filename)
     else:
         validate_image_extension(filename)
@@ -155,6 +176,14 @@ def create_job(
     ] = None,
     mode: Annotated[str | None, Form()] = None,
     ranges: Annotated[str | None, Form()] = None,
+    pages: Annotated[str | None, Form()] = None,
+    angle: Annotated[str | None, Form()] = None,
+    dpi: Annotated[str | None, Form()] = None,
+    quality: Annotated[str | None, Form()] = None,
+    options: Annotated[str | None, Form()] = None,
+    watermark_images: Annotated[
+        list[UploadFile] | None, File(alias="watermark_image")
+    ] = None,
 ) -> Response:
     if tool not in JOB_TOOLS:
         return _error_response(
@@ -169,11 +198,28 @@ def create_job(
 
     try:
         uploads = _select_uploads(selected_tool, single_files, multiple_files)
+        pdf_options = None
 
         if selected_tool == "pdf-split":
             validate_split_options((mode or "").strip(), ranges)
         elif selected_tool == "pdf-to-docx":
             mode = validate_pdf_to_word_mode(mode)
+        elif selected_tool == "pdf-rotate":
+            pdf_options = rotation_options(pages, angle)
+        elif selected_tool == "pdf-to-jpg":
+            pdf_options = jpeg_options(pages, dpi, quality)
+        elif selected_tool in {"pdf-watermark", "pdf-page-numbers"}:
+            pdf_options = overlay_options(selected_tool, pages, options)
+            validate_overlay_image_choice(pdf_options, len(watermark_images or []))
+        if (
+            selected_tool not in {"pdf-watermark", "pdf-page-numbers"}
+            and watermark_images
+        ):
+            raise ValidationError(
+                "invalid_overlay_options",
+                "This tool does not accept a watermark image.",
+            )
+        uploads = [*uploads, *(watermark_images or [])]
     except (ValidationError, SplitError) as exc:
         return _error_response(400, exc)
 
@@ -187,9 +233,12 @@ def create_job(
     total_upload_bytes = 0
 
     try:
-        for upload in uploads:
+        for index, upload in enumerate(uploads):
             original_filename = upload.filename or "upload"
-            _validate_filename(selected_tool, original_filename)
+            if selected_tool == "pdf-watermark" and index == 1:
+                validate_image_extension(original_filename)
+            else:
+                _validate_filename(selected_tool, original_filename)
             saved_path = save_upload_to_temp(
                 source=upload.file,
                 upload_dir=settings.upload_temp_dir,
@@ -211,6 +260,7 @@ def create_job(
                 original_filenames=tuple(original_filenames),
                 mode=(mode or "").strip() or None,
                 ranges=ranges,
+                pdf_options=pdf_options,
             ),
         )
         return JSONResponse(

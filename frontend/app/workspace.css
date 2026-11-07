@@ -1,0 +1,160 @@
+/* Shared arrangement for catalog discovery and focused tool workspaces. */
+:root { --pc-overlay: rgb(0 0 0 / 35%); }
+.workspace-navigation-boundary { min-height: 100dvh; }
+.app-frame.app-frame--catalog,
+.app-frame.app-frame--workspace {
+  --pc-header-height: 72px;
+  --pc-progress-height: 48px;
+  --pc-primary-height: 56px;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.app-frame .global-header {
+  min-height: var(--pc-header-height);
+  height: auto;
+  padding: 14px clamp(20px, 4vw, 64px);
+  gap: 24px;
+}
+.app-frame .brand-navigation { min-height: 44px; gap: 24px; flex: 1 1 auto; }
+.app-frame .brand-lockup { width: 172px; height: 38px; }
+.app-frame .header-rule { height: 28px; margin: 0; background: var(--pc-border-default); }
+.header-current-tool { font-size: 14px; font-weight: 500; line-height: 22px; }
+.app-frame .backend-status { gap: 8px; }
+.app-frame .backend-status > svg { width: 20px; height: 20px; margin: 0; }
+.app-frame .backend-label { font-size: 13px; line-height: 20px; }
+.app-frame .status-pill { min-height: 28px; margin: 0; padding: 3px 9px; font-size: 12px; line-height: 20px; }
+
+.tool-switcher { position: relative; margin-left: auto; flex: 0 0 auto; }
+.tool-switcher summary {
+  min-height: 42px;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid var(--pc-border-default);
+  border-radius: var(--pc-radius-sm);
+  cursor: pointer;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 550;
+}
+.tool-switcher summary::-webkit-details-marker { display: none; }
+.tool-switcher summary:hover, .tool-switcher[open] summary { background: var(--pc-bg-subtle); }
+.tool-switcher summary:focus-visible,
+.tool-switcher a:focus-visible { outline: 2px solid var(--pc-focus); outline-offset: 3px; }
+.tool-switcher-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  z-index: 20;
+  width: min(580px, calc(100vw - 40px));
+  max-height: min(600px, 70dvh);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+  overflow: auto;
+  border: 1px solid var(--pc-border-strong);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-bg-surface);
+}
+.tool-switcher-catalog { grid-column: 1 / -1; display: flex; justify-content: space-between; padding: 8px 4px 16px; border-bottom: 1px solid var(--pc-border-default); font-size: 14px; font-weight: 600; text-decoration: none; }
+.tool-switcher-panel h2 { margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--pc-fg-secondary); }
+.tool-switcher-panel ul { margin: 0; padding: 0; list-style: none; }
+.tool-switcher-panel li a { min-height: 40px; padding: 9px 6px; display: block; border-radius: var(--pc-radius-sm); font-size: 14px; line-height: 22px; text-decoration: none; }
+.tool-switcher-panel li a:hover, .tool-switcher-panel a[aria-current="page"] { background: var(--pc-bg-selected); }
+.tool-switcher-panel a[aria-current="page"] { font-weight: 650; }
+
+.app-frame .progress-rail { height: 48px; border-bottom: 1px solid var(--pc-border-default); }
+.app-frame .progress-list { width: auto; max-width: calc(100% - 40px); display: flex; gap: 18px; }
+.app-frame .progress-entry { display: flex; align-items: center; gap: 18px; }
+.app-frame .progress-connector { width: 28px; margin: 0; }
+.app-frame .progress-stage { gap: 8px; font-size: 12px; line-height: 18px; }
+.app-frame .step-number { width: 22px; height: 22px; font-size: 11px; border-width: 1px; }
+.app-frame .progress-label-full { display: inline; }
+.app-frame .progress-label-compact { display: none; }
+
+.app-frame .app-shell {
+  width: min(1320px, calc(100% - 64px));
+  height: auto;
+  min-height: 0;
+  margin: 32px auto 0;
+  display: block;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+}
+.app-frame .task-canvas { padding: 0; height: auto; min-height: 0; overflow: visible; }
+.app-frame .creator-credit { position: static; display: block; width: fit-content; margin: 24px max(32px, calc((100vw - 1320px) / 2)) 0 auto; padding: 0 0 20px; font-size: 11px; }
+.app-frame--workspace .dropzone { min-height: clamp(420px, calc(100svh - 220px), 680px); height: auto; }
+.app-frame--workspace .empty-state { height: auto; min-height: inherit; padding: 60px 24px; justify-content: center; transform: none; }
+.app-frame--workspace .hero-icon, .app-frame--workspace .hero-icon > svg { width: 64px; height: 64px; }
+.app-frame--workspace .page-title { margin: 24px 0 8px; font-size: 36px; line-height: 44px; }
+.app-frame--workspace .accepted-format { font-size: 16px; line-height: 24px; }
+.app-frame .primary-action { width: min(360px, 100%); min-height: 56px; margin-top: 32px; padding: 14px 24px; gap: 14px; font-size: 18px; line-height: 26px; }
+.app-frame .primary-action > svg { width: 26px; height: 26px; }
+.app-frame--workspace .privacy-statement { max-width: 100%; margin-top: 24px; gap: 12px; transform: none; }
+.app-frame--workspace .privacy-statement > svg { width: 24px; height: 28px; }
+.app-frame--workspace .privacy-copy { font-size: 14px; line-height: 22px; }
+.app-frame--workspace .configuration-surface { height: auto; overflow: visible; }
+.app-frame--workspace .configuration-header { padding: 28px 32px; gap: 20px; }
+.app-frame--workspace .configuration-header h1 { font-size: 30px; line-height: 38px; }
+.app-frame--workspace .file-list { flex: 0 0 auto; padding-inline: 32px; max-height: 360px; }
+.app-frame--workspace .split-options, .app-frame--workspace .pdf-word-options { padding: 24px 32px; }
+.app-frame--workspace .configuration-actions { margin-top: 0; padding: 24px 32px; }
+.app-frame--workspace .convert-action { margin-top: 0; flex: 0 0 auto; width: min(300px, 45%); }
+.app-frame--workspace .inline-validation { margin: 20px 32px 0; }
+.app-frame--workspace .state-panel { min-height: 480px; height: auto; overflow: visible; padding: 48px 32px; }
+.app-frame--workspace .state-heading h1 { font-size: 34px; line-height: 42px; }
+.app-frame--workspace .state-primary { margin-top: 24px; }
+
+.leave-workspace-dialog { width: min(500px, calc(100% - 32px)); padding: 28px; border: 1px solid var(--pc-border-strong); border-radius: var(--pc-radius-md); background: var(--pc-bg-surface); color: var(--pc-fg-primary); }
+.leave-workspace-dialog::backdrop { background: var(--pc-overlay); }
+.leave-workspace-dialog h2 { margin: 0 0 12px; font-size: 24px; line-height: 30px; }
+.leave-workspace-dialog p { margin: 0; color: var(--pc-fg-secondary); font-size: 15px; line-height: 24px; }
+.leave-workspace-actions { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+.leave-workspace-actions .secondary-action, .leave-workspace-actions .primary-action { width: auto; min-height: 44px; margin: 0; padding: 10px 14px; font-size: 14px; line-height: 22px; }
+.leave-workspace-actions .primary-action { color: var(--pc-fg-inverse); background: var(--pc-action-primary); border: 0; border-radius: var(--pc-radius-sm); cursor: pointer; }
+.leave-workspace-actions button:focus-visible { outline: 2px solid var(--pc-focus); outline-offset: 3px; }
+
+@media (max-width: 900px) {
+  .app-frame .global-header { padding-inline: 24px; gap: 18px; }
+  .app-frame .brand-navigation { gap: 16px; }
+  .app-frame .brand-lockup { width: 148px; height: 34px; }
+  .app-frame .backend-label { display: none; }
+}
+@media (max-width: 700px) {
+  .app-frame .global-header { padding: 16px 20px; display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .app-frame .brand-navigation { height: auto; display: grid; grid-template-columns: 1fr auto; gap: 10px 12px; }
+  .app-frame .brand-link { grid-row: 1; grid-column: 1; }
+  .app-frame .header-rule { display: none; }
+  .app-frame .header-current-tool { grid-row: 2; grid-column: 1 / -1; }
+  .app-frame .tool-switcher { grid-row: 1; grid-column: 2; margin: 0; }
+  .app-frame .backend-status { margin: 0; justify-self: start; }
+  .app-frame .backend-label { display: inline; }
+  .app-frame .app-shell { width: calc(100% - 32px); margin-top: 20px; }
+  .app-frame .creator-credit { margin-right: 16px; }
+  .app-frame .progress-list { gap: 10px; max-width: calc(100% - 32px); }
+  .app-frame .progress-entry { gap: 10px; }
+  .app-frame .progress-connector { width: 12px; }
+  .app-frame .progress-stage { font-size: 11px; gap: 6px; }
+  .app-frame .progress-label-full { display: none; }
+  .app-frame .progress-label-compact { display: inline; }
+  .app-frame--workspace .dropzone { min-height: 390px; }
+  .app-frame--workspace .empty-state { padding: 40px 20px; }
+  .app-frame--workspace .page-title { font-size: 30px; line-height: 38px; }
+  .app-frame--workspace .configuration-header { flex-direction: column; padding: 22px 20px; }
+  .app-frame--workspace .configuration-header h1 { font-size: 26px; line-height: 34px; }
+  .app-frame--workspace .file-list { padding-inline: 20px; }
+  .app-frame--workspace .split-options, .app-frame--workspace .pdf-word-options { grid-template-columns: 1fr; padding: 22px 20px; }
+  .app-frame--workspace .pdf-page-options .image-option-field { grid-column: 1 / -1; }
+  .app-frame--workspace .configuration-actions { flex-direction: column; align-items: stretch; padding: 22px 20px; gap: 18px; }
+  .app-frame--workspace .convert-action { width: 100%; }
+  .app-frame--workspace .inline-validation { margin-inline: 20px; }
+  .app-frame--workspace .state-panel { min-height: 420px; padding: 32px 20px; }
+  .app-frame--workspace .state-heading h1 { font-size: 28px; line-height: 36px; }
+  .app-frame--workspace .privacy-copy { font-size: 13px; line-height: 20px; }
+  .tool-switcher-panel { grid-template-columns: 1fr; max-height: 65dvh; }
+}

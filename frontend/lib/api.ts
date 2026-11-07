@@ -1,4 +1,5 @@
 import { DEFAULT_API_BASE_URL } from "./constants";
+import { resolveResultMetadata } from "./conversion-output";
 import {
   GENERIC_ERROR_MESSAGE,
   NETWORK_ERROR_MESSAGE,
@@ -65,24 +66,7 @@ function fallbackFilename(
   const sourceName = files[0]?.name || config.slug;
   const dotIndex = sourceName.lastIndexOf(".");
   const basename = dotIndex > 0 ? sourceName.slice(0, dotIndex) : sourceName;
-  const extension = outputType === "docx" ? "docx" : "pdf";
-  return `${basename || config.slug}.${extension}`;
-}
-
-function getOutputType(
-  contentType: string,
-  filename?: string,
-): ConversionOutputType {
-  if (contentType.includes("zip") || filename?.toLowerCase().endsWith(".zip")) {
-    return "zip";
-  }
-  if (
-    contentType.includes("wordprocessingml") ||
-    filename?.toLowerCase().endsWith(".docx")
-  ) {
-    return "docx";
-  }
-  return "pdf";
+  return `${basename || config.slug}.${outputType}`;
 }
 
 async function toApiError(
@@ -174,7 +158,8 @@ function createConversionJob(
     formData.append(config.fileFieldName, file, file.name);
   }
   for (const [name, value] of Object.entries(extraFields)) {
-    formData.append(name, value);
+    if (typeof value === "string") formData.append(name, value);
+    else formData.append(name, value, value.name);
   }
 
   return new Promise((resolve, reject) => {
@@ -349,9 +334,17 @@ async function downloadJobResult(
   }
 
   if (!response.ok) throw await toApiError(response, config);
-  const contentType = status.result_content_type || "application/pdf";
   const filename = status.result_filename || undefined;
-  const outputType = getOutputType(contentType, filename);
+  const metadata = resolveResultMetadata(
+    response.headers.get("content-type") || "",
+    status.result_content_type || "",
+    filename,
+    config.outputKind,
+  );
+  if (!metadata) {
+    throw new PrivConApiError("invalid_result", getErrorMessage("invalid_result"));
+  }
+  const { contentType, outputType } = metadata;
   const transportBlob = await response.blob();
   const blob = new Blob([transportBlob], { type: contentType });
   return {

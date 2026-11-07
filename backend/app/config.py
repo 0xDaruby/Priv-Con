@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     max_pdf_pages_per_job: int = Field(default=2000, gt=0)
     max_image_pixels: int = Field(default=40_000_000, gt=0)
     max_total_image_pixels: int = Field(default=100_000_000, gt=0)
+    max_pdf_render_pixels: int = Field(default=40_000_000, gt=0)
+    max_total_pdf_render_pixels: int = Field(default=100_000_000, gt=0)
     max_office_archive_entries: int = Field(default=10_000, gt=0)
     max_office_uncompressed_size_mb: int = Field(default=250, gt=0)
     max_office_compression_ratio: int = Field(default=200, gt=0)

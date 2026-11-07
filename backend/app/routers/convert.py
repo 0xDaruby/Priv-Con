@@ -14,7 +14,6 @@ from app.core.logging_config import log_job_event
 from app.core.security import LimitedUploadRoute
 from app.core.validators import (
     validate_extension,
-    validate_office_structure,
     validate_pdf_extension,
     validate_pdf_structure,
 )
@@ -66,8 +65,8 @@ def _handle_office_conversion(
             max_size_bytes=settings.max_upload_size_mb * 1024 * 1024,
         )
         mark_active_paths([input_path])
-        validate_office_structure(input_path, tool_key)
-        output_path = libreoffice_service.convert_to_pdf(input_path, job_id)
+        with libreoffice_service.validated_office_input(input_path, tool_key) as prepared_path:
+            output_path = libreoffice_service.convert_to_pdf(prepared_path, job_id)
     except ValidationError as exc:
         cleanup_now([input_path] if input_path is not None else [])
         log_job_event(logger, tool=tool_name, job_id=job_id, status="failure")

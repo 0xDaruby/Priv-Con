@@ -2,10 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { BackendMonitorIcon } from "@/components/icons/PrivConIcons";
 import { useBackendHealth } from "@/hooks/useBackendHealth";
 import type { BackendHealthState } from "@/lib/types";
+import { TOOLS } from "@/lib/constants";
+import { ToolSwitcher } from "@/components/shell/ToolSwitcher";
+import { AnimatedThemeToggle } from "@/components/ui/animated-theme-toggle";
 
 const STATUS_LABELS: Readonly<Record<BackendHealthState, string>> = {
   checking: "Checking",
@@ -14,6 +18,8 @@ const STATUS_LABELS: Readonly<Record<BackendHealthState, string>> = {
 };
 
 export function AppHeader() {
+  const pathname = usePathname();
+  const currentTool = TOOLS.find((tool) => tool.route === pathname);
   const { state: backendState } = useBackendHealth();
   const statusLabel = STATUS_LABELS[backendState];
 
@@ -31,11 +37,12 @@ export function AppHeader() {
           />
         </Link>
         <span className="header-rule" aria-hidden="true" />
-        <Link className="home-link" href="/">
-          Home
-        </Link>
+        {currentTool ? <span className="header-current-tool">{currentTool.title}</span> : <span className="header-current-tool">Document tools</span>}
+        <ToolSwitcher />
       </nav>
 
+      <div className="header-utilities">
+      <AnimatedThemeToggle />
       <div
         aria-label={`Local backend is ${statusLabel.toLowerCase()}`}
         className="backend-status"
@@ -45,6 +52,7 @@ export function AppHeader() {
         <BackendMonitorIcon />
         <span className="backend-label">Local backend</span>
         <span className="status-pill">{statusLabel}</span>
+      </div>
       </div>
     </header>
   );

@@ -18,6 +18,8 @@ import shutil
 import subprocess
 import tempfile
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 from app.config import settings
@@ -25,10 +27,29 @@ from app.core.exceptions import ConversionError, ValidationError
 from app.core.file_utils import (
     enforce_output_size,
     ensure_private_directory,
+    new_job_id,
     output_dir_for_job,
 )
 from app.core.progress import CancellationCheck, JobCancelled
+from app.core.validators import validate_office_structure
 from app.services.cleanup_service import cleanup_now, mark_active_paths
+
+
+@contextmanager
+def validated_office_input(input_path: Path, tool_key: str) -> Iterator[Path]:
+    """Prepare a validated input and clean up any conversion-only copy."""
+    if tool_key != "pptx":
+        validate_office_structure(input_path, tool_key)
+        yield input_path
+        return
+
+    prepared_path = settings.upload_temp_dir / f"{new_job_id()}.pptx"
+    mark_active_paths([prepared_path])
+    try:
+        copy = validate_office_structure(input_path, tool_key, chart_safe_copy=prepared_path)
+        yield copy or input_path
+    finally:
+        cleanup_now([prepared_path])
 
 
 def _resolve_libreoffice_executable() -> str:

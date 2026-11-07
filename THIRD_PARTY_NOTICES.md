@@ -8,7 +8,26 @@ are in [LICENSES](LICENSES/README.md); exact paths and SHA-256 hashes are in
 **This is a development dependency snapshot, not the final Windows installer
 bill of materials or a statement that all binary/source obligations are complete.**
 
+2026-10-28 animation dependency addendum: Motion 14.7.1, framer-motion 14.7.1,
+motion-dom 14.7.1 and motion-utils 14.7.0 were added for the theme toggle.
+Their installed MIT notices are preserved in `LICENSES/npm/`; exact lockfile
+integrities and notice hashes are in
+[the addendum](docs/licensing/motion-dependencies-2026-10-28.json).
+The existing tslib 2.8.1 notice remains in the original inventory. Reconcile
+both inventories against the actual artifact before Windows distribution.
+
 ## PDF engines: resolved distribution route
+
+2026-10-29 browser preview addendum: PDF.js (`pdfjs-dist` 6.4.299) provides local
+PDF page rendering. Its Apache-2.0 license and embedded CMap, font, ICC and
+WASM notices are preserved under `LICENSES/npm/pdfjs-dist/`; these resources
+have their own license terms, including the Liberation font GPLv2 exception.
+See [the exact dependency/resource addendum](docs/licensing/pdfjs-dependencies-2026-10-29.json).
+The npm package also declares optional Node canvas dependencies; they are not
+required by the browser renderer. Inspect the actual distributed closure and
+resolve the optional native package's missing local notice if it is shipped.
+Regenerate local runtime assets with `frontend/scripts/prepare-pdfjs.mjs`;
+no CDN assets are used. Existing final source/notice obligations still apply.
 
 - PyMuPDF 1.26.7: select GNU AGPLv3 from its AGPL/commercial licensing options.
   The installed COPYING file is a one-line declaration, so the full AGPL text

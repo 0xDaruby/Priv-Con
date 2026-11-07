@@ -65,11 +65,22 @@ export function useConversion(config: ToolConfig) {
             );
           },
         );
+        controller.signal.throwIfAborted();
         const url = URL.createObjectURL(conversion.blob);
         resultUrlRef.current = url;
         setResult({ ...conversion, url });
         setProgress(undefined);
         setPhase("success");
+
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = conversion.filename;
+        document.body.append(downloadLink);
+        try {
+          downloadLink.click();
+        } finally {
+          downloadLink.remove();
+        }
       } catch (caught) {
         if (caught instanceof DOMException && caught.name === "AbortError") {
           if (timedOut) {

@@ -34,11 +34,21 @@ class LimitedUploadRoute(APIRoute):
             content_type = request.headers.get("content-type", "").lower()
 
             if content_type.startswith("multipart/form-data"):
-                await request.form(
+                form = await request.form(
                     max_files=settings.max_files_per_request,
                     max_fields=settings.max_form_fields_per_request,
                     max_part_size=settings.max_form_field_size_kb * 1024,
                 )
+                if "watermark_image" in form and request.url.path not in {
+                    "/api/pdf/watermark",
+                    "/api/jobs/pdf-watermark",
+                }:
+                    await form.close()
+                    return _error_response(
+                        400,
+                        "invalid_overlay_options",
+                        "This tool does not accept a watermark image.",
+                    )
 
             return await route_handler(request)
 

@@ -17,6 +17,7 @@ from pypdf.generic import (
 )
 
 from app.config import Settings, settings
+from app.core import pptx_chart_data
 from app.core.exceptions import ValidationError
 from app.core.file_utils import save_upload_to_temp
 from app.core.validators import (
@@ -24,6 +25,7 @@ from app.core.validators import (
     validate_office_structure,
     validate_pdf_structure,
 )
+from app.services.libreoffice_service import validated_office_input
 
 OFFICE_PARTS = {
     "docx": (
@@ -422,6 +424,83 @@ def test_office_validation_rejects_embedded_objects(tmp_path: Path) -> None:
         validate_office_structure(path, "docx")
 
     assert exc_info.value.code == "unsafe_document_content"
+
+
+@pytest.mark.parametrize(
+    "variant",
+    ["cached_chart", "no_cache", "ole", "shared", "refresh", "orphan", "other_ole", "large"],
+)
+def test_powerpoint_conversion_only_uses_cached_chart_data(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, variant: str
+) -> None:
+    source = tmp_path / "presentation.pptx"
+    copy = tmp_path / "prepared.pptx"
+    chart = "ppt/charts/chart1.xml"
+    chart_rels = "ppt/charts/_rels/chart1.xml.rels"
+    workbook = "ppt/embeddings/chart-data.xlsx"
+    cache = (
+        '<c:numCache><c:ptCount val="1"/><c:pt idx="0"><c:v>7</c:v></c:pt></c:numCache>'
+        if variant != "no_cache"
+        else ""
+    )
+    auto_update = '<c:autoUpdate val="1"/>' if variant == "refresh" else ""
+    relationship_type = "oleObject" if variant == "ole" else "package"
+    office_rel = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    package_rel = "http://schemas.openxmlformats.org/package/2006/relationships"
+    parts = {
+        chart: (
+            '<c:chartSpace xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" '
+            f'xmlns:r="{office_rel}"><c:chart><c:plotArea><c:barChart><c:ser><c:val>'
+            f'<c:numRef><c:f>Sheet1!$A$1</c:f>{cache}</c:numRef>'
+            '</c:val></c:ser></c:barChart></c:plotArea></c:chart>'
+            f'<c:externalData r:id="rId1">{auto_update}</c:externalData></c:chartSpace>'
+        ).encode(),
+        chart_rels: (
+            f'<Relationships xmlns="{package_rel}"><Relationship Id="rId1" '
+            f'Type="{office_rel}/{relationship_type}" Target="../embeddings/chart-data.xlsx"/>'
+            '</Relationships>'
+        ).encode(),
+        workbook: _office_bytes("xlsx"),
+    }
+    if variant == "shared":
+        parts["ppt/slides/_rels/slide1.xml.rels"] = parts[chart_rels].replace(
+            b"../embeddings/chart-data.xlsx", b"../embeddings/chart%2Ddata.xlsx"
+        )
+    elif variant == "orphan":
+        del parts[chart_rels]
+    elif variant == "other_ole":
+        parts["ppt/slides/_rels/slide1.xml.rels"] = parts[chart_rels].replace(
+            b'/package" Target="../embeddings/chart-data.xlsx',
+            b'/oleObject" Target="../other/object.bin',
+        )
+        parts["ppt/other/object.bin"] = b"synthetic payload"
+    elif variant == "large":
+        monkeypatch.setattr(pptx_chart_data, "_MAX_METADATA_PART_BYTES", len(parts[chart]) - 1)
+    source_bytes = _office_bytes("pptx", extra_parts=parts)
+    source.write_bytes(source_bytes)
+
+    if variant != "cached_chart":
+        with pytest.raises(ValidationError) as exc_info:
+            validate_office_structure(source, "pptx", chart_safe_copy=copy)
+        assert exc_info.value.code == (
+            "oversized_file" if variant == "large" else "unsafe_document_content"
+        )
+        assert not copy.exists()
+        return
+
+    with monkeypatch.context() as context:
+        context.setattr(settings, "upload_temp_dir", tmp_path)
+        with validated_office_input(source, "pptx") as prepared:
+            assert prepared != source
+            validate_office_structure(prepared, "pptx")
+            with zipfile.ZipFile(prepared) as archive:
+                assert workbook not in archive.namelist()
+                assert b"externalData" not in archive.read(chart)
+                assert cache.encode() in archive.read(chart)
+                assert b"Relationship Id" not in archive.read(chart_rels)
+
+        assert not prepared.exists()
+    assert source.read_bytes() == source_bytes
 
 
 def test_streaming_upload_limit_removes_partial_file(tmp_path: Path) -> None:

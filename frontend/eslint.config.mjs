@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Reproducible third-party runtime assets copied by prepare-pdfjs.mjs.
+    "public/pdfjs/**",
   ]),
 ]);
 

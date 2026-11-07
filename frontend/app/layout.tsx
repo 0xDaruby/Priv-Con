@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./workspace.css";
+import "./theme.css";
+import "./watermark-workspace.css";
+import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme";
 
 const geist = localFont({
   src: "./fonts/Geist-Variable.woff2",
@@ -26,7 +30,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={geist.variable}>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} /></head>
       <body>{children}</body>
     </html>
   );
